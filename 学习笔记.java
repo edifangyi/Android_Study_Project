@@ -34,6 +34,9 @@
 	       // setContentView(R.layout.activity_main);
 	        setContentView(R.layout.my_activity);
 
+
+
+			凭身份证								设置点击侦听器				点击监听
 	        findViewById(R.id.btnStartAnotherAty).setOnClickListener(new View.OnClickListener() {
 	            @Override
 	            public void onClick(View v) {
@@ -144,10 +147,9 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
 Alt(Option)+Enter	自动修正
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 本课讲解在 Activity 跳转时如何传递简单数据。
 
 前面都正常
@@ -164,7 +166,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, AnotherAty.class);
-                i.putExtra("data","hello 傻逼桑");
+
+                	额外投入
+                i.putExtra("data","hello hi几个号hiI");
                 startActivity(i);
             }
         });
@@ -183,8 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-3.在AnotherAty中创建
+3.在AnotherAty中创建		获取数据
 public class AnotherAty extends AppCompatActivity {
 
     private TextView textView2;
@@ -260,6 +263,315 @@ public class AnotherAty extends AppCompatActivity {
 在 Code →  Generate 可以自动生成各种get set 析构函数
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+通过 setResult() 返回状态码
+
+
+finish();直接把当前的 activity
+
+startActivityForResult(i,0)
+
+再加上
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	super.onActivityResult(requestCode, resultCode, data)  
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////Launch
+
+默认启动模式
+标准启动模式
+本课讲解在 Android 中 Activity 的标准启动模式的意义。
+		
+
+		protected TextView tv;
+
+
+
+        tv = (TextView) findViewById(R.id.tv);
+
+        tv.setText(String.format("TaskID:%d, \n Current Activity id:%s", getTaskId(),toString()));
+
+
+定义框框中文字是否全为大写
+android:textAllCaps="false" 
+
+
+        findViewById(R.id.btnStartSelf).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+            }
+        });
+
+
+
+
+关于配置 在 manifests 中的 AndroidManifest.xml
+
+<activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+  啦啦啦    android:launchMode="standard"
+            android:theme="@style/AppTheme.NoActionBar">
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SingleTop 模式
+本课讲解在 Android 中 Activity 的 SingleTop 启动模式的意义。
+			
+            android:launchMode="singleTop"
+
+
+改名字重构   右键 Refactor → Rename 完成改名工作
+
+
+在同一个堆栈 里面 Activity 的 SingleTop 启动模式的话，如果此时这个 Activity 处于栈顶 只能创建一个实例。
+如果当前不属于栈顶，会创建新的实例
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+SingleTask 与 SingleInstance 模式
+
+            android:launchMode="singleTask"
+
+有一个任务栈，有 A和B  点B后 再点A  直接把B弹出，A 是最初时候的，再按后退键直接退出
+
+            android:launchMode="singleInstance"
+
+两个任务 A B 相互切换，，，，独立的任务栈只放了一个实例
+
+
+package com.example.fangyi.launchmode;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+public class MainActivity extends AppCompatActivity {
+    protected TextView tv;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        tv = (TextView) findViewById(R.id.tv);
+
+        tv.setText(String.format("TaskID:%d, \n Current Activity id:%s", getTaskId(), toString()));
+
+        findViewById(R.id.btnMainAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+            }
+        });
+
+
+        findViewById(R.id.btnStartBAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BAty.class));
+            }
+        });
+
+
+
+
+
+package com.example.fangyi.launchmode;
+
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+public class BAty extends AppCompatActivity {
+    private TextView tv;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_baty);
+
+        tv = (TextView) findViewById(R.id.tv);
+        tv.setText(String.format("TaskID:%d, \n Current Activity id:%s", getTaskId(), toString()));
+
+        findViewById(R.id.btnMainAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BAty.this, MainActivity.class));
+            }
+        });
+
+
+        findViewById(R.id.btnStartBAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(BAty.this, BAty.class));
+            }
+        }); 
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动 Main Activity"
+        android:id="@+id/btnMainAty" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动 BAty"
+        android:id="@+id/btnStartBAty" />
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+显式 Intent 
+
+本课讲解显式 Intent 的声明与使用方式。
+
+
+public class MyAty extends Activity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.myaty);  //可以用过这段代码把 myaty 的Activity 绑定起来
+    }
+}
+
+
+注册 MyAty 在 AndroidManifest.xml
+
+	在 <application 标记下添加一个子标记
+        	<activity
+         	   android:name=".MyAty"/>
+
+
+1.显式Intent
+new Intent(MainActivity.this, MyAty.class)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+2.隐式Intent
+注册 MyAty 在 AndroidManifest.xml
+
+        <activity android:name=".MyAty">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.example.fangyi.launchmode.intent.action.MyAty"/>
+            </intent-filter>
+
+被启动的 Activity - MyAty 中添加
+public static final String ACTION ="com.example.fangyi.launchmode.intent.action.MyAty"
+
+
+        findViewById(R.id.btnStartMyAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MyAty.ACTION));
+            }
+        });
+
+
+ //优势，可以启动其他应用中的 Activity
+ 
+新建一个模块App1
+
+在MainActivity中添加
+
+        findViewById(R.id.btnStartMyAty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent("com.example.fangyi.launchmode.intent.action.MyAty"));
+            }
+        });
+启动 app 中的 Activity
+
+//如果不想其他应用调用，只能在同一个应用内部进行访问
+
+可以在 app 中的 AndroidManifest.xml 标签处添加   android:exported=""  是否可以调用
+
+        <activity android:name=".MyAty" android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.example.fangyi.launchmode.intent.action.MyAty"/>
+            </intent-filter>
+
+//可以在 App1 中加一个检测，处理 捕获到这个异常  不能调用app中的应用
+
+                try {
+                    startActivity(new Intent("com.example.fangyi.launchmode.intent.action.MyAty"));
+                }catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "无法启动指定的Activity", Toast.LENGTH_SHORT).show();
+                }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Intent 过滤器相关选项
+
+在 app 中 新建一个 activity  MyAty1
+
+什么都不用改
+
+在 AndroidManifest.xml 中
+
+        <activity 							加上下面这句
+            android:name=".MyAty" android:label="MyAty">
+啦啦啦这段删了            <!--android:exported="false">-->
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.example.fangyi.launchmode.intent.action.MyAty" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MyAty1"
+            android:label="@string/title_activity_my_aty1"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+ 加这段         <category android:name="android.intent.category.DEFAULT"/>
+ 加这段         <action android:name="com.example.fangyi.launchmode.intent.action.MyAty" />
+            </intent-filter>
+        </activity>
+
+//效果， 在app1 中 选择 会有两个选择 MAty 和 MAty1
 
 
 
