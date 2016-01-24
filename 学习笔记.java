@@ -150,6 +150,11 @@
 Alt(Option)+Enter	自动修正
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
 本课讲解在 Activity 跳转时如何传递简单数据。
 
 前面都正常
@@ -215,8 +220,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        System.out.println("lalalalalalalall            onCreate");
 
         findViewById(R.id.btnStartAnotherAty2).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -464,22 +467,34 @@ public class BAty extends AppCompatActivity {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
 显式 Intent 
 
 本课讲解显式 Intent 的声明与使用方式。
 
+手动创建一个类，让他继承 Activity，给他绑定一个视图
+
+1。在 com.example.fangyi.launchmode 中创建一个类 MyAty
+
+	让它继承至 Activity
 
 public class MyAty extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.myaty);  //可以用过这段代码把 myaty 的Activity 绑定起来
+        setContentView 设置内容视图 (R.layout.myaty);  //可以用过这段代码把 myaty 的Activity 绑定起来  绑定一个布局
     }
 }
+2.在 res.layout 里面创建一个myaty
+	
+	orientation布局走向
 
-
-注册 MyAty 在 AndroidManifest.xml
+3.注册 MyAty 在 AndroidManifest.xml
 
 	在 <application 标记下添加一个子标记
         	<activity
@@ -527,7 +542,7 @@ public static final String ACTION ="com.example.fangyi.launchmode.intent.action.
 
 //如果不想其他应用调用，只能在同一个应用内部进行访问
 
-可以在 app 中的 AndroidManifest.xml 标签处添加   android:exported=""  是否可以调用
+可以在 app 中的 AndroidManifest.xml 标签处添加   android:exported=""  是否可以调用，默认是可以导出
 
         <activity android:name=".MyAty" android:exported="false">
             <intent-filter>
@@ -553,8 +568,10 @@ Intent 过滤器相关选项
 
 在 AndroidManifest.xml 中
 
+默认方式
+
         <activity 							加上下面这句
-            android:name=".MyAty" android:label="MyAty">
+            android:name=".MyAty" android:label 标签 ="MyAty">
 啦啦啦这段删了            <!--android:exported="false">-->
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -565,13 +582,239 @@ Intent 过滤器相关选项
             android:name=".MyAty1"
             android:label="@string/title_activity_my_aty1"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
- 加这段         <category android:name="android.intent.category.DEFAULT"/>
- 加这段         <action android:name="com.example.fangyi.launchmode.intent.action.MyAty" />
+            <intent-filter>//添加子标签
+ 加这段         <category /*类别*/ android:name="android.intent.category.DEFAULT /*默认*/"/>
+ 加这段         <action /*行动*/ android:name="com.example.fangyi.launchmode.intent.action.MyAty" />
+ 															//注意格式
             </intent-filter>
         </activity>
 
 //效果， 在app1 中 选择 会有两个选择 MAty 和 MAty1
+//
+582行 添加 <data android:scheme="app"/>
+
+如果想指明 这段Activity
+
+ 		<activity
+            android:name=".MyAty1"
+            android:label="@string/title_activity_my_aty1"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>//添加子标签
+ 加这段         <category /*类别*/ android:name="android.intent.category.DEFAULT /*默认*/"/>
+ 加这段         <action /*行动*/ android:name="com.example.fangyi.launchmode.intent.action.MyAty" />
+ 				<data android:scheme="app"/>											//注意格式
+            </intent-filter>
+        </activity>
+
+去 app1中的 MainActivity
+	
+重载函数																				这里→
+		startActivity(new Intent("com.example.fangyi.launchmode.intent.action.MyAty", Uri.parse("app://hello")));
+直接启动到指明协议的 Activity 
+
+除此之外，所配置的 data 选项 还有许多其他可以匹配的参数
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+通过浏览器链接启动本地 Activity 07:22
+
+本课讲解如何通过配置 IntentFilter 从而从浏览器启动本地的 Activity。
+
+
+1.新建一个 LocalAppAty  随便写点东西在里面
+
+2.在 AndroidManifest 中添加 
+        <activity
+            android:name=".LocalAppAty"
+            android:label="@string/title_activity_local_app_aty"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="LocalAppAty" />
+            </intent-filter>
+            </activity>
+
+
+
+3.写一个浏览器的页面 index.html  WebStorm
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8"
+	<title></title>
+
+	<style type="text/css">
+		a{
+			font-size: 50pt;
+		}
+	</style>
+</head>
+<body>
+<a href="app:/LocalAppAty">Launch My App</a>
+</body>
+</html>
+
+
+3.
+来获取启动这个Activity的Intent的对象
+在LocalAppAty中添加
+     Uri uri = getIntent().getData();
+     System.out.println(uri);
+可以获取到传来的信息的 app:/LocalAppAty
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Android 中 Context 的理解及使用
+本课带你理解 Context 及 Context 的作用。
+
+
+
+Interface to global information about an application environment. This is an abstract class whose implementation is 
+provided by the Android system. It allows access to application-specific resources and classes, as well as up-calls 
+for application-level operations such as launching activities, broadcasting and receiving intents, etc.
+
+
+一个应用环境的全球信息接口。这是一个抽象类，它的实现是由安卓系统提供的。它允许访问应用程序特定的资源和类，以及应用
+级的操作，如启动活动，电话，广播和接收的意图，等等。
+
+接口有关的应用程序环境的全局信息。这是一个抽象类，它的实现是由Android系统提供的。它允许访问特定应用程序的资源和类，
+以及向上呼吁应用层的操作，如发射活动，广播和接收意图等。
+
+
+    protected TextView tv;
+
+    tv = new TextView(MainActivity.this);
+//    tv.setText("hello android");
+    tv.setText(R.string.hello_world);//重载函数，字符串资源ID,出入ID  R.string.hello_world  任意资源
+
+//    工程在创建时候，会自动在values.strings.xml中
+//    <resources>
+//     <string name="app_name">LaunchMode</string>
+//     <string name="hello_world">Hello world!</string>
+//     <string name="action_settings">Settings</string>
+//     <string name="title_activity_baty">BAty</string>
+//     <string name="title_activity_my_aty1">MyAty1</string>
+//     <string name="title_activity_local_app_aty">LocalAppAty</string>
+//     <string name="title_activity_learn_context">LearnContext</string>
+// </resources>
+
+    setContentView(tv);
+    System.out.println(getResources().getText(R.string.hell_world));
+
+
+
+//图标资源
+    protected TextView tv;
+
+    ImageView iv = new ImageView(this);
+    iv.setImageResources(R.mipmap.ic_launcher);
+    setContentView(iv);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Application 的用途 12:45
+
+本课讲解在 Android 中 Application 的用途以及如何自定义 Application。
+
+1.定义一个class → App
+
+	继承自 Application
+
+	在AndroidManifest中进行配置 
+		<application
+			android:name=".App" //通过这种方式，我们就自定义了
+
+2.在 MainActivity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
