@@ -684,19 +684,20 @@ for application-level operations such as launching activities, broadcasting and 
 
 
 一个应用环境的全球信息接口。这是一个抽象类，它的实现是由安卓系统提供的。它允许访问应用程序特定的资源和类，以及应用
-级的操作，如启动活动，电话，广播和接收的意图，等等。
+级的操作，如启动活动，电话，广播和接收的意图，等等
 
 接口有关的应用程序环境的全局信息。这是一个抽象类，它的实现是由Android系统提供的。它允许访问特定应用程序的资源和类，
-以及向上呼吁应用层的操作，如发射活动，广播和接收意图等。
+以及向上呼吁应用层的操作，如发射活动，广播和接收意图等
+
 
 
     protected TextView tv;
 
     tv = new TextView(MainActivity.this);
-//    tv.setText("hello android");
-    tv.setText(R.string.hello_world);//重载函数，字符串资源ID,出入ID  R.string.hello_world  任意资源
+//方法一    tv.setText("hello android");
+    tv.setText(R.string.hello_world);//方法二 重载函数，字符串资源ID,出入ID  R.string.hello_world  任意资源
 
-//    工程在创建时候，会自动在values.strings.xml中
+//    工程在创建时候，会自动在values.strings.xml中生成资源  app_name、hello_world都是字符串资源
 //    <resources>
 //     <string name="app_name">LaunchMode</string>
 //     <string name="hello_world">Hello world!</string>
@@ -707,21 +708,20 @@ for application-level operations such as launching activities, broadcasting and 
 //     <string name="title_activity_learn_context">LearnContext</string>
 // </resources>
 
-    setContentView(tv);
+    setContentView(tv);//设置内容视图
     System.out.println(getResources().getText(R.string.hell_world));
 
 
 
 //图标资源
-    protected TextView tv;
 
-    ImageView iv = new ImageView(this);
-    iv.setImageResources(R.mipmap.ic_launcher);
-    setContentView(iv);
+        ImageView iv = new ImageView(this);
+        iv.setImageResource(R.mipmap.ic_launcher);
+        setContentView(iv);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Application 的用途 12:45
+Application 的用途
 
 本课讲解在 Android 中 Application 的用途以及如何自定义 Application。
 
@@ -729,71 +729,352 @@ Application 的用途 12:45
 
 	继承自 Application
 
+		public class App extends Application{
+	    private String textData = "default";
+
+	    public String getTextData() {
+	        return textData;
+	    }
+
+	    public void setTextData(String textData) {
+	        this.textData = textData;
+	    }
+	}
+
 	在AndroidManifest中进行配置 
 		<application
-			android:name=".App" //通过这种方式，我们就自定义了
+			android:name=".App" //通过这种方式，我们就自定义了application 真正的全局上下文对象
 
-2.在 MainActivity
-
-
-
-
-
-
-
-
-
+2.定义一个class → Main2
+	继承自 Activity
+	public class Main2 extends Activity {
+	    @Override
+	    public void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	    }
+	}
 
 
+在AndroidManifest中进行配置 
+        <activity android:name=".Main2">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
 
-
-
-
-
-
-
-
-
-
-
-
+在<activity
+            android:name=".MainActivity"
+            android:label="Main1" //改成Main1
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+使用 Service
+本课讲解如何使用 startService 启动服务和如何使用 stopService 停止服务，以及在过程中需要注意的问题。
+创建 MyService
+
+    protected Intent intent;
+
+            intent = new Intent(MainActivity.this, MyService.class);
+
+        findViewById(R.id.btnStartService).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startService(new Intent(MainActivity.this, MyService.class));
+            }
+        });
+
+        findViewById(R.id.btnStopService).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService( intent );
+            }
+        });
+
+
+//在后台不断输出 输出语句
+
+在 MyService中 
+添加
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+
+                while (true) {
+                    System.out.println("服务正在运行···");
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+//    在外界执行了 startService 的时候 会执行到 onStartCommand
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+绑定 Service 06:26
+
+本课讲解如何使用 bindService 绑定并启动服务，如何使用 unbindService 解除绑定服务，以及 Activity 与被绑定的服务之间的关系。
+
+
+//技巧
+//如果希望 所以按钮，可以这么写代码
+        findViewById(R.id.btnStartService).setOnClickListener(this);
+        findViewById(R.id.btnStopService).setOnClickListener(this);
+        findViewById(R.id.btnBindService).setOnClickListener(this);
+        findViewById(R.id.btnUnBindService).setOnClickListener(this);
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnStartService:
+            //Inten i = new Intent(this, MyService.class);
+            //startService(i);
+                startService(intent);
+                break;
+            case R.id.btnStopService:
+                stopService(intent);
+                break;
+            case R.id.btnBindService:
+                bindService(intent, this, Context.BIND_AUTO_CREATE);   //第二个this会有错误，类型不匹配 需要补全
+                break;
+            case R.id.btnUnBindService:
+                unbindService(this);
+                break;
+        }
+    }
+
+
+//补全代码
+    @Override//服务被绑定成功之后 执行
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        System.out.println("Service Connected");
+    }
+
+    @Override//服务所在进程崩溃杀掉 执行
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
+
+
+//替换掉在 MySerivice 下面代码
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+//为这样
+    @Override
+    public IBinder onBind(Intent intent) {
+		return new Binder();
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Service生命周期 06:58
+
+本课介绍 Service 的生命周期，并 Service 的生命周期对于开发实际项目的意义。
+
+
+
+    @Override//启动
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override//停止
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+//当启动服务，绑定服务的时候，，，需要停止 和 解除 才真正意义上的关闭
 
 
 
 
 
+package com.example.fangyi.launchmode;
+
+import android.app.Service;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.IBinder;
+
+public class MyService extends Service {
+    private boolean serviceRuning = false;
+    public MyService() {
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new Binder();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
 
 
+        System.out.println("哈哈哈哈哈哈·······onStattCommand");
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        System.out.println("服务，，，，onCreate");
+
+        serviceRuning = true;
+
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+
+                while (serviceRuning) {
+                    System.out.println("服务正在运行···");
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("服务，，，disDestroy，");
+        serviceRuning = false;
+
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+启动 Service 并传递数据 08:59
+
+本课时讲解如何启动一个 Service 并且向该 Service 传递数据。
 
 
 
+外界与一个服务进行通信
+
+1.在 content_main.xml 中添加
+
+    <EditText
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:text="默认信息"
+        android:id="@+id/etData"
+        android:layout_alignTop="@+id/btnMainAty"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
+2.在 MainActivity.java 中添加
+    1.protected EditText etData;
+
+    2.etData = (EditText) findViewById(R.id.etData);
+	
+	3.@Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnStartService:
+                intent.putExtra("data",etData.getText().toString()); //这句话
+                startService(intent);
+                break;
+            case R.id.btnStopService:
+                stopService(intent);
+                break;
+            case R.id.btnBindService:
+                bindService(intent, this, Context.BIND_AUTO_CREATE);
+                break;
+            case R.id.btnUnBindService:
+                unbindService(this);
+                break;
+        }
+    }
+
+3. 在 MyService 中 添加
 
 
+public class MyService extends Service {
+    private boolean running = false;
+    private String data = "这是默认信息";
+
+    public MyService() {
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        // TODO: Return the communication channel to the service.
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        data = intent.getStringExtra("data");	//这句话
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();	//这句话
+        running = true;
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                
+                while (running) {
+
+                    System.out.println(data);
 
 
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();	//这句话
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public void onDestroy() {
+        running = false;	//这句话
+    }
+}
 
 
 
