@@ -1077,43 +1077,165 @@ public class MyService extends Service {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+绑定 Service 进行通信（上） 08:02
+
+本课时讲解如何与被绑定的 Service 进行通信。
+
+1.在以上基础上添加按钮
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步数据"
+        android:id="@+id/btnSyncData"
+        android:layout_below="@+id/btnUnBindService"
+        android:layout_alignLeft="@+id/btnUnBindService"
+        android:layout_alignStart="@+id/btnUnBindService" />
+
+2.在 MainActivity 中添加 监听器
+
+        a. 		findViewById(R.id.btnSyncData).setOnClickListener(this);
+
+        b.	case R.id.btnSyncData:
+
+                break;
+
+3.在 MyService 中 修改添加 Binder
+
+    @Override
+    public IBinder onBind(Intent intent) {
+//        // TODO: Return the communication channel to the service.
+//        throw new UnsupportedOperationException("Not yet implemented");
+        return new Binder();
+    }
+    public class Binder extends android.os.Binder{
+        public void setData(String data) {
+            MyService.this.data = data;
+        }
+    }
+
+    这样就可以把 MyService 和 MainActivity 链接起来了
+
+
+4. 在 MainActivity 中添加     
+	protected MyService.Binder binder = null;
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        binder = (MyService.Binder) service;
+    }
+
+5. 直接添加代码
+            case R.id.btnSyncData:
+                if (binder!=null){
+                    binder.setData(etData.getText().toString());
+                }
+                break;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+绑定 Service 进行通信（下） 08:26
+
+本课时讲解如何侦听被绑定的 Service 的内部状态。
+
+之前都是在控制台输出
+现在要 把输出呈现在 MainActivity 中
+
+1.在 MyService 中添加 数字
+
+int i = 0;
+                while (running) {
+                    i++;
+                    System.out.println(i+":"+data);
+
+
+2.新建一个 TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/tvOut"
+        android:layout_below="@+id/btnSyncData"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+3.在 MainActivity 中定义一个 新的
+	
+    private TextView tvOut;
+       
+       tvOut = (TextView) findViewById(R.id.tvOut);
+
+4.接下来就是如何让内部通知外界
+	回调机制
+
+	在 MyService 中 添加一个接口
+
+	   a. private Callback callback = null;
+    
+
+        b.            
+         int i = 0;
+                while (running) {
+                    i++;
+                    String str = i+":"+data;
+                    System.out.println(str);
+                    if (callback!=null) {
+                        callback.onDataChange(str);
+                    }
+
+
+  c,  @Override
+    public void onDestroy() {
+        super.onDestroy();
+        running = false;
+    }
+
+    private Callback callback = null;
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
+    public Callback getCallback() {
+        return callback;
+    }
+
+    public static interface Callback {
+        void onDataChange(String data);
+    }
 
 
 
+UI线程不准许辅线程调用UI线程资源
 
+5.在 MainActivity 中添加
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        binder = (MyService.Binder) service;
+        binder.getService().setCallback(new MyService.Callback() {
+            @Override
+            public void onDataChange(String data) {
+                Message msg = new Message();
+                Bundle b = new Bundle();
+                b.putString("data", data);
+                msg.setData(b);
+                handler.sendMessage(msg);
+            }
+        });
+    }
 
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private android.os.Handler handler = new android.os.Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            tvOut.setText(msg.getData().getString("data"));
+        }
+    };
 
 
 
