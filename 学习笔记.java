@@ -149,10 +149,10 @@
 
 Alt(Option)+Enter	自动修正
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 ///
 本课讲解在 Activity 跳转时如何传递简单数据。
@@ -466,11 +466,11 @@ public class BAty extends AppCompatActivity {
         android:id="@+id/btnStartBAty" />
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
 ///
 显式 Intent 
@@ -667,11 +667,11 @@ Intent 过滤器相关选项
 可以获取到传来的信息的 app:/LocalAppAty
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Android 中 Context 的理解及使用
 本课带你理解 Context 及 Context 的作用。
@@ -771,10 +771,10 @@ Application 的用途
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 使用 Service
 本课讲解如何使用 startService 启动服务和如何使用 stopService 停止服务，以及在过程中需要注意的问题。
@@ -973,10 +973,10 @@ public class MyService extends Service {
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 启动 Service 并传递数据 08:59
 
@@ -1160,22 +1160,61 @@ int i = 0;
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+
+
 3.在 MainActivity 中定义一个 新的
 	
     private TextView tvOut;
        
        tvOut = (TextView) findViewById(R.id.tvOut);
 
+
+
+
 4.接下来就是如何让内部通知外界
 	回调机制
 
-	在 MyService 中 添加一个接口
+public class MyService extends Service {
+    private boolean running = false;
+    private String data = "这是默认信息";
 
-	   a. private Callback callback = null;
-    
+    public MyService() {
 
-        b.            
-         int i = 0;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new Binder();
+    }
+    public class Binder extends android.os.Binder{
+        public void setData(String data) {
+            MyService.this.data = data;
+        }
+
+        public MyService getService() {
+            return MyService.this;
+        }
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        data = intent.getStringExtra("data");
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        running = true;
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+
+                int i = 0;
                 while (running) {
                     i++;
                     String str = i+":"+data;
@@ -1183,9 +1222,17 @@ int i = 0;
                     if (callback!=null) {
                         callback.onDataChange(str);
                     }
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
 
-
-  c,  @Override
+    @Override
     public void onDestroy() {
         super.onDestroy();
         running = false;
@@ -1204,12 +1251,58 @@ int i = 0;
     public static interface Callback {
         void onDataChange(String data);
     }
+}
+
+
+
 
 
 
 UI线程不准许辅线程调用UI线程资源
 
 5.在 MainActivity 中添加
+    protected Intent intent;
+    private EditText etData;
+    private MyService.Binder binder = null;
+    private TextView tvOut;
+        
+
+        intent = new Intent(MainActivity.this, MyService.class);
+        etData = (EditText) findViewById(R.id.etData);
+        tvOut = (TextView) findViewById(R.id.tvOut);
+
+        findViewById(R.id.btnStartService).setOnClickListener(this);
+        findViewById(R.id.btnStopService).setOnClickListener(this);
+        findViewById(R.id.btnBindService).setOnClickListener(this);
+        findViewById(R.id.btnUnBindService).setOnClickListener(this);
+        findViewById(R.id.btnSyncData).setOnClickListener(this);
+
+
+   @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnStartService:
+                intent.putExtra("data",etData.getText().toString());
+                startService(intent);
+                break;
+            case R.id.btnStopService:
+                stopService(intent);
+                break;
+            case R.id.btnBindService:
+                bindService(intent, this, Context.BIND_AUTO_CREATE);
+                break;
+            case R.id.btnUnBindService:
+                unbindService(this);
+                break;
+            case R.id.btnSyncData:
+                if (binder!=null){
+                    binder.setData(etData.getText().toString());
+                }
+                break;
+        }
+    }
+
+    @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         binder = (MyService.Binder) service;
         binder.getService().setCallback(new MyService.Callback() {
@@ -1236,6 +1329,601 @@ UI线程不准许辅线程调用UI线程资源
             tvOut.setText(msg.getData().getString("data"));
         }
     };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Android 中 AIDL 的理解与使用
+
+跨应用启动 Service 10:57
+
+本课讲解如何跨应用启动 Service，从 Android 5.0 以后只能通信显式 Intent 来启动服务
+
+1.在 app 中创建 AppService 类 
+
+	添加
+	    @Override
+	    public void onCreate() {
+	        super.onCreate();
+	        System.out.println("Service started");
+	    }
+
+	    @Override
+	    public void onDestroy() {
+	        super.onDestroy();
+
+	        System.out.println("Service destroy");
+	    }
+
+
+	 在 MainActivity 中 添加 startService(new Intent(this,AppService.c;ass));
+
+	 和 @Override
+	 protected void onDestroy(){
+	 	super.onDestroy();
+
+	 	stopService(new Intent(this,AppService.class)); 
+	 }
+
+	 以上方法可以在同一个应用中启动和定制服务
+
+	 下面通过其他App调用另一个App服务
+
+
+
+2.再来创建一个 module - app2
+    
+    创建两个按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动LaunchMode服务"
+        android:id="@+id/btnStartLaunchModeAppService"
+        android:layout_below="@+id/btnStartMyAty"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关闭LaunchMode服务"
+        android:id="@+id/btnStopLaunchModeAppService"
+        android:layout_below="@+id/btnStopLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp" />
+
+3.
+
+    private Intent serviceIntent;
+        serviceIntent = new Intent();
+	    serviceIntent.setComponent(new ComponentName("com.example.fangyi.app1", "com.example.fangyi.launchmode.AppService"));
+//通过setComponent来设置一个组建名字，同过名字来启动 Activity  ，参数 首先是这个app文件的包名，之后是被启动的服务的类的名字，可以写全路径
+        
+        findViewById(R.id.btnStartLaunchModeAppService).setOnClickListener(this);
+        findViewById(R.id.btnStopLaunchModeAppService).setOnClickListener(this);
+
+4. 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnStartLaunchModeAppService:
+                startService(serviceIntent);
+                break;
+            case R.id.btnStopLaunchModeAppService:
+                stopService(serviceIntent);
+                break;
+        }
+    }
+
+
+4.通过 service 启动服务 还可以在 AppService 中 重新写 onStartCommand 用于接收从其他的应用传递过来的数据
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+跨应用绑定 Service 06:14
+
+本课讲解如何跨应用绑定 Service
+
+在绑定的过程当中我们需要一个Bind,,指定的类里面所定义的。我们无法从一个应用里面访问另一个应用里面的Bind
+
+接口定义语言
+
+创建一个 AIDI 文件
+
+
+
+1.创建：IAPPServiceRemoteBinder 
+
+他会全自动的给我们生成相关的类
+
+然后重新构建 在 Build → Rebuild Project
+
+
+2.在 AppService 中添加代码
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new IAPPServiceRemoteBinder.Stub() {
+//因为是抽象类，所以我们需要实现里面的方法
+            @Override
+            public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+            }
+        };
+    }
+
+3.如何通过app1 来绑定 app中的服务
+
+在app1 中添加按钮
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="绑定LaunchMode服务"
+        android:id="@+id/btnBindLaunchModeAppService"
+        android:layout_below="@+id/btnStopLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="解除LaunchMode服务"
+        android:id="@+id/btnUnBindLaunchModeAppService"
+        android:layout_below="@+id/btnBindLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+4.在 app1 中在添加两个事件监听器
+	private Intent serviceIntent;
+ 		serviceIntent = new Intent();
+        serviceIntent.setComponent(new ComponentName("com.example.fangyi.app1", "com.example.fangyi.launchmode.AppService"));
+
+        findViewById(R.id.btnStartLaunchModeAppService).setOnClickListener(this);
+        findViewById(R.id.btnStopLaunchModeAppService).setOnClickListener(this);
+        findViewById(R.id.btnBindLaunchModeAppService).setOnClickListener(this);
+        findViewById(R.id.btnUnBindLaunchModeAppService).setOnClickListener(this);
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnStartLaunchModeAppService:
+                startService(serviceIntent);
+                break;
+            case R.id.btnStopLaunchModeAppService:
+                stopService(serviceIntent);
+                break;
+            case R.id.btnBindLaunchModeAppService:
+                bindService(serviceIntent, this, Context.BIND_AUTO_CREATE); //绑定代码，this，实现 onServiceConnected
+                break;
+            case R.id.btnUnBindLaunchModeAppService:
+                unbindService((ServiceConnection) this);
+                break;
+        }
+    }
+
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        System.out.println("Bind Service");
+        System.out.println(service);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+跨应用绑定 Service 并通信 11:28
+
+本课讲解如何使用 AIDL 跨应用与 Service 通信
+
+1.把app 中的 aidl文件进行修改 ，如果说你想新增加接口的话，肯定会在 aidl 文件里面进行添加修改
+
+
+    void setData(String data);
+
+
+然后重新构建 在 Build → Rebuild Project
+
+2.
+
+会在 AppService 中有一个错误
+
+IAPPServiceRemoteBinder.Stub  需要一个接口
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new IAPPServiceRemoteBinder.Stub() {
+
+            @Override
+            public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
+
+            }
+
+            @Override
+            public void setData(String data) throws RemoteException {
+
+            }
+        };
+    }
+
+
+    private String data = "默认数据";
+
+
+3. 然后我们回到
+	
+	public void setData(String data) throws RemoteException {
+       	AppService.this.data = data;//添加这句，来访问
+    }
+
+
+4. 进行测试
+
+    private boolean running = false;
+
+    然后我们回到 onCreate() 中 添加一个线程
+ 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        System.out.println("Service started");
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+
+                running = true;
+                while(running){
+                    System.out.println(data);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        System.out.println("Service destroy");
+
+        running = false;
+    }
+
+
+    private boolean running = false;
+
+
+5. 在app1 中 放进一个输入文本和按钮
+
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/etInput"
+        android:layout_below="@+id/btnUnBindLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="22dp"
+        android:layout_alignRight="@+id/btnUnBindLaunchModeAppService"
+        android:layout_alignEnd="@+id/btnUnBindLaunchModeAppService"
+        android:text="这是另一个应用的数据"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步数据到绑定的服务中"
+        android:id="@+id/btnSync"
+        android:layout_below="@+id/editText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+	在 MainActivity 中添加事件监听器
+    private EditText etInput;
+        etInput = (EditText) findViewById(R.id.etInput);
+        findViewById(R.id.btnSync).setOnClickListener(this);
+
+                    case R.id.btnSync:
+                break;
+
+
+
+5.然后我们在同步的时候，该如何去使用呢
+
+在这里我们首先需要一个bind，我们如何通过bind 很方便的去执行一个远程的函数呢，我们需要把 app 中 aidl 文件拷贝一下，而且还要保持同样的包名
+
+
+首先，我们在 app1 中创建一个包
+
+app1 → New → Folder → AIDI Folder  
+
+会多出来一个 aidl 文件夹，在里面呢，New 一个 Package 
+
+然后去 app 中 把 aidl 文件 拷贝到 app1 中
+
+然后重新构建 在 Build → Rebuild Project
+
+
+
+6. 之后我们可以在 app1 里面的 MainActivity 中 定义一个
+
+    private IAPPServiceRemoteBinder binder = null;
+
+    然后回到 onClick()
+
+
+            case R.id.btnUnBindLaunchModeAppService:
+                unbindService(this);//还要加上这句话
+                binder = null;
+            case R.id.btnSync:
+                if (binder!=null){
+                    //binder.setData(etInput.getText().toString()); 这句话会有一个异常，因为远程通信
+                    //
+                    try {
+                        binder.setData(etInput.getText().toString());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+
+    当我们获取到了 Service ，我们
+
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        System.out.println("Bind Service");
+        System.out.println(service);
+        //binder = (IAPPServiceRemoteBinder) service; //在这里需要执行一个强制转换
+        //在运行的时候，上面的强制类型转换 虽然名字一样，但是内存地址不一样
+        //
+        //所以我们换用另一种方法
+        //
+        binder = IAPPServiceRemoteBinder.Stub.asInterface(service);
+    }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
