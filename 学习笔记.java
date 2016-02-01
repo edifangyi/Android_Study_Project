@@ -1717,131 +1717,364 @@ app1 → New → Folder → AIDI Folder
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+Android 广播接收器
 
+使用 BroadcastReceiver 05:20
 
+本课讲解 BroadcastReceiver 的概念以及如何使用
 
 
+1.我们先创建一个 BroadcastReceiver 
 
+	New → Other → Broadcast Receiver → 起名 MyReceiver
 
 
+public class MyReceiver extends BroadcastReceiver {
+    public MyReceiver() {
+    }
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        // TODO: This method is called when the BroadcastReceiver is receiving
+        // an Intent broadcast.
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+}
 
 
+如果有其他程序朝这个接收器发送消息，他就会就收到，事实上，他也是一种通信的方式
 
 
+2.
+创建一个按钮
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发送消息"
+        android:id="@+id/btnSendMsg"
+        android:layout_x="1dp"
+        android:layout_y="260dp" />
 
+添加事件监听器  
 
+        findViewById(R.id.btnSendMsg).setOnClickListener(this);
 
+添加 	public void onClick(View v)
+            
 
+            case R.id.btnSendMsg:
+                Intent i = new Intent(this,MyReceiver.class);
+                i.putExtra("data","ABCD");
+                sendBroadcast(i);
+                break;
 
 
+3.在 MyReceiver 中添加
 
+  @Override
+    public void onReceive(Context context, Intent intent) {
+        System.out.println("接收到了一个消息,消息的内容是：" + intent.getStringExtra("data"));
+    }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+动态注册和注销 BroadcastReceiver 05:12
 
+在有些情况下，我们不是很希望 BroadcastReceiver 始终处于监听状态
 
+本课讲解如何实现动态注册和注销 BroadcastReceiver
 
+1.在 AndroidManifest 中把 
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+  删掉，这样我们就接收不到了
 
 
 
+2.如何通过注册，我们可以用过程序实现
 
+	例如，再添加两个按钮，来控制注册和注销
 
+	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="注册接收器"
+	        android:id="@+id/btnReg"
+	        android:layout_x="1dp"
+	        android:layout_y="300dp" />
+	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="注销接收器"
+	        android:id="@+id/btnUnReg"
+	        android:layout_x="1dp"
+	        android:layout_y="340dp" />
 
+	添加事件监听器  
+        findViewById(R.id.btnReg).setOnClickListener(this);
+        findViewById(R.id.btnUnReg).setOnClickListener(this);
 
+	添加 	public void onClick(View v)
 
+            case R.id.btnReg:
+                if(receiver==null){
+                    receiver = new MyReceiver();
+                    registerReceiver(receiver,new IntentFilter(/*这里需要第三步，创建 ACTION*/));
+                }
+                break;
+            case R.id.btnUnReg:
+                if(receiver!=null){
+                    unregisterReceiver(receiver);
+                    receiver = null;
+                }
+                break;
 
 
+为了防止注册多个 Receiver 我们可以在最外面一个
+    private MyReceiver receiver = null;
 
 
+3.回到 MyReceiver 里面
 
+    public static final String ACTION ="com.example.fangyi.launchmode.intent.action.MyReceiver";
 
+    然后第二步 中 注册接收器 添加
+	registerReceiver(receiver,new IntentFilter(MyReceiver.ACTION));
 
 
+4.在通过注册时候，我们不能用第一阶段的方式发送，即
 
+            case R.id.btnSendMsg:
+           //不要     //Intent i = new Intent(this,MyReceiver.class);
+                //即在创建Intent的时候 调用MyReceiver.ACTION的方式
+                //也就是隐式Intent
+                Intent i = new Intent(MyReceiver.ACTION);
+                i.putExtra("data","ABCD");
+                sendBroadcast(i);
+                break;
 
+5.测试
 
+		1.此时我们点击 “发送消息” 的按钮，是没有任何反应的
 
+		2.点击 “注册接收器” ，此时是注册成功了；然后我们点击 “发送消息”，
+			有反应：接收到了一个消息,消息的内容是：ABCD
 
+		3.点击 “注销接收器”，再点击 “发送消息”，发现不会再有反应了
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+BroadcastReceiver 的优先级 06:25
 
+本课讲解 BroadcastReceiver 的优先级以及如何进行控制
 
 
+1. 我们来给 MyReceiver 在 AndroidManifest 添加注册信息 
 
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.example.fangyi.launchmode.intent.action.MyReceiver"/>
+                //添加的 action 是 MyReceiver 我们定义的
+            </intent-filter>
+        </receiver>
+2. 之后我们在创建一个接收器 ：MyReceiver 1
+添加
+        System.out.println("MyReceiver 1 接收到了消息");
 
+        在 AndroidManifest 中添加注册信息
+	        <receiver
+	            android:name=".MyReceiver1"
+	            android:enabled="true"
+	            android:exported="true">
+	            <intent-filter>
+	                <action android:name="com.example.fangyi.launchmode.intent.action.MyReceiver"/>
+	            </intent-filter>
+	        </receiver>
 
+当我们朝接收器发送信息，，，，理论上来讲两个接收器都会发送信息
 
+测试表明，后注册的 MyReceiver 1 先提示信息
 
+我们可以改变这一顺序
 
+3.测试表明，后注册的 MyReceiver 1 先提示信息
 
+	我们可以改变这一顺序
 
+	在 <intent-filter> 中有一个参数 android:priority="X"
 
+	比如在 
 
+	 		<receiver
+		            android:name=".MyReceiver1"
+		            android:enabled="true"
+		            android:exported="true">
+		            <intent-filter android:priority="10">
+		                <action android:name="com.example.fangyi.launchmode.intent.action.MyReceiver"/>
+		            </intent-filter>
+		        </receiver>
 
 
+	        <receiver
+	            android:name=".MyReceiver"
+	            android:enabled="true"
+	            android:exported="true">
+	            <intent-filter android:priority="9">
+	                <action android:name="com.example.fangyi.launchmode.intent.action.MyReceiver"/>
+	                //添加的 action 是 MyReceiver 我们定义的
+	            </intent-filter>
+	        </receiver>
 
+	测试表明，优先级是 10 的先接收到消息，并输出 
 
+	如果把 MyReceiver1 优先级 改成 8， 测试：优先级 9的先接收到消息
 
 
+	即：在参数中，，数字谁的高，谁的优先级就高
 
 
 
+4.如果一个 优先级高的 MyReceiver，不想让后面的 MyReceiver 接收到消息，
 
+我们可以在 高 优先级 的 MyReceiver 中的  public void onReceive(Context context, Intent intent) 中添加一个方法
 
+        abortBroadcast();
 
+从这里直接把广播给中断了
 
+但其实，在上述代码没改变的情况下，会抛出一个异常：他尝试中断的一个非顺序的 Broadcast
+也就是说，我们通过
 
+            case R.id.btnSendMsg:
+                Intent i = new Intent(MyReceiver.ACTION);
+                i.putExtra("data","ABCD");
+                // sendBroadcast(i);//这种方式所发送的Broadcast是不能够被中断的，所以我们需要换函数
+                
+                sendOrderedBroadcast(i, null);//第一个参数是intent，第二个参数是权限，我们不需要所以写null
+                break;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+Android 日志系统
 
 
+使用日志 API 06:01
 
+本课讲解在 Android 系统中如何使用日志 API 进行日志输出，内容包括 System.out、System.err、Log.v、Log.d、Log.i、Log.w、Log.e 的使用。
 
 
+1.我们在 MainActivity 中 添加 
 
+	他其实是java本身提供的输出信息，他的日志级别是 “普通日志” 
+    sout →
+        System.out.println("普通日志Info");
+	
 
+	此外，java还提供了 “错误日志” 输出信息
+	serr →
+       System.err.println("错误日志Warn");
 
+两种信息样式不一样，I/System.out:普通日志Info	//黑色
+					W/System.out:错误日志Warn	//蓝色
 
+					Warn 比 Info 级别要高
 
+2.Android 还提供了有非常详细的日志级别的信息
 
+在最上面创建一个
+    private static String TAG = "MainActivity";
 
+按优先级 从高到低
+        Log.e(TAG,"错误信息");	//红色的
+        Log.w(TAG,"警告信息");	//蓝色
+        Log.i(TAG,"普通信息");	//黑色
+        Log.d(TAG,"调试信息");	//黑色
+        Log.v(TAG,"无用信息");//给程序员唠叨用的//黑色
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+日志分类 05:08
 
+本课讲解在 Android Studio 中如何对日志进行分类呈现，便于开发调试。
 
+Edit Filter Configuration//编辑滤镜的配置信息
 
+1.可以添加一个自定义的标签
+	Name:MainActivity //只输出MainActivity的信息，所以名字这么写
 
+	by Log Tag(regex):	MainActivity
 
+	然后点击ok
+	
+	输出
+        E/MainActivity：错误信息	//红色的
+        W/MainActivity：警告信息	//蓝色
+        I/MainActivity：普通信息	//黑色
 
+2. 
+	by Log Message (regex): 信息
 
+	输出
+		E/MainActivity：错误信息	//红色的
+        W/MainActivity：警告信息	//蓝色
+        I/MainActivity：普通信息	//黑色
 
+    比如不是信息的他也会输出
+    比我我们在主程序中添加一个
+        Log.e("MSG","其他信息");
 
+    输出
+		E/MainActivity：错误信息	//红色的
+        W/MainActivity：警告信息	//蓝色
+        I/MainActivity：普通信息	//黑色
+        E/MSG：其他信息	
 
+        即只要 出现信息两个字，他就会输出
 
+3.
+	by Package Name://根据程序的包名，他会全自动的添加
 
+4.
+	by PID:	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+使用 DDMS 查看日志 04:49
 
+本课讲解如何使用 Android Studio 中的 DDMS 以及独立的 DDMS 查看日志。
 
+D:\Android\sdk\tools\ddms.bat
 
 
+//机器人小图标  Android Device Monitor //设备监视器	DDMS
 
+点开后，我们可以在下面看到一个 LogCat 的窗口
 
+我们可以在那个 加号 添加分类信息
 
+1.
+	Filter Name:
+	by log Tag:
+	~~~
 
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Android 权限系统
 
+请求权限实例 05:18
+本课用一个实例演示如何请求使用系统内置的某一个权限。
 
-
-
-
-
-
-
-
-
-
-
-
+我们添加一个 
 
 
 
