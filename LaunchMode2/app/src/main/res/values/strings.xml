@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LaunchMode</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_baty">BAty</string>
+    <string name="title_activity_my_aty1">MyAty1</string>
+    <string name="title_activity_local_app_aty">LocalAppAty</string>
+    <string name="title_activity_learn_context">LearnContext</string>
+    <string name="title_activity_web_view">WebView</string>
+    <string name="title_activity_my_web_view">MyWebView</string>
+    <string name="title_activity_my_aty2">MyAty2</string>
+</resources>

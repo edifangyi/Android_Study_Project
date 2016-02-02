@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.fangyi.app1.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+
+    <Button
+        android:id="@+id/btnStartMyAty"
+        android:text="Start MyAty From App1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动LaunchMode服务"
+        android:id="@+id/btnStartLaunchModeAppService"
+        android:layout_below="@+id/btnStartMyAty"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="36dp" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关闭LaunchMode服务"
+        android:id="@+id/btnStopLaunchModeAppService"
+        android:layout_below="@+id/btnStartLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="绑定LaunchMode服务"
+        android:id="@+id/btnBindLaunchModeAppService"
+        android:layout_below="@+id/btnStopLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="解除LaunchMode服务"
+        android:id="@+id/btnUnBindLaunchModeAppService"
+        android:layout_below="@+id/btnBindLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/etInput"
+        android:layout_below="@+id/btnUnBindLaunchModeAppService"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="22dp"
+        android:layout_alignRight="@+id/btnUnBindLaunchModeAppService"
+        android:layout_alignEnd="@+id/btnUnBindLaunchModeAppService"
+        android:text="这是另一个应用的数据"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步数据到绑定的服务中"
+        android:id="@+id/btnSync"
+        android:layout_below="@+id/etInput"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动MyAty"
+        android:id="@+id/btnStartMyAty2"
+        android:layout_x="1dp"
+        android:layout_y="340dp"
+        android:layout_below="@+id/btnSync"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>
