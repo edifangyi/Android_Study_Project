@@ -2074,66 +2074,267 @@ Android 权限系统
 请求权限实例 05:18
 本课用一个实例演示如何请求使用系统内置的某一个权限。
 
-我们添加一个 
+重点是：类名千万别和包名起一样的
+
+我们添加一个 Activity,然后加一个 WebView
+
+1.
+    private WebView wv;
+
+        wv = (WebView) findViewById(R.id.wv);
+        wv.loadUrl("http://www.baidu.com");
+
+2.
+	在AndroidManifest中进行配置 中加权限
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+为代码添加权限检查 05:37
+
+本课介绍如何在代码中为应用添加权限检查功能。
+
+
+1.创建一个类 Hello.class
+
+
+public class Hello {
+    public static final String PLERISSION_SAY_HELLO="com.example.fangyi.launchmode.permission.SAY_HELLO";
+    //需要检查一个权限， 定义一个静态的字符串，他的值是 我们的包名，.permission.SAY_HELLO
+
+    public static void sayHello() {
+
+    }
+}
+
+
+
+2.我们需要为这个类在  AndroidManifest 中进行注册一个新的权限
+
+    <permission android:name="com.example.fangyi.launchmode.permission.SAY_HELLO" />
+
+3.接下来我们想检查执行这个程序的代码，是否拥有这个权限
+所以我们需要一个 Context context 对象，我们才可以访问到全局的属性
+    public static void sayHello(Context context) {
+    	int checkResult = context.checkCallingOrSelfPermission(PLERISSION_SAY_HELLO);
+    	//执行这个程序的代码是否拥有这个权限
+    	if(checkResult!= PackageManager.PERMISSION_GRANTED/*拒绝DENIED 和 访问GRANTED*/){
+    		throw new SecurityException("执行sayHello方法需要有：com.example.fangyi.launchmode.permission.SAY_HELLO 权限");	
+    		//不能访问，我们可以抛出一个安全的异常
+        }
+                System.out.println("Hello ABCD");//有权限，就会输出
+    }
+
+
+4.我们可以在 MainActivity 中 通过
+	        Hello.sayHello(this);
+5.输出错误信息
+		
+		执行sayHello方法需要有：com.example.fangyi.launchmode.permission.SAY_HELLO 权限
+
+6.如何来填写权限请求
+	AndroidManifest 中进行添加
+    <uses-permission android:name="com.example.fangyi.launchmode.permission.SAY_HELLO"></uses-permission>
+输出：
+	Hello ABCD
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+为基本组件添加权限检查 07:19
+
+本课讲解如何为 Android 基本控件添加权限检查功能。
+
+1.	添加一个 新的 Activity （MyAt2）
+
+	我们在 AndroidManifest 中进行注册 权限
+
+	添加
+	<permission android:name="com.example.fangyi.launchmode.permission.MyAty2" />
+
+	然后给在指定的Activity权限，你想启动 Activity 必须拥有这个权限
+        <activity
+            android:name=".MyAty2"
+            android:label="@string/title_activity_my_aty2"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:permission="com.example.fangyi.launchmode.permission.MyAty2"></activity>
+
+2.在 MainActivity 中添加代码
+	按钮，事件监听器
+        findViewById(R.id.btnStartMyAty2).setOnClickListener(this);
+            
+
+            case R.id.btnStartMyAty2:
+                startActivity(new Intent(MainActivity.this,MyAty2.class));
+                break;
+
+
+
+3.我们在其他程序中启动，权限 在app1 中新建一个按钮 btnStartMyAty2
+
+	我们通过 action 来启动 app 中的MyAt2
+
+	在 app 中的 AndroidManifest 中我们配置
+	        <activity
+	            android:name=".MyAty2"
+	            android:label="@string/title_activity_my_aty2"
+	            android:theme="@style/AppTheme.NoActionBar"
+	            android:permission="com.example.fangyi.launchmode.permission.MyAty2">
+	            <intent-filter>//声明一个 category
+	                <category android:name="android.intent.category.DEFAULT"/>
+	                <action android:name="com.example.fangyi.launchmode.intent.action.MyAty2"/>
+	            </intent-filter>
+	        </activity>
 
 
 
 
 
+	在app1 中  MainActivity 中添加 事件监听器
+
+        findViewById(R.id.btnStartMyAty2).setOnClickListener(this);
+
+            case R.id.btnStartMyAty2:
+                startActivity(new Intent("com.example.fangyi.launchmode.intent.action.MyAty2"));
+                break;
+
+4.java.lang.SecurityException: Permission Denial: starting Intent { act=com.example.fangyi.launchmode.intent.action.MyAty2 cmp=com.example.fangyi.launchmode/.MyAty2 } from ProcessRecord{f24ac01 2998:com.example.fangyi.app1/u0a57} (pid=2998, uid=10057) requires com.example.fangyi.launchmode.permission.MyAty2
+
+安全错误，没有权限
+
+在 app1 中 AndroidManifest 文件里面写上一个使用说明
+    <uses-permission android:name="com.example.fangyi.launchmode.permission.MyAty2"></uses-permission>
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+使用 Fragment 11:38
+
+本课讲解如何创建和使用 Fragment。
+
+属于轻量级的界面切换，即同一个应用内部进行切换
+
+
+1.在 fragment_main.xml 创建一个按钮
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="呈现另一个Fragment"
+        android:id="@+id/btnShowAnotherFragment"/>
+
+2.我们在 layout 中添加一个布局
+	
+	New → Layout Resource File
+
+	File name：fragment_another
+
+	我们在里面添加一个文本框
+	    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="这是另一个Fragment"
+        android:id="@+id/textView" />
+
+3.我们想呈现一个Fragment，需要一个类
+	继承 自动 	android.support.v4.app.Fragment
+
+
+/**
+ * Created by FANGYI on 2016/2/2.
+ */
+public class AnotherFragment extends android.support.v4.app.Fragment{
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.fragment_another,container,false);
+
+        return root;
+    }
+}
+
+
+4.在 MainActivity 中添加
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.fragment, new MainActivityFragment())
+                    .commit();
+        }
 
 
 
 
 
+5.在 MainActivityFragment 中
+
+public class MainActivityFragment extends Fragment {
+
+    public MainActivityFragment() {
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        rootView.findViewById(R.id.btnShowAnotherFragment).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().beginTransaction().replace(R.id.fragment, new AnotherFragment()).commit();
+            }
+        });
+
+        return rootView;
+    }
+}
+
+
+两个fragment重叠
+	1、先将你的activity_main里的fragment改为FrameLayout将name那句删除。2、在MainActivity的oncreate的super下面增加
+			if (savedInstanceState == null) {
+			    getSupportFragmentManager().beginTransaction()
+			            .add(R.id.fragment, new MainActivityFragment())
+			            .commit();
+			}
+	。之于你那个为什么会出现我可能解释的会不是很好我的想法是你的main里就已经是添加了mainactivityfragment了所以之后再替换也就只
+	是后面添加了我尝试了 一下xml不改变就只增加2的内容这时就会出现了两个mainfragment而且下面的那个fragment就可以被替换因为第二个
+	的fragment是由2这个写法写的。
+		http://www.cnblogs.com/mengdd/archive/2013/01/08/2851368.html
+	还是看看这个吧   说明fragment的
 
 
 
+6.添加后退            
+	在fragment_another 中
+	    
+	    <Button
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="后退"
+	        android:id="@+id/btnBack" />
 
+	在 fragment_another 中添加
+	
+        View root = inflater.inflate(R.layout.fragment_another,container,false);
+        root.findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();//这句话
+            }
+        });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
