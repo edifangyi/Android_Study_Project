@@ -2242,6 +2242,8 @@ public class Hello {
         android:id="@+id/textView" />
 
 3.我们想呈现一个Fragment，需要一个类
+
+		AnotherFragment
 	继承 自动 	android.support.v4.app.Fragment
 
 
@@ -2253,7 +2255,7 @@ public class AnotherFragment extends android.support.v4.app.Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_another,container,false);
+        View root = inflater.inflate(R.layout.fragment_another,container,false);//初始化这个布局，从外界传进来的
 
         return root;
     }
@@ -2302,11 +2304,21 @@ public class MainActivityFragment extends Fragment {
 
 两个fragment重叠
 	1、先将你的activity_main里的fragment改为FrameLayout将name那句删除。2、在MainActivity的oncreate的super下面增加
-			if (savedInstanceState == null) {
-			    getSupportFragmentManager().beginTransaction()
-			            .add(R.id.fragment, new MainActivityFragment())
-			            .commit();
-			}
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.fragment, new MainActivityFragment())
+                    .commit();
+        }
+
+
 	。之于你那个为什么会出现我可能解释的会不是很好我的想法是你的main里就已经是添加了mainactivityfragment了所以之后再替换也就只
 	是后面添加了我尝试了 一下xml不改变就只增加2的内容这时就会出现了两个mainfragment而且下面的那个fragment就可以被替换因为第二个
 	的fragment是由2这个写法写的。
@@ -2324,7 +2336,7 @@ public class MainActivityFragment extends Fragment {
 	        android:text="后退"
 	        android:id="@+id/btnBack" />
 
-	在 fragment_another 中添加
+	在 AnotherFragment 中添加
 	
         View root = inflater.inflate(R.layout.fragment_another,container,false);
         root.findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
@@ -2344,18 +2356,146 @@ public class MainActivityFragment extends Fragment {
 
 
 1.我们新建一个Activity，
-	New → Activity → Navigation Drawer Activity
+	New → Activity → Navigation Drawer Activity → SliderActivity
+
+
+2.我们在 fragment_main 中添加按钮
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动侧边栏的Activity"
+        android:id="@+id/btnStartSliderActivity"
+        android:layout_below="@+id/btnShowAnotherFragment"
+        android:layout_alignParentStart="true" />
+
+3.在 MainActivityFragment 中添加 
+        
+        rootView.findViewById(R.id.btnStartSliderActivity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SliderActivity.class));
+            }
+        });
+
+        //这样就有侧边栏了
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+Tabbed Activity 08:59
+
+本课讲解如何创建一个 Tabbed Activity 并使用它。
+
+New → Activity → Tabbed Activity → Tabs (Navigatiion Style：Action Bar Tabs (with ViewPager))
 
 
+1.fragment_main.xml 写一个按钮
+	    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动Tabbed Activity"
+        android:id="@+id/btnStartTabbedActivity"
+        android:layout_below="@+id/btnStartSliderActivity"
+        android:layout_alignStart="@+id/btnShowAnotherFragment" />
+
+2.在
+        rootView.findViewById(R.id.btnStartTabbedActivity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), Tabs.class));
+            }
+        });
+
+3.fragment_tabs.xml
+可以添加一个自定义的按钮，，，三个界面 都有按钮，，使用同一个布局资源
+
+4.如何来自定义布局
+
+在 Tabs 中  关键代码在
 
 
+ public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override			//这句话重点
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            return PlaceholderFragment.newInstance(position + 1);
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "SECTION 1";
+                case 1:
+                    return "SECTION 2";
+                case 2:
+                    return "SECTION 3";
+            }
+            return null;
+        }
+    }
 
 
+5.新建类 Image_1Fm 代码
 
 
+package com.example.fangyi.learnfragment;
+
+import android.graphics.ImageFormat;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+/**
+ * Created by FANGYI on 2016/2/7.
+ */
+public class Image_1Fm extends Fragment {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ImageView iv = new ImageView(getActivity());
+        iv.setImageResource(R.drawable.img3);
+        return iv;
+    }
+}
+
+6.接下来我们回到 Tabs ， 来到 4 中的 代码段里
+
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return new Image_1Fm();
+                case 1:
+                    return new Image_2Fm();
+                case 2:
+                    return new Image_3Fm();
+            }
+
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            return null;
+        }
 
 
 
