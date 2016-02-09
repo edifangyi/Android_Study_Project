@@ -2508,6 +2508,8 @@ LinearLayout 06:19
 
 本课介绍线性布局的定义与使用，并介绍在线性布局中 weight 属性的意义与使用方式
 
+做了一个简单的浏览器界面
+
 1.在
 
 	content_main 里面改 这个
@@ -2518,9 +2520,705 @@ LinearLayout 06:19
    		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     		xmlns:tools="http://schemas.and
 
+ 
+    android:orientation="vertical"		//垂直
+    android:orientation="horizontal"	//水平
+
+
+	andorid:background="#f00"	//红色
+    android:background="#0f0"	//绿色
+    android:background="#00f"	//蓝色
+
+
+    android:layout_width="1"	//分割富集容器比重
+    android:layout_width="1"
+    android:layout_width="1"
+
+    屏占比：1:1:1
+
+
+2. 在 layout 中创建一个 browser.xml
+
+添加
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <EditText
+            android:layout_weight="1"////分割富集容器比重的属性
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button//不参与分割
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go"/>
+    </LinearLayout>
+        <WebView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"></WebView>
+</LinearLayout>
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+
+用代码控制子对象 07:39
+
+本课介绍如何使用代码控制布局子对象的添加与删除。
+
+    private LinearLayout root;
+    private Button btnClickme;
+
+
+
+
+        root = new LinearLayout(this);
+        setContentView(root);
+        btnClickme = new Button(this);
+        btnClickme.setText("Click me");
+        // root.addView(btnClickme);
+        root.addView(btnClickme,300,200);//调整按钮大小
+
+效果一：root.addView(btnClickme, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        //宽度铺满富集容器，
+
+
+效果一：LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		root.addView(btnClickme, lp);//把布局放里面
+
+
+添加多个子对象：
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);//调整垂直布局
+        setContentView(root);
+
+        for (int i= 0; i < 5; i++) {	
+            btnClickme = new Button(this);
+            btnClickme.setText("Click me");
+            btnClickme.setOnClickListener(this);//跳到A：
+
+
+            //设定布局参数
+效果一：    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.weight = 1;//五个设定1:1:1:1:1分割
+
+
+           lp.leftMargin = 200;//相对布局左边
+           lp.topMargin = 500;//相对布局上边
+            root.addView(btnClickme, lp);
+
+
+效果2：     root.addView(btnClickme, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
+        //五个按钮
+设定比重：
+
+
+A：		@Override
+		public void onClick(View v) {
+			root.removeView(v);
+		}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+RelativeLayout 09:34
+
+本课介绍如何定义与使用相对布局。
+
+1.	创建一个 新的  Blank Activity → RelativeLayoutAty
+	把它当成启动的 Activity ： Launcher Activity（勾上）
+
+2.
+	我们在 AndroidManifest 中的 MainActivity 启动 <intent-filter> 中的部分 注释掉
+
+	此时，我们就从 RelativeLayoutAty 中启动了
+
+在 protected void onCreate() 函数中添加 代码布局
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+FrameLayout 06:06
+
+本课讲解 FrameLayout 的意义并以实例演示如何使用。
+
+1.	创建一个 新的  Blank Activity → FrameLayoutAty
+	把它当成启动的 Activity ： Launcher Activity（勾上）
+
+2.
+	我们在 AndroidManifest 中的 RelativeLayoutAty 启动 <intent-filter> 中的部分 注释掉
+
+	此时，我们就从 FrameLayoutAty 中启动了
+
+
+3.
+	我们 可以来到 activity_relative_layout_aty.xml 中 把布局改成 FrameLayout
+
+给主布局一个id
+		android:id="@+id/root"
+
+
+添加图片
+	
+	//先呈现一个图片，让他俩有切换的效果
+	<ImageView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:src="@drawable/img1"
+		android:id="@+id/ivA"/>
+
+	<ImageView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:src="@drawable/img2"
+		android:visiibility="invisible"//不可见
+		android:id="@+id/ivB"/>
+
+4.
+	来到主程序 FrameLayoutAty 
+
+    private FrameLayoutAty root;
+    private ImageView ivA,ivB;
+
+    在 onCreate() 函数中添加
+
+    	root = (FrameLayoutAty) findViewById(R.id.root);
+    	ivA = (ImageView) findViewById(R.id.ivA);
+    	ivB = (ImageView) findViewById(R.id.ivB);
+
+    	showA();
+
+    	root.setOnClickListener(new View.OnClickListener() {
+    		@Override
+    		public void onClick(View v) {
+    			//判断
+    			if(ivA.getVisibility()==View.VISIIBLE) {
+    				showB();
+    			} else {
+    				showA();
+    			}
+    		}
+    	});
+
+    private void showA() {
+    	ivA.setVisibility(View.VISIIBLE);//可见
+    	ivB.setVisibility(View.INVISIIBLE);//不可见
+    }
+    private void showB) {
+    	ivA.setVisibility(View.INVISIIBLE);//不可见
+    	ivB.setVisibility(View.VISIIBLE);//可见
+    }
+
+
+//效果，先呈现 A，然后点击一下图片，出现 B
+//	在点击 B 呈现 A
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+使用RecyclerView 08:58
+
+本课讲解如何创建RecyclerView、如何为RecyclerView适配数据源
+
+1.如果想使用 RecyclerView 需要 
+
+	在主工程右键 Open Module Settings
+	Dependencies //依赖项
+
+	添加一个库
+		recyclerview-v7
+
+2.
+public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView rv;
     
-    android:orientation="vertical"
-    android:orientation="vertical"
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        rv = new RecyclerView(this);
+        setContentView(rv);//把 rv 当成 Activity 的布局
+
+        rv.setLayoutManager(new LinearLayoutManager(this));//使用线性布局
+
+        //填充内容
+        rv.setAdapter(new RecyclerView.Adapter() {
+
+            //使用onCreateViewHolder()，创建一个自定义类
+            class ViewHolder extends RecyclerView.ViewHolder {
+
+                private TextView tv;//绑定一个子对象的视图，用他呈现一些数据
+
+                public ViewHolder(TextView itemView) {
+                    super(itemView);
+
+                    tv = itemView;//通过这种方式，可以和ViewHolder产生关联
+                }
+
+                public TextView getTv() {
+                    return tv;
+                }
+            }
+
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new ViewHolder(new TextView(parent.getContext()));
+            }
+
+            @Override//第二个参数是索引，当前显式的是哪一条
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                ViewHolder vh = (ViewHolder) holder;
+//                vh.getTv().setText("Item"+position);
+                vh.getTv().setText(data[position]);
+            }
+            
+            @Override//获取 RecycleView 子对象的数量，比如返回10，创建了10个子对象
+            public int getItemCount() {
+//                return 1000;
+                return data.length;
+            }
+            
+            private String[] data = new String[]{"Hello","fangyi1896@gmail.com","fangyi186@outlook.com"};
+        });
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+使用资源文件自定义列表项 08:39
+
+本课讲解如何创建列表项资源以及如何解析列表项资源并应用在列表中
+1.
+	新建 list_cell.xml 添加
+
+	//标题
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tvTitle"
+        android:layout_gravity="center_horizontal" />
+    //文本
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/tvContent" />
+
+2.
+	我们回来程序里去 MainActivity 中的 RecyclerView.Adapter()，转移到单独的一个文件里去
+
+					在 RecyclerView.Adapter() {
+						中 右键  Refactor → Move 
+					}
+
+	之后我们来继续移动，  在 MyAdapter 上右键 Refactor → Move 创建了一个 MyAdapter 类
+		
+
+		class MyAdapter extends RecyclerView.Adapter {
+
+		    //使用onCreateViewHolder()，创建一个自定义类
+		    class ViewHolder extends RecyclerView.ViewHolder {
+
+		        private View root;//绑定一个子对象的视图，用他呈现一些数据
+		        private TextView tvTitle, tvContent;
+
+		        public ViewHolder(View root) {
+		            super(root);
+
+		            tvTitle = (TextView) root.findViewById(R.id.tvTitle);
+		            tvContent = (TextView) root.findViewById(R.id.tvContent);
+		        }
+
+		        public TextView getTvTitle() {
+		            return tvTitle;
+		        }
+
+		        public TextView getTvContent() {
+		            return tvContent;
+		        }
+		    }
+
+		    @Override
+		    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_cell, null));//根据一个资源进行创建,布局解释器
+		    }
+
+		    @Override//第二个参数是索引，当前显式的是哪一条
+		    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+		        ViewHolder vh = (ViewHolder) holder;
+
+		        CellData cd = data[position];
+
+		        vh.getTvTitle().setText(cd.title);
+		        vh.getTvContent().setText(cd.content);
+		    }
+
+		    @Override//获取 RecycleView 子对象的数量，比如返回10，创建了10个子对象
+		    public int getItemCount() {
+		//                return 1000;
+		        return data.length;
+		    }
+
+		    private CellData[] data = new CellData[]{new CellData("Hello","fangyi1896@gmail.com"), new CellData("大笨蛋","fangyi186@outlook.com")};
+		}
+
+
+
+3.我们创建 一个 类 方数据，CellData 类
+
+public class CellData {
+
+    public CellData(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+    
+    public String title = "title";
+    public String content = "content";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
