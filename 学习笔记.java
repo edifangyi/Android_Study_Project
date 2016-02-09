@@ -2422,7 +2422,7 @@ New → Activity → Tabbed Activity → Tabs (Navigatiion Style：Action Bar Ta
             super(fm);
         }
 
-        @Override			//这句话重点
+        @Override									//这句话重点
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
@@ -2435,7 +2435,7 @@ New → Activity → Tabbed Activity → Tabs (Navigatiion Style：Action Bar Ta
             return 3;
         }
 
-        @Override
+        @Override									//这句话重点
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
@@ -2477,6 +2477,8 @@ public class Image_1Fm extends Fragment {
     }
 }
 
+
+
 6.接下来我们回到 Tabs ， 来到 4 中的 代码段里
 
 
@@ -2498,15 +2500,27 @@ public class Image_1Fm extends Fragment {
         }
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+LinearLayout 06:19
 
+本课介绍线性布局的定义与使用，并介绍在线性布局中 weight 属性的意义与使用方式
 
+1.在
 
+	content_main 里面改 这个
 
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   			xmlns:tools="http://schemas.and
+   		
+   		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    		xmlns:tools="http://schemas.and
 
-
-
-
-
+    
+    android:orientation="vertical"
+    android:orientation="vertical"
 
 
 
