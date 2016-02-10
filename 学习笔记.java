@@ -2829,6 +2829,32 @@ public class MainActivity extends AppCompatActivity {
 						中 右键  Refactor → Move 
 					}
 
+
+
+
+		public class MainActivity extends AppCompatActivity {
+
+		    private RecyclerView rv;
+
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+
+		        rv = new RecyclerView(this);
+		        setContentView(rv);//把 rv 当成 Activity 的布局
+
+		        rv.setLayoutManager(new LinearLayoutManager(this));//使用线性布局
+
+		        //填充内容
+		        rv.setAdapter(new MyAdapter());
+		    }
+
+		}
+
+
+
+
+
 	之后我们来继续移动，  在 MyAdapter 上右键 Refactor → Move 创建了一个 MyAdapter 类
 		
 
@@ -2878,6 +2904,7 @@ public class MainActivity extends AppCompatActivity {
 		    }
 
 		    private CellData[] data = new CellData[]{new CellData("Hello","fangyi1896@gmail.com"), new CellData("大笨蛋","fangyi186@outlook.com")};
+		    //放数据的地方
 		}
 
 
@@ -2896,144 +2923,436 @@ public class CellData {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+RecyclerView的布局样式 03:42
 
+本课讲解如何为列表RecyclerView适配样式，并演示适配样式后的结果
 
 
 
+1.
+	我们先把 list_cell <TextView 布局改一下
+       
+       android:layout_width="fill_parent" 	→ 	android:layout_width="wrap_content"
 
+2. 
+	我们来到 主程序， 把布局参数改一下
 
+效果一：		rv.setLayoutManager(new LinearLayoutManager(this));//使用线性布局,默认 垂直排列数据
 
+		//更改下列布局
 
+效果二：       rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+				//使用线性布局， 水平方向排列数据，左边是第一位，不反转 false
 
 
+效果三：       rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
+				//使用线性布局， 水平方向排列数据，右边是第一位
 
 
+3.
+	表格布局
 
+	        rv.setLayoutManager(new GridLayoutManager(this,3));
+	        //第一个参数传进去this，第二个参数传进去多少列。如果水平的话，第二个参数就是多少行
+	        //不能拖动是因为数据不够多
 
+	//还可以调整布局走向
+	
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+Android 常用控件
 
 
+下拉列表 00:33
 
+本课讲解如何创建下拉列表、如何为下拉列表适配数据源，以及如何侦听下拉列表的选择事件
 
 
+1.
+	添加一个 下拉控件 → Spinner
 
+   <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_gravity="center_horizontal" />
 
 
+2.
+  	在主程序中添加
+   
+    private Spinner s;
 
 
+	s = (Spinner) findViewById(R.id.spinner);
 
+	        //如果想呈现下拉列表，我们设定一个数据源
+			//第二个参数，我们传入一个列表项资源的ID,第三个参数是数据
+	        s.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,new String[]{"大笨蛋","fangyi186@outlook.com","fangyi1896@gmail.com"}));
 
+3.
+	如何侦听用户的选择
+	比如用户选择 "大笨蛋" ，如何能跳过去
+    private Spinner s;
+    private String[] dataSource = new String[]{"大笨蛋","fangyi186@outlook.com","fangyi1896@gmail.com"};
 
 
+		s = (Spinner) findViewById(R.id.spinner);
 
+		        //如果想呈现下拉列表，我们设定一个数据源
+		        //第二个参数，我们传入一个列表项资源的ID,第三个参数是数据
+		        s.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dataSource));
 
+		        s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		            @Override
+		            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		                System.out.println("用户选择的是"+dataSource[position]);
+		            }
 
+		            @Override
+		            public void onNothingSelected(AdapterView<?> parent) {
 
+		            }
+		        });
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+日期选择器 04:59
 
+本课讲解如何呈现日期选择器以及如何侦听日期选择器的选中事件
 
 
+1.新建 一个 Activity → name:ChooseAData
 
+2.在 AndroidManifest 中配置，把 MainActivity 不当做启动 Activity
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            // <intent-filter>
+            //     <action android:name="android.intent.action.MAIN" />
 
+            //     <category android:name="android.intent.category.LAUNCHER" />
+            // </intent-filter>
+        </activity>
 
+3.修改成线性布局
 
 
+	在 content_choose_adata.xml 中添加按钮
+	    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0000-00-00"
+        android:id="@+id/btnChooseData" />
 
 
 
+4.
+	在 ChooseAData 中添加
 
+	private Button btnChooseData;
 
 
+        btnChooseData = (Button) findViewById(R.id.btnChooseData);
+        btnChooseData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //在这里呈现一个日期选择器
+                new DatePickerDialog(ChooseAData.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        //月份从0快开始的                        
+                        String theDate = String.format("%d-%d-%d", year, monthOfYear + 1, dayOfMonth);
+						
+						//把数字呈现在按钮里
+                        btnChooseData.setText(theDate);
+                        System.out.println(theDate);
+                    }
+                },2016,1,10).show();
+            }
+        });
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+时间选择器 03:54
 
+本课讲解如何创建并呈现时间选择器以及如何使用并侦听Android5时间选择器事件
 
 
+1.新建 一个 Activity → name: btnChooseTime
 
+2.在 AndroidManifest 中配置，把 MainActivity 不当做启动 Activity 和 ChooseAData
 
+3.修改成线性布局
 
+	在 content_choose_time.xml 中添加按钮
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:id="@+id/btnChooseTime" />
 
 
 
+4.
+	在 ChooseAData 中添加
 
+    private Button btnChooseTime;
 
 
+        btnChooseTime = (Button) findViewById(R.id.btnChooseTime);
+        btnChooseTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TimePickerDialog(ChooseTime.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        String theTime = String.format("%d:%d",hourOfDay,minute);
+                        System.out.println(theTime);
+                        btnChooseTime.setText(theTime);
+                    }
+                },0,0,true).show();//小时：0，分钟：0，是否24小时制：是
+            }
+        });
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+单项选择 04:40
 
+本课讲解如何使用单选按扭组以及单选按扭，并使用单选按扭组开发一个简单的选择题程序
 
 
+1.新建 一个 Activity → name: ChooseTime
 
+2.在 AndroidManifest 中配置，把 MainActivity 不当做启动 Activity 和 ChooseAData 和 ChooseTime
 
+3.
+	在 content_sngle_choose.xml 中添加 RadioGroup
+	可以在里面存放多个 RadioButton
+    
+	然后我们拖进 RadioButton
 
 
 
 
+<LinearLayout
+  
+    android:orientation="vertical"
 
+	<TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textView" />
 
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New RadioButton"
+            android:id="@+id/rbA"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New RadioButton"
+            android:id="@+id/rbB"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New RadioButton"
+            android:id="@+id/rbC"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New RadioButton"
+            android:id="@+id/rbD"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:id="@+id/btnSubmit" />
 
+    </RadioGroup>
 
+//配置这些就有了单选的效果
 
 
 
 
 
+4.
+	在 SingleChoose 中添加
 
+    private Button btnSubmit;
+    private RadioButton rbA;
 
 
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        rbA = (RadioButton) findViewById(R.id.rbA);
 
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (rbA.isChecked()) {
+                    Toast.makeText(SingleChoose.this,"所选是正确的",Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(SingleChoose.this,"所选是错误的",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+多项选择 05:44
 
+本课讲解如何使用多选按扭(CheckBox)，如何侦听多选按钮选择状态改变事件
 
+1.新建 一个 Activity → name: MulChoose
 
+2.在 AndroidManifest 中配置，把 MainActivity 不当做启动 Activity 和 ChooseAData 和 ChooseTime 和 SingChoose
 
+3.	在 content_mul_choose.xml 中添加 CheckBox
+	
+	CheckBox 不像 单选
 
 
 
 
 
 
+<LinearLayout
+  
+    android:orientation="vertical"
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="你最喜欢哪些食物（多选）"
+        android:id="@+id/textView2" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="肉夹馍"
+        android:id="@+id/cb1" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="苹果派"
+        android:id="@+id/cb2" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="红烧肉"
+        android:id="@+id/cb3" />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="鸡大腿"
+        android:id="@+id/cb4" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tvResult" />
 
+    </RadioGroup>
 
+//配置这些就有了单选的效果
 
 
 
+4.
+	在 MulChoose 中添加
 
+    private CheckBox cb1,cb2,cb3,cb4;
+    private TextView tvResult;
 
+ @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_mul_choose);
 
+        tvResult = (TextView) findViewById(R.id.tvResult);
 
+        cb1 = (CheckBox) findViewById(R.id.cb1);
+        cb2 = (CheckBox) findViewById(R.id.cb2);
+        cb3 = (CheckBox) findViewById(R.id.cb3);
+        cb4 = (CheckBox) findViewById(R.id.cb4);
 
+        //选择状态发生改变，用this实现接口
+        cb1.setOnCheckedChangeListener(this);
+        cb2.setOnCheckedChangeListener(this);
+        cb3.setOnCheckedChangeListener(this);
+        cb4.setOnCheckedChangeListener(this);
+    }
 
 
+@Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        String str = "你喜欢：";
+        if (cb1.isChecked()) {
+            str += cb1.getText() + ",";
+        }
+        if (cb2.isChecked()) {
+            str += cb2.getText() + ",";
+        }
+        if (cb3.isChecked()) {
+            str += cb3.getText() + ",";
+        }
+        if (cb4.isChecked()) {
+            str += cb4.getText();
+        }
 
+        tvResult.setText(str);
+    }
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+Android用户界面优化-Android SlidingMenu菜单栏程序设计开发
 
 
 
 
 
 
+https://www.zybuluo.com/natsumi/note/135382
 
 
 
@@ -3041,10 +3360,126 @@ public class CellData {
 
 
 
+3. 导入类库的过程
 
+视频里面导入了SlidingMenu和ActionBarSherlock两个包，说是因为SlidingMenu/Readme.md里说要“set up with ActionBarSherlock” 
+但是，我只导入了SlidingMenu就可以实现那些基础功能了，并不知道ActionBarSherlock有什么卵用= =
 
+参考：https://github.com/phodal/learning-android 
+下面正式开始导入的步骤：
 
+新建空Activity工程UsingSlidingMenu
+从github上下载SlidingMenu-master.zip解压
+将其中的SlidingMenu-master/library目录整个拷贝到UsingSlidingMenu工程文件夹下的任意位置，我是拷贝到了UsingSlidingMenu/libraries/library，并将library改名为SlidingMenu，即UsingSlidingMenu/libraries/SlidingMenu
+在AS中通过Import Module的方式导入库：File--Import Module，在弹出的框中，通过浏览的方式填入待导入库的路径AS工作空间/UsingSlidingMenu/libraries/SlidingMenu
+修改SlidingMenu里的build.gradle文件（并不是太懂gradle，看着网上的各种资料以及自己试着改，下面两个注释了必须改的不该就不能成功build，其他不改好像也没什么事儿）
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.1.0'//必须改
+    }
+}
+apply plugin: 'android-library'
+dependencies {
+    compile 'com.android.support:support-v4:13.0.0'
+}
+android {
+    compileSdkVersion 21//参考learning-android项目做了修改
+    buildToolsVersion "21.1.2"//必须改，这里是参考app目录里的build.gradle改的
+    defaultConfig {
+        minSdkVersion 14//参考learning-android项目做了修改
+        targetSdkVersion 21//参考learning-android项目做了修改
+    }
+    sourceSets {
+        main {
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}
+不要修改项目根目录下的build.gradle文件中的dependencies里的内容，因为注释写着“Do not place your application dependencies here; they belong in the individual module build.gradle files”
+修改app目录下的build.gradle文件
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile project(':SlidingMenu')//加上这句～
+}
+修改了Gradle文件后代码编辑器上方会提示同步，点sync now同步
+网上有些资料说要修改settings.gradle,但是用import module的方式导入的话好像AS会自动修改这个配置文件
+include ':app', ':SlidingMenu'
+project(':SlidingMenu').projectDir = new File('libraries/SlidingMenu')
+4. 开始开发吧～
 
+下面就可以按照视频愉快的写代码了～ 
+菜单背景色是打代码的时候少打了两个9～从灰色变粉色萌萌哒～
+
+MainActivity.java
+
+package com.jikexueyuan.usingslidiingmenu;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+public class MainActivity extends ActionBarActivity {
+    private SlidingMenu slidingMenu;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        slidingMenu = new SlidingMenu(this);//创建对象
+        slidingMenu.setMode(SlidingMenu.LEFT);//设定模式，SlidingMenu在左边
+        slidingMenu.setBehindOffsetRes(R.dimen.sliding_menu_offset);//配置slidingmenu偏移出来的尺寸
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);//全屏都可以拖拽触摸，打开slidingmenu
+        slidingMenu.attachToActivity(this,SlidingMenu.SLIDING_CONTENT);//附加到当前的Aty上去
+        slidingMenu.setMenu(R.layout.slidingmenu);
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //重写KeyDown事件，菜单键按下也能拉出slidingmenu
+        switch(keyCode){
+            case KeyEvent.KEYCODE_MENU:
+                slidingMenu.toggle(true);
+                break;
+            default:
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+}
+下面是布局文件activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff9999">
+    <com.jeremyfeinstein.slidingmenu.lib.SlidingMenu
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/slidingmenulayout">
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Click me"/>
+    </com.jeremyfeinstein.slidingmenu.lib.SlidingMenu>
+</LinearLayout>
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////
 
 
 
