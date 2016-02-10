@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">LearnComponents</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_choose_adata">ChooseAData</string>
+    <string name="title_activity_choose_time">ChooseTime</string>
+    <string name="title_activity_single_choose">SingleChoose</string>
+    <string name="title_activity_mul_choose">MulChoose</string>
+</resources>
