@@ -297,7 +297,7 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         tv.setText(String.format("TaskID:%d, \n Current Activity id:%s", getTaskId(),toString()));
 
 
-定义框框中文字是否全为大写
+定义框 框中文字字体是否全为大写
 android:textAllCaps="false" 
 
 
@@ -2213,6 +2213,9 @@ public class Hello {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 使用 Fragment 11:38
 
 本课讲解如何创建和使用 Fragment。
@@ -2242,37 +2245,54 @@ public class Hello {
         android:id="@+id/textView" />
 
 3.我们想呈现一个Fragment，需要一个类
-
 		AnotherFragment
 	继承 自动 	android.support.v4.app.Fragment
 
+package com.example.fangyi.theviewanimation;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
- * Created by FANGYI on 2016/2/2.
+ * Created by FANGYI on 2016/2/12.
  */
-public class AnotherFragment extends android.support.v4.app.Fragment{
+public class AnotherFragment extends Fragment{
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_another,container,false);//初始化这个布局，从外界传进来的
 
+        root.findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();//这句话
+            }
+        });
+        
         return root;
     }
 }
 
 
-4.在 MainActivity 中添加
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.fragment, new MainActivityFragment())
-                    .commit();
-        }
+
+
+4.
+	在 MainActivity 中添加
+	   
+	    @Override
+	    protected void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        setContentView(R.layout.activity_main);
+	        if (savedInstanceState == null) {
+	            getSupportFragmentManager().beginTransaction()
+	                    .addToBackStack(null)
+	                    .add(R.id.fragment, new MainActivityFragment())
+	                    .commit();
+	        }
 
 
 
@@ -2293,7 +2313,10 @@ public class MainActivityFragment extends Fragment {
         rootView.findViewById(R.id.btnShowAnotherFragment).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction().replace(R.id.fragment, new AnotherFragment()).commit();
+                getFragmentManager().beginTransaction()
+                .addToBackStack(null)//返回键设置
+                .replace(R.id.fragment, new AnotherFragment())
+                .commit();
             }
         });
 
@@ -2303,20 +2326,38 @@ public class MainActivityFragment extends Fragment {
 
 
 两个fragment重叠
-	1、先将你的activity_main里的fragment改为FrameLayout将name那句删除。2、在MainActivity的oncreate的super下面增加
-public class MainActivity extends AppCompatActivity {
+	1、先将你的 content_main 里的 fragment 改为 FrameLayout 将name那句删除。
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.fragment, new MainActivityFragment())
-                    .commit();
-        }
+			<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			    xmlns:app="http://schemas.android.com/apk/res-auto"
+			    xmlns:tools="http://schemas.android.com/tools"
+			    android:id="@+id/fragment"
+
+			    android:layout_width="match_parent"
+			    android:layout_height="match_parent"
+			    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+			    tools:layout="@layout/fragment_main" />
+
+
+
+
+	2、在MainActivity的oncreate的super下面增加
+
+
+				public class MainActivity extends AppCompatActivity {
+
+				    @Override
+				    protected void onCreate(Bundle savedInstanceState) {
+				        super.onCreate(savedInstanceState);
+				        setContentView(R.layout.activity_main);
+
+				        if (savedInstanceState == null) {
+				            getSupportFragmentManager().beginTransaction()
+				                    .addToBackStack(null)
+				                    .add(R.id.fragment, new MainActivityFragment())
+				                    .commit();
+				        }
 
 
 	。之于你那个为什么会出现我可能解释的会不是很好我的想法是你的main里就已经是添加了mainactivityfragment了所以之后再替换也就只
@@ -2339,6 +2380,7 @@ public class MainActivity extends AppCompatActivity {
 	在 AnotherFragment 中添加
 	
         View root = inflater.inflate(R.layout.fragment_another,container,false);
+
         root.findViewById(R.id.btnBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -3044,6 +3086,7 @@ Android 常用控件
             // </intent-filter>
         </activity>
 
+
 3.修改成线性布局
 
 
@@ -3335,6 +3378,13 @@ Android 常用控件
 
 
 
+
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3345,105 +3395,80 @@ Android 常用控件
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-Android用户界面优化-Android SlidingMenu菜单栏程序设计开发
+Android 用户界面优化 - Android SlidingMenu 菜单栏程序设计开发
 
 
-
-
-
-
+Android Studio导入SlidingMenu类库
 https://www.zybuluo.com/natsumi/note/135382
 
+https://github.com/jfeinstein10/SlidingMenu
+
+1.
+	
+	在 MainActivity 中添加
+
+public class MainActivity extends AppCompatActivity {
 
 
-
-
-
-
-3. 导入类库的过程
-
-视频里面导入了SlidingMenu和ActionBarSherlock两个包，说是因为SlidingMenu/Readme.md里说要“set up with ActionBarSherlock” 
-但是，我只导入了SlidingMenu就可以实现那些基础功能了，并不知道ActionBarSherlock有什么卵用= =
-
-参考：https://github.com/phodal/learning-android 
-下面正式开始导入的步骤：
-
-新建空Activity工程UsingSlidingMenu
-从github上下载SlidingMenu-master.zip解压
-将其中的SlidingMenu-master/library目录整个拷贝到UsingSlidingMenu工程文件夹下的任意位置，我是拷贝到了UsingSlidingMenu/libraries/library，并将library改名为SlidingMenu，即UsingSlidingMenu/libraries/SlidingMenu
-在AS中通过Import Module的方式导入库：File--Import Module，在弹出的框中，通过浏览的方式填入待导入库的路径AS工作空间/UsingSlidingMenu/libraries/SlidingMenu
-修改SlidingMenu里的build.gradle文件（并不是太懂gradle，看着网上的各种资料以及自己试着改，下面两个注释了必须改的不该就不能成功build，其他不改好像也没什么事儿）
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'//必须改
-    }
-}
-apply plugin: 'android-library'
-dependencies {
-    compile 'com.android.support:support-v4:13.0.0'
-}
-android {
-    compileSdkVersion 21//参考learning-android项目做了修改
-    buildToolsVersion "21.1.2"//必须改，这里是参考app目录里的build.gradle改的
-    defaultConfig {
-        minSdkVersion 14//参考learning-android项目做了修改
-        targetSdkVersion 21//参考learning-android项目做了修改
-    }
-    sourceSets {
-        main {
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-            manifest.srcFile 'AndroidManifest.xml'
-        }
-    }
-}
-不要修改项目根目录下的build.gradle文件中的dependencies里的内容，因为注释写着“Do not place your application dependencies here; they belong in the individual module build.gradle files”
-修改app目录下的build.gradle文件
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile project(':SlidingMenu')//加上这句～
-}
-修改了Gradle文件后代码编辑器上方会提示同步，点sync now同步
-网上有些资料说要修改settings.gradle,但是用import module的方式导入的话好像AS会自动修改这个配置文件
-include ':app', ':SlidingMenu'
-project(':SlidingMenu').projectDir = new File('libraries/SlidingMenu')
-4. 开始开发吧～
-
-下面就可以按照视频愉快的写代码了～ 
-菜单背景色是打代码的时候少打了两个9～从灰色变粉色萌萌哒～
-
-MainActivity.java
-
-package com.jikexueyuan.usingslidiingmenu;
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.KeyEvent;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-public class MainActivity extends ActionBarActivity {
     private SlidingMenu slidingMenu;
+
+    private PullToRefreshListView pullToRefreshListView;
+    private ArrayAdapter<String> adapter;
+    private String[] data = new String[]{"Hello","fangyi1896@gmail.com","fangyi186@outlook.com"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*
+         *Android SlidingMenu 菜单栏程序设计开发
+         */
         slidingMenu = new SlidingMenu(this);//创建对象
-        slidingMenu.setMode(SlidingMenu.LEFT);//设定模式，SlidingMenu在左边
+        slidingMenu.setMode(SlidingMenu.LEFT);//设定模式，SlidingMenu在左边\
         slidingMenu.setBehindOffsetRes(R.dimen.sliding_menu_offset);//配置slidingmenu偏移出来的尺寸
+
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);//全屏都可以拖拽触摸，打开slidingmenu
-        slidingMenu.attachToActivity(this,SlidingMenu.SLIDING_CONTENT);//附加到当前的Aty上去
+        slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);//附加到当前的Aty上去
         slidingMenu.setMenu(R.layout.slidingmenu);
+
+        /*
+         *那个小邮件图标
+         */
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
     }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         //重写KeyDown事件，菜单键按下也能拉出slidingmenu
-        switch(keyCode){
+        switch (keyCode) {
             case KeyEvent.KEYCODE_MENU:
                 slidingMenu.toggle(true);
                 break;
@@ -3453,24 +3478,120 @@ public class MainActivity extends ActionBarActivity {
         return super.onKeyDown(keyCode, event);
     }
 }
-下面是布局文件activity_main.xml
+
+
+
+
+2. 新建布局 slidingmenu.xml 
+
 
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff9999">
+    android:background="#ff9999">	//粉色
+
     <com.jeremyfeinstein.slidingmenu.lib.SlidingMenu
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/slidingmenulayout">
+
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Click me"/>
     </com.jeremyfeinstein.slidingmenu.lib.SlidingMenu>
+
 </LinearLayout>
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Android 通用下拉刷新控件的使用
+
+
+https://github.com/chrisbanes/Android-PullToRefresh
+
+
+导入包 Android-PullToRefresh
+
+	先把library库以as的形式导入。确认这个工程没有问题之后，然后在你新建的项目中添加进去
+
+
+1.
+
+	在 MainActivity 中新建 
+
+    private PullToRefreshListView pullToRefreshListView;
+    private ArrayAdapter<String> adapter;
+    private String[] data = new String[]{"Hello","fangyi1896@gmail.com","fangyi186@outlook.com"};
+
+        /*
+         *Android 通用下拉刷新控件的使用
+         */
+
+        //下拉菜单以后 效果：放开以刷新
+        pullToRefreshListView = (PullToRefreshListView) findViewById(R.id.pullToRefreshListViewlayout);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+        pullToRefreshListView.setAdapter(adapter);
+
+
+        //下拉菜单以后 效果：正在载入···
+        pullToRefreshListView.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
+            @Override
+            public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        //休眠3秒钟，模拟网络通信的效果
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    //可以用来修改UI控件的变化
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+
+                        adapter.addAll("87649669@qq.com", "475714960@qq.com");
+
+                        //然后我们通过 pullToRefreshListView 成功加载了上面的数据
+                        pullToRefreshListView.onRefreshComplete();//其实这个地方是有问题的，我们之前是数组，现在我们改成 集合
+
+                    }
+                }.execute();
+            }
+        });
+
+2.
+	在 content_main.xml 中新添加
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/pullToRefreshListViewlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    </com.handmark.pulltorefresh.library.PullToRefreshListView>
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3479,7 +3600,1215 @@ public class MainActivity extends ActionBarActivity {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////
+
+
+
+自定义视图属性
+
+
+1.
+	创建一个类 MyRect 继承自 View 
+
+
+		package com.example.fangyi.customizeview;
+
+		import android.content.Context;
+		import android.content.res.TypedArray;
+		import android.util.AttributeSet;
+		import android.view.View;
+
+		/**
+		 * Created by FANGYI on 2016/2/12.
+		 */
+		public class MyRect extends View {
+
+		    public MyRect(Context context) {
+		        super(context);
+		    }
+
+		    //资源解析器来访问
+		    public MyRect(Context context, AttributeSet attrs) {
+		        super(context, attrs);
+
+		        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.MyView);
+
+		        //可以获得颜色值
+		        int color = ta.getColor(R.styleable.MyView_rect_color, 0xffff0000);//默认值
+		        setBackgroundColor(color);
+
+		        ta.recycle();
+		    }
+		}
+
+
+2. 
+
+	设定颜色的属性
+
+	创建一个 values （值） 文件、
+
+		New → XML → Values XML File
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<resources>
+		    <declare-styleable name="MyRect">
+		        <attr name="rect_color" format="color"/>//格式
+		    </declare-styleable>
+		</resources>
+
+
+
+3.
+	在 content_main.xml 文件中定义
+
+	mlns:jkxy="http://schemas.android.com/apk/res/com.example.fangyi.customizeview"
+    
+
+
+
+    <com.example.fangyi.customizeview.MyRect
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        jkxy:rect_color="#ff0000ff" //可以在这里给设值，不写的话，就是默认值
+        >
+
+    </com.example.fangyi.customizeview.MyRect>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+
+
+自定义控件皮肤
+
+1.
+	在 res\drawable 中添加皮肤，PNG格式
+
+2.
+	添加控件
+
+    <Button
+        // android:background="@drawable/android" //皮肤
+        android:background="@drawable/button_skin"
+        android:text="Button"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/button" />
+
+
+3.
+	交互效果
+
+	在 res 文件夹 下  New → Android Resource Fle 
+
+		选择 
+			File name:button_skin	//File-based resource names must start with a lowercase letter 基于文件的资源名称必须以小写字母开头
+			Resource type:Drawable
+			Root element:selector
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+	//按下前的状态
+    <item android:state_pressed="false" android:drawable="@drawable/btn_1"></item>//原图绿色
+    //按下后的状态
+    <item android:state_pressed="true" android:drawable="@drawable/btn_2"></item>//原图蓝色
+    //还有很多方案
+</selector>
+
+
+4.
+	效果
+		点击前：绿色
+
+		点击 不弹起：蓝色
+
+		弹起：绿色
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+使用绘图 API 自定义视图
+
+
+
+1. 
+	创建一个类 （旋转的方块）
+		
+
+		package com.example.fangyi.customizeview;
+
+		import android.content.Context;
+		import android.graphics.Canvas;
+		import android.graphics.Color;
+		import android.graphics.Paint;
+		import android.util.AttributeSet;
+		import android.view.View;
+
+		/**
+		 * Created by FANGYI on 2016/2/12.
+		 */
+		public class RotatingRect extends View {
+
+		    public RotatingRect(Context context) {
+		        super(context);
+
+		        initProperties();
+		    }
+
+		    public RotatingRect(Context context, AttributeSet attrs) {
+		        super(context, attrs);
+
+		        initProperties();
+		    }
+
+		    public RotatingRect(Context context, AttributeSet attrs, int defStyleAttr) {
+		        super(context, attrs, defStyleAttr);
+
+		        initProperties();
+		    }
+
+
+
+			private Paint p;//画笔对象，控制我们绘制图形的样式
+		    private float degrees = 0;//绘制旋转角度
+
+		    //初始化属性
+		    private void initProperties() {
+		        p = new Paint();
+		        p.setColor(Color.RED);//给个红色
+		    }
+
+		    @Override
+		    public void draw(Canvas canvas) {
+		        super.draw(canvas);
+
+		        canvas.save();//保存状态
+		//        canvas.rotate(degrees); //默认绕着左上角旋转，degrees是旋转一个角度
+		        canvas.translate(200,200);//调整坐标
+		        canvas.rotate(degrees,50,50);//第一个是角度，第二个和第三个是旋转坐标点
+		        canvas.drawRect(0,0,100,100,p);//绘图API，绘制了一个正方形
+		        degrees ++;
+		        canvas.restore();
+		        invalidate();//使这个View无效，太耗资源，可以用延时
+		        //重绘的时候查看是否是有效状态，有效，就不重绘了，重新绘制，就会重新执行draw方法
+		        //Handler 延时绘制
+		    }
+		}
+
+
+2.
+
+    <com.example.fangyi.customizeview.RotatingRect
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+    </com.example.fangyi.customizeview.RotatingRect>
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+View动画-透明动画效果
+
+需要 运用之前的 2221 行代码处
+
+
+/*
+使用代码控制
+ */
+1.
+	在 fragment_main.xml 中添加 按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Animate Me"
+        android:id="@+id/btnAnimMe"
+        android:layout_below="@+id/btnShowAnotherFragment"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+2.
+	在 MainActivityFragment 中添加
+
+        rootView.findViewById(R.id.btnAnimMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlphaAnimation btnAnimMe = new AlphaAnimation(0, 1);//透明度0到1的动画效果
+                btnAnimMe.setDuration(1000);//设置动画时间长度
+                v.startAnimation(btnAnimMe);
+            }
+        });
+
+
+
+/*
+使用xml文件控制
+ */
+1.
+	在 res 右键，New →  Android Resource File
+	选择 
+		neme:animation_transparent
+		Resource type: Animation
+		Root element:alpha
+
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:fromAlpha="0"
+	    android:toAlpha="1"
+	    android:duration="1000">
+
+	</alpha>
+
+
+2.
+	在 MainActivityFragment 中添加
+
+        rootView.findViewById(R.id.btnAnimMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animation_transparent));//xml文件配置
+            }
+        });
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+View动画-旋转动画效果
+
+/*
+使用代码控制
+ */
+1.
+	在 fragment_main.xml 中添加 按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Rotate Me"
+        android:id="@+id/btnRotateMe"
+        android:layout_below="@+id/btnAnimMe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+2.
+	在 MainActivityFragment 中添加
+    private RotateAnimation rotateAnimation;
+
+    // 在    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    //                          Bundle savedInstanceState)
+    // 中添加
+    // 
+//        rotateAnimation = new RotateAnimation(0, 360);//默认左上角旋转，0到360度
+//        rotateAnimation = new RotateAnimation(0, 360, 100, 100);//指明在哪个点旋转
+        rotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);//相对自身的中心点
+        rotateAnimation.setDuration(1000);//旋转一秒
+
+        rootView.findViewById(R.id.btnRotateMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(rotateAnimation);
+            }
+        });
+
+
+
+/*
+使用xml文件控制
+ */
+1.
+	在 res 右键，New →  Android Resource File
+	选择 
+		neme:animation_rotate
+		Resource type: Animation
+		Root element:translate //根节点
+
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:duration="1000"
+    android:pivotX="50%"	//写百分百，会自动解析相对自身的位置
+    android:pivotY="50%">	//写数值， 会解析成像素位置
+
+	</alpha>
+
+
+2.
+	在 MainActivityFragment 中添加
+
+        /*
+            View动画-旋转动画效果
+         */
+//        rotateAnimation = new RotateAnimation(0, 360);//默认左上角旋转，0到360度
+//        rotateAnimation = new RotateAnimation(0, 360, 100, 100);//指明在哪个点旋转
+//        rotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);//相对自身的中心点
+//        rotateAnimation.setDuration(1000);//旋转一秒
+
+        rootView.findViewById(R.id.btnRotateMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                v.startAnimation(rotateAnimation);
+                v.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.animation_rotate));
+            }
+        });
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+View动画-移动动画效果
+
+
+
+/*
+使用代码控制
+ */
+1.
+	在 fragment_main.xml 中添加 按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Rotate Me"
+        android:id="@+id/btnRotateMe"
+        android:layout_below="@+id/btnAnimMe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+2.
+	在 MainActivityFragment 中添加
+
+    private TranslateAnimation translateAnimation;
+        /*
+            View动画-移动动画效果
+         */
+
+        translateAnimation = new TranslateAnimation(0, 200 , 0, 200);//当前位置，往右移动200，往下移动200
+        translateAnimation.setDuration(1000);
+
+        rootView.findViewById(R.id.btnTranslateMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(translateAnimation);
+            }
+        });
+
+
+
+/*
+使用xml文件控制
+ */
+1.
+	在 res 右键，New →  Android Resource File
+	选择 
+		neme:animation_translate
+		Resource type: Animation
+		Root element:scale //根节点
+
+
+			<?xml version="1.0" encoding="utf-8"?>
+			<translate xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:fromXDelta="0"
+			    android:toXDelta="200"
+			    android:fromYDelta="0"
+			    android:toYDelta="200"
+			    android:duration="1000">
+
+			</translate>
+
+
+2.
+	在 MainActivityFragment 中添加
+
+        /*
+            View动画-移动动画效果
+         */
+
+        rootView.findViewById(R.id.btnTranslateMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animation_translate));//xml文件配置
+            }
+        });
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+View动画-缩放动画效果
+
+/*
+使用代码控制
+ */
+1.
+	在 fragment_main.xml 中添加 按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Rotate Me"
+        android:id="@+id/btnRotateMe"
+        android:layout_below="@+id/btnAnimMe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+2.
+	在 MainActivityFragment 中添加
+
+    private ScaleAnimation scaleAnimation;
+
+        /*
+            View动画-缩放动画效果
+         */
+//        scaleAnimation = new ScaleAnimation(0, 1, 0, 1);//默认左上角， 按比例从 0 到 1 缩放
+//        scaleAnimation = new ScaleAnimation(0, 1, 0, 1, 100, 50);//后面两个是缩放中心点，从缩放点，按比例从 0 到 1 缩放
+        scaleAnimation = new ScaleAnimation(0, 1, 0, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);//相对于自身中心点进行缩放
+        scaleAnimation.setDuration(1000);
+
+        rootView.findViewById(R.id.btnScaleMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(scaleAnimation);
+            }
+        });
+
+/*
+使用xml文件控制
+ */
+1.
+	在 res 右键，New →  Android Resource File
+	选择 
+		neme:animation_scale
+		Resource type: Animation
+		Root element:scale //根节点
+
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<scale xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:fromXScale="0"
+		    android:toXScale="1"
+		    android:fromYScale="0"
+		    android:toYScale="1"
+		    android:duration="1000"
+		    android:pivotX="50%"
+		    android:pivotY="50%">
+
+		</scale>
+
+
+2.
+	在 MainActivityFragment 中添加
+
+        /*
+            View动画-移动动画效果
+         */
+
+        rootView.findViewById(R.id.btnTranslateMe).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animation_scale));//xml文件配置
+            }
+        });
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+View动画-动画效果混合
+
+
+/*
+使用代码控制
+ */
+1.
+	在 fragment_main.xml 中添加 按钮
+    
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Two Animaion"
+        android:id="@+id/btnTwoANimaion"
+        android:layout_below="@+id/btnRotateMe"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+2.
+	在 MainActivityFragment 中添加
+
+    private ScaleAnimation scaleAnimation;
+
+        /*
+            View动画-动画效果混合
+         */
+        animationSet = new AnimationSet(true);//是否使用动画补间
+        animationSet.setDuration(1000);
+
+        alphaAnimation = new AlphaAnimation(0, 1);//透明度0到1的动画效果
+        alphaAnimation.setDuration(1000);//设置动画时间长度
+        animationSet.addAnimation(alphaAnimation);
+
+        translateAnimation = new TranslateAnimation(0, 200 , 0, 200);//当前位置，往右移动200，往下移动200
+        translateAnimation.setDuration(1000);
+        animationSet.addAnimation(translateAnimation);
+
+        rootView.findViewById(R.id.btnTwoAnimaion).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animationSet);
+            }
+        });
+
+
+/*
+使用xml文件控制
+ */
+1.
+	在 res 右键，New →  Android Resource File
+	选择 
+		neme:animation
+		Resource type: Animation
+		Root element:set //根节点
+
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<set xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:shareInterpolator="true"
+		    android:duration="1000">
+		    <alpha
+		        android:fromAlpha="0"
+		        android:toAlpha="1"></alpha>
+		    <translate
+		        android:fromXDelta="0"
+		        android:toXDelta="200"
+		        android:fromYDelta="0"
+		        android:toYDelta="200"></translate>
+
+		</set>
+
+
+2.
+	在 MainActivityFragment 中添加
+
+        rootView.findViewById(R.id.btnTwoAnimaion).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.animation));//xml文件配置
+            }
+        });
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+View动画-动画效果侦听
+
+
+        rootView.findViewById(R.id.btnTwoAnimaion).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                v.startAnimation(animationSet);
+                Animation a = AnimationUtils.loadAnimation(getActivity(), R.anim.animation);
+
+                a.setAnimationListener(new Animation.AnimationListener() {
+                    @Override//动画开始
+                    public void onAnimationStart(Animation animation) {
+//                        Toast.makeText(getActivity(), "Animation End", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override//动画重复
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override//动画结束
+                    public void onAnimationRepeat(Animation animation) {
+                        Toast.makeText(getActivity(), "Animation End", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                v.startAnimation(a);//xml文件配置
+            }
+        });
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+自定义动画效果
+
+
+1. 我们新建一个Activity，、CustomAnimation
+
+			package com.example.fangyi.theviewanimation;
+
+			import android.view.animation.Animation;
+			import android.view.animation.Transformation;
+
+			/**
+			 * Created by FANGYI on 2016/2/12.
+			 */
+			public class CustomAnimation extends Animation {
+			    //需要了解目标组件的宽高
+			    @Override
+			    public void initialize(int width, int height, int parentWidth, int parentHeight) {
+			        super.initialize(width, height, parentWidth, parentHeight);
+			    }
+
+			    @Override
+			    protected void applyTransformation(float interpolatedTime, Transformation t) {
+			        //float interpolatedTime ：补间时间，动画在执行完毕以后是1，在执行的过程当中applyTransformation()在不断的执行，interpolatedTime在0-1之间
+			        //Transformation t ：来对目标组件状态进行修改
+
+			//        t.setAlpha(interpolatedTime);//设置透明度0-1之间的透明变化效果
+			//        t.getMatrix().setTranslate(200, 200);//直接瞬间跳到指定的位置,然后一秒回来
+			//        t.getMatrix().setTranslate(200*interpolatedTime, 200);//Y轴立即跳到指定的坐标，X轴慢慢的挪过去，然后一秒回来
+			//        t.getMatrix().setTranslate(200*interpolatedTime, 200*interpolatedTime);//两轴慢慢的挪到指定的坐标，然后一秒回来
+
+
+			        //我们来设置一个摇头的动画效果,往X轴里面放一个周期，括弧里面第一个*是摇晃速度，外面第二个*是摇晃幅度
+			        t.getMatrix().setTranslate((float) (Math.sin(interpolatedTime*10)*50), 0);
+
+			        super.applyTransformation(interpolatedTime, t);
+			    }
+			}
+
+2.
+
+    <Button
+        android:textAllCaps="false"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Custom Animation"
+        android:id="@+id/btnCustomAnimaion"
+        android:layout_below="@+id/btnTwoAnimaion"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+3.
+
+    private CustomAnimation customAnimation;
+
+        /*
+            自定义动画效果
+         */
+
+        customAnimation = new CustomAnimation();
+        customAnimation.setDuration(1000);
+        rootView.findViewById(R.id.btnCustomAnimaion).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(customAnimation);
+            }
+        });
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ Android用户界面优化-Android创建和配置布局动画
+
+
+为布局添加动画效果
+
+1.把 fragment_main.xml 改成 
+	
+	<LinearLayout
+    	android:orientation="vertical"
+
+
+2.
+    private ScaleAnimation scaleAnimation;
+
+        /*
+            根目录列表动画,效果：慢慢缩放出来
+         */
+        //原来       
+        // View root = inflater.inflate(R.layout.fragment_another,container,false);//初始化这个布局，从外界传进来的
+        //改成
+        LinearLayout rootView = (LinearLayout) inflater.inflate(R.layout.fragment_main, container, false);
+
+        scaleAnimation = new ScaleAnimation(0, 1, 0, 1);
+        scaleAnimation.setDuration(1000);
+
+        LayoutAnimationController lac = new LayoutAnimationController(scaleAnimation, 0.5f);//第二个参数是，假设为0.5f，当第一个按钮动画执行到0.5f时，第二个动画开始加载执行动画
+
+        lac.setOrder(LayoutAnimationController.ORDER_REVERSE);//默认三个属性：ORDER_NORMA从上到下,LORDER_RANDOM随机,ORDER_REVERSE从下往上
+
+        rootView.setLayoutAnimation(lac);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0619/3090.html
+
+	由于 layout-animation 是对于某一组控件的操作，就需要一个基本的动画来定义单个控件的动画。另外还可以定义动画的显示顺序和延迟：
+	
+
+	<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:delay="30%"
+	        android:animationOrder="reverse"
+	        android:animation="@anim/slide_right"/>
+
+
+
+
+
+其中
+
+android:delay表示动画播放的延时，既可以是百分比，也可以是float小数。
+
+android:animationOrder表示动画的播放顺序，有三个取值normal(顺序)、reverse(反序)、random(随机)。
+
+android:animation指向了子控件所要播放的动画。
+
+上述步骤完成之后，就可以将layout-animation应用到ViewGroup中，xml布局添加下面一行就ok：
+
+		android:layoutAnimation="@anim/list_anim_layout"
+
+这样在加载布局的时候就会自动播放layout-animtion。
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+布局内容改变动画
+
+1.
+	在 content_main 中更改
+
+	<LinearLayout
+	    android:orientation="vertical"
+	    android:id="@+id/rootView"
+	        android:animateLayoutChanges="true"//添加动画效果
+
+2. 
+	在 res/menu/ menu_main.xml 中添加
+    
+    <item
+        android:id="@id/action_add"
+        app:showAsAction="always"					//注意这里是app 不是android
+        android:title="@string/action_add"
+        android:icon="@android:drawable/ic_input_add"></item>
+
+3.
+
+package com.example.fangyi.myapplication;
+
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.LinearLayout;
+
+public class MainActivity extends AppCompatActivity {
+
+    private LinearLayout linearLayout;
+
+    //方法点击退出
+    private View.OnClickListener btn_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            linearLayout.removeView(v);
+        }
+    };
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        linearLayout = (LinearLayout) findViewById(R.id.rootView);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+
+	//添加按钮
+    private void AddButton() {
+
+        Button btn = new Button(this);
+        btn.setText("Remove Me");
+
+        linearLayout.addView(btn);
+		linearLayout.setLayoutTransition(？？？？？);//加动画
+        btn.setOnClickListener(btn_onClickListener);
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+									//对菜单栏做选择
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_add:
+                AddButton();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+偷懒了
+
+
+为列表添加布局动画效果
+
+
+1.
+	修改，
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
