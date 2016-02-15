@@ -4543,36 +4543,139 @@ public class MainActivity extends AppCompatActivity {
 	修改，
 
 
+public class MainActivity extends ListActivity {
+	//布局
+    private ArrayAdapter<String> adapter;
+    //动画效果
+    private LayoutAnimationController lac;
+    private ScaleAnimation sa;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+
+        //布局
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{"Hello","fangyi1896@gmail.com","fangyi186@outlook.com"});
+        setListAdapter(adapter);
+
+        //动画效果
+        sa = new ScaleAnimation(0, 1, 0, 1);
+        sa.setDuration(1000);
+        lac = new LayoutAnimationController(sa, 0.5f);
+        getListView().setLayoutAnimation(lac);
+    }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+使用资源文件配置布局动画,效果和前面的一样
+
+
+
+1.
+
+		public class MainActivity extends ListActivity {
+
+		    private ArrayAdapter<String> adapter;
+		//    private LayoutAnimationController lac;
+		//    private ScaleAnimation sa;
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+		        setContentView(R.layout.main);//添加这句
+
+		        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{"Hello","fangyi1896@gmail.com","fangyi186@outlook.com"});
+
+		        setListAdapter(adapter);
+
+		//        sa = new ScaleAnimation(0, 1, 0, 1);
+		//        sa.setDuration(1000);
+		//        lac = new LayoutAnimationController(sa, 0.5f);
+		//        getListView().setLayoutAnimation(lac);
+		    }
+
+
+
+2.
+
+	创建 layout/main.xnl
+
+			<?xml version="1.0" encoding="utf-8"?>
+			<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:orientation="vertical" android:layout_width="match_parent"
+			    android:layout_height="match_parent">
+
+			    <ListView
+			        android:id="@android:id/list"//记住这里
+			        android:layout_width="fill_parent"
+			        android:layout_height="fill_parent"
+			        android:layoutAnimation="@anim/listview_anim">
+			    </ListView>
+
+			</LinearLayout>
+
+
+
+
+
+	创建	anim/listview_anim.xml
+
+
+			<?xml version="1.0" encoding="utf-8"?>
+			<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:animation="@anim/scale_0_1"
+			    android:delay="0.5">
+
+			</layoutAnimation>
+
+
+
+
+	创建	anim/scale_0_1.xml
+
+
+			<?xml version="1.0" encoding="utf-8"?>
+			<scale xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:fromXScale="0"
+			    android:toXScale="1"
+			    android:fromYScale="0"
+			    android:toYScale="1"
+			    android:duration="1000">
+
+
+			</scale>
 
 
 
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+Android知识点-点9切图法在Android UI设计中的运用
 
+1.
 
+	在 AndroidManifest 中
 
+	        android:icon="@drawable/icon_android"
 
+	        可以改图标
 
+2.
 
+	在  xml 文件中
 
+		android:background="@drawable/XXX"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		可以改背景
 
 
 
