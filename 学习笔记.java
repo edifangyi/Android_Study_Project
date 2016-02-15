@@ -4679,35 +4679,221 @@ Android知识点-点9切图法在Android UI设计中的运用
 
 
 
+3，
+
+	在 content_main 中添加
+
+	    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageView"
+        android:src="@drawable/img_1" />//看这里
+
+
+
+4.
+ 	在应用程序中修改原来的拖
+        ImageView iv = (ImageView) findViewById(R.id.imageView);
+        iv.setImageResource(R.drawable.img_2);  //看这里
 
 
 
 
+http://blog.csdn.net/qq_24889075/article/details/47211913
+
+不用用太大的图片 容易 oom
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+程序引导页依然成为现今App的必需品，通过引导页可以第一时间知道此款软件是如何应用的。并且能了解到最新的动态和更新。
+
+
+ViewPager实现 13:24
+
+本课时讲解ViewPager的实现，实现左右滑动的效果，让学员掌握ViewPager的使用。
+
+
+引导页
 
 
 
+1.
+
+	新建 Guide 类
+
+		package com.example.fangyi.viewpagerdemo;
+
+		import android.app.Activity;
+
+		/**
+		 * Created by FANGYI on 2016/2/15.
+		 */
+		public class Guide extends Activity {
+
+		    private
+		}
+
+
+2.
+	新建 ViewPagerAdapter 类
+
+		package com.example.fangyi.viewpagerdemo;
+
+		import android.content.Context;
+		import android.support.v4.view.PagerAdapter;
+		import android.support.v4.view.ViewPager;
+		import android.view.View;
+		import android.view.ViewGroup;
+
+		import java.util.List;
+
+		/**
+		 * Created by FANGYI on 2016/2/15.
+		 */
+		public class ViewPagerAdapter extends PagerAdapter {
+		//重写方法  直接 alt+enter
+
+
+		    private List<View> views;
+		    private Context context;
+
+		    public ViewPagerAdapter(List<View> views, Context context) {
+		        this.views = views;
+		        this.context = context;
+		    }
+
+
+		    @Override//我们不可能都保存每一个views，我们可以将其销毁
+		    public void destroyItem(ViewGroup container, int position, Object object) {
+
+		        //我们使用container.removeView来进行移除，通过views来知道当前个数，position来进行索引
+		//            container.removeView(views.get(position));
+		        ((ViewPager)container).removeView(views.get(position));
+		    }
+
+		    @Override//我们需要一个加载views的方法，
+		    public Object instantiateItem(ViewGroup container, int position) {
+		        ((ViewPager)container).removeView(views.get(position));
+
+		        return views.get(position);
+		    }
+
+		    @Override//返回当前views 的数量
+		    public int getCount() {
+		        return views.size();
+		    }
+
+		    @Override//来判断当前view是不是我们需要的对象
+		    public boolean isViewFromObject(View view, Object object) {
+		        return (view == object);
+		    }
+		}
 
 
 
+3.
+	补全 Guide 类
+		package com.example.fangyi.viewpagerdemo;
+
+		import android.app.Activity;
+		import android.os.Bundle;
+		import android.os.PersistableBundle;
+		import android.support.v4.view.ViewPager;
+		import android.view.LayoutInflater;
+		import android.view.View;
+
+		import java.util.ArrayList;
+		import java.util.List;
+
+		/**
+		 * Created by FANGYI on 2016/2/15.
+		 */
+		public class Guide extends Activity {
+
+		    private ViewPager viewPager;
+		    private ViewPagerAdapter viewPagerAdapter;
+		    private List<View> views;
+
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+		        setContentView(R.layout.guide);//加载好当前的视图
+		        initViews();
+		    }
+
+		    //初始化的方法        首先我们要加载额外的三个view 切换的三个view
+		    private void initViews() {
+		        LayoutInflater inflater = LayoutInflater.from(this);//先来通过这个来加载
+		        //view 是要放在集合当中的，所以我们先将view进行实例化操作
+		        views = new ArrayList<View>();
+		        views.add(inflater.inflate(R.layout.one, null));
+		        views.add(inflater.inflate(R.layout.two, null));
+		        views.add(inflater.inflate(R.layout.three, null));
+		    }
+		}
 
 
 
+4.
+	创建一个 guide.xml 文件
+
+		<android.support.v4.view.ViewPager
+	        android:id="@+id/viewpager"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="#000000"></android.support.v4.view.ViewPager>
 
 
 
+5.
+
+	创建一个 one.xml 和 two.xml 和 three.xml 文件
+
+	    <ImageView
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/img_1"/>
+
+	    <ImageView
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/img_2"/>
 
 
+5.
+
+	去 AndroidManifest 修改启动入口
+
+	<activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            //把下面这段删除
+          	// <intent-filter>
+           //      <action android:name="android.intent.action.MAIN" />
+
+           //      <category android:name="android.intent.category.LAUNCHER" />
+           //  </intent-filter>
+    
+    </activity>
 
 
+    添加
 
+        <activity android:name=".Guide">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
-
-
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
 
 
