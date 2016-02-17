@@ -271,7 +271,17 @@ public class AnotherAty extends AppCompatActivity {
 通过 setResult() 返回状态码
 
 
-finish();直接把当前的 activity
+finish();直接把当前的 activity 收回
+
+Activity.finish()
+Call this when your activity is done and should be closed. 
+在你的activity动作完成的时候，或者Activity需要关闭的时候，调用此方法。
+当你调用此方法的时候，系统只是将最上面的Activity移出了栈，并没有及时的调用onDestory（）方法，其占用的资源也没有被及时释放。
+因为移出了栈，所以当你点击手机上面的“back”按键的时候，也不会找到这个Activity。
+
+
+
+
 
 startActivityForResult(i,0)
 
@@ -2200,7 +2210,10 @@ public class Hello {
                 startActivity(new Intent("com.example.fangyi.launchmode.intent.action.MyAty2"));
                 break;
 
-4.java.lang.SecurityException: Permission Denial: starting Intent { act=com.example.fangyi.launchmode.intent.action.MyAty2 cmp=com.example.fangyi.launchmode/.MyAty2 } from ProcessRecord{f24ac01 2998:com.example.fangyi.app1/u0a57} (pid=2998, uid=10057) requires com.example.fangyi.launchmode.permission.MyAty2
+4.java.lang.SecurityException: Permission Denial: 
+
+starting Intent { act=com.example.fangyi.launchmode.intent.action.MyAty2 cmp=com.example.fangyi.launchmode/.MyAty2 } from 
+ProcessRecord{f24ac01 2998:com.example.fangyi.app1/u0a57} (pid=2998, uid=10057) requires com.example.fangyi.launchmode.permission.MyAty2
 
 安全错误，没有权限
 
@@ -4896,124 +4909,577 @@ ViewPager实现 13:24
         </activity>
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
+添加导航点 06:48
 
+本课主要时讲解在ViewPager上添加页面滑动的导航点，
+用以表示当前ViewPager的索引。让学员掌握如何使用点来标识ViewPager当前在哪一页中。
 
 
 
+1.
+	先打开布局文件 guide.xml 添加
 
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ll"
+        android:orientation="horizontal"	//布局方向：水平布局
+        android:gravity="center_horizontal"	//水平居中
+		android:layout_alignParentBottom="true"	//基于空间底部
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv1"
+            android:src="@drawable/login_point_selected"/>//亮的
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv2"
+            android:src="@drawable/login_point"/>//暗的
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv3"
+            android:src="@drawable/login_point"/>//暗的
 
+    </LinearLayout>
 
 
+2.
 
+	在 GuiDe 中进行操作
 
 
+//点的改变需要ViewPager，所以我们需要一个监听事件，监听ViewPager
+//我们要复写这三个方法
+public class Guide extends Activity implements ViewPager.OnPageChangeListener {
 
+    private ImageView[] dots;
+    private int[] ids = {R.id.iv1,R.id.iv2,R.id.iv3};
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.guide);//加载好当前的视图
+        initViews();
+        initDots();
+    }
 
+//在 initViews() 最后一行 添加回调	viewPager.setOnPageChangeListener(this);
 
+        viewPager.addOnPageChangeListener(this);//回调
 
 
+    //点的操作方法
+    private void initDots() {
+        dots = new ImageView[views.size()];
 
+        for (int i = 0; i < views.size(); i++) {
+            dots[i] = (ImageView) findViewById(ids[i]);
+        }
+    }
 
+    @Override//当前新的页面被选中时候调用
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+    }
 
+    @Override//当页面滑动时候调用
+    public void onPageSelected(int position) {
+        for (int i = 0; i < ids.length; i++) {
+            if (position == i) {
+                dots[i].setImageResource(R.drawable.login_point_selected);
+            }else {
+                dots[i].setImageResource(R.drawable.login_point);
+            }
+        }
+    }
 
+    @Override//滑动状态改变时候进行调用
+    public void onPageScrollStateChanged(int state) {
 
+    }
+}
 
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+添加进入主界面按钮 04:09
 
+本课时讲解了在ViewPager的最后一个页面添加上Button按钮用以提示用户进入程序，让学员掌握如何在最后一个页面添加上Button。
 
 
+1.
 
+	在最后一张图，也就是 three.xml 中
 
+	<?xml version="1.0" encoding="utf-8"?>
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent">
 
+	    <ImageView
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:background="@drawable/img_3"/>
 
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center_horizontal"
+	        android:layout_alignParentBottom="true"
+	        android:orientation="horizontal">
 
+	        <Button
+	            android:id="@+id/start_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="进入"/>
+	    </LinearLayout>
 
+	</RelativeLayout>
 
+2.
+	事件的监听  砸 initViews(){} 中添加
 
 
+	    private Button start_btn;
 
 
+	    private void initViews() {
 
+	        //直接findViewById不行，因为当前加载的View是guide，所以我们应该到views列表里找到，谁加载了这个View
+	        start_btn = (Button) views.get(2).findViewById(R.id.start_btn);
+	        start_btn.setOnClickListener(new View.OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	                //直接跳转到主界面就可以了，因为主界面至始至终都没有打开过，所以直接跳转打开新界面
+	                Intent i = new Intent(Guide.this,MainActivity.class);
+	                startActivity(i);
+	                finish();//将当期没用的收回
+	            }
+	        });
+	    }
 
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+添加数据储存 09:25
 
+本课主要时讲解了如何在首次打开程序进入引导页，之后进入主程序。让学员掌握数据存储的使用，通过使用数据储存实现效果。
 
 
+1.
+	我们要新建一个首界面 WelcomeActivity 类
 
 
 
+		package com.example.fangyi.viewpagerdemo;
 
+		import android.app.Activity;
+		import android.content.Intent;
+		import android.content.SharedPreferences;
+		import android.os.Bundle;
+		import android.os.Handler;
+		import android.os.Message;
 
+		/**
+		 * Created by FANGYI on 2016/2/16.
+		 */
+		public class WelcomeActivity extends Activity{
+		    //我们先让首界面沉睡几秒，然后再选择跳入哪一个界面，主界面还是引导面
+		    private boolean isFirstIn = false;//这个值我们要储存起来
+		    private static final int TIME = 2000;
+		    private static final int Go_HOME = 1000;
+		    private static final int GO_GUIDE =1001;
 
+		    //我们等待的时间不能直接让他在主线程中沉睡，这是不合理的
+		    //mHandler发送的消息是很关键的，所有我们需要一个boolean类型的值，判定哪个消息 我们写一个方法init()
+		    private Handler mHandler = new Handler() {
+		        @Override
+		        public void handleMessage(Message msg) {
+		            switch (msg.what) {
+		                case Go_HOME:
+		                    goHome();
+		                    break;
+		                case GO_GUIDE:
+		                    goGuide();
+		                    break;
+		            }
+		        }
+		    };
 
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+		        setContentView(R.layout.welcomeactivity);
+		        init();
+		    }
 
+		    private void goHome() {
+		        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+		        startActivity(i);
+		        finish();
+		    }
 
+		    private void goGuide() {
+		        Intent i = new Intent(WelcomeActivity.this, Guide.class);
+		        startActivity(i);
+		        finish();
+		    }
 
+		    private void init() {
+		        //SharedPreferences来进行储存，首先获取
+		        SharedPreferences prePreferences = getSharedPreferences("FANGYI", MODE_PRIVATE);
 
+		        //先来获取到看他里面是否存在的值，同时把这个值赋给isFirstIn,第一次赋值是没有的
+		        isFirstIn = prePreferences.getBoolean("isFirstIn", true);
+		        if (!isFirstIn) {
+		            mHandler.sendEmptyMessageDelayed(Go_HOME, TIME);
+		        }else {
+		            mHandler.sendEmptyMessageDelayed(GO_GUIDE, TIME);
+		            //当进入过引导界面以后，将这个值储存起来
+		            SharedPreferences.Editor editor = prePreferences.edit();
+		            editor.putBoolean("isFirstIn",false);
+		            editor.commit();//提交
 
+		        }
+		    }
+		}
 
 
 
 
+2.
+	需要一个欢迎布局 welcomeactivity.xml
 
+		<?xml version="1.0" encoding="utf-8"?>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:orientation="vertical" android:layout_width="match_parent"
+		    android:layout_height="match_parent">
 
+		    <ImageView
+		        android:layout_width="fill_parent"
+		        android:layout_height="fill_parent"
+		        android:background="@drawable/img_17"/>
+		</LinearLayout>
 
 
 
 
 
+3.
 
+	去 AndroidManifest 中更改启动入口
 
 
+		<?xml version="1.0" encoding="utf-8"?>
+		<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+		    package="com.example.fangyi.viewpagerdemo">
 
+		    <application
+		        android:allowBackup="true"
+		        android:icon="@mipmap/ic_launcher"
+		        android:label="@string/app_name"
+		        android:supportsRtl="true"
+		        android:theme="@style/AppTheme">
+		        <activity
+		            android:name=".MainActivity"
+		            android:label="@string/app_name"
+		            android:theme="@style/AppTheme.NoActionBar">
+		        </activity>
 
+		        <activity android:name=".Guide">
 
+		        </activity>
+		        <activity android:name=".WelcomeActivity">
+		            <intent-filter>
+		                <action android:name="android.intent.action.MAIN" />
 
+		                <category android:name="android.intent.category.LAUNCHER" />
+		            </intent-filter>
+		        </activity>
 
+		    </application>
 
+		</manifest>
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+创建抽屉布局 06:40
 
+本课时在 XML 文件中创建抽屉布局，完成划出侧滑菜单的功能。
 
 
+http://developer.android.com/intl/zh-cn/training/implementing-navigation/nav-drawer.html#DrawerLayout
 
 
 
 
+1.
 
+	我们把跟布局 content_main.xml 全部删除，重新写一个
 
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <!-- The main content view -->
 
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
+    <!-- The navigation drawer -->
 
+    <ListView
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:background="#ffffcc"
+		android:layout_gravity="start" //从左向右滑，指定end从右向左滑
+		android:choiceMode="singleChoice"//单选模式
+		android:divider="@android:color/transparent"//透明色
+		android:dividerHeight="0dp"//这样就看不到项与项之间的分割条>
+    </ListView>
 
+</android.support.v4.widget.DrawerLayout>
 
 
+注意事项：
+	1、主内容视图一定要是 DrawerLayout 的第一个子视图
+	
+	2、主内容视图宽度和高度匹配父视图，即“mactch_parent”
+	
+	3、必须显示指定抽屉视图（如ListView）的androiid:layout_gravity属性
+		1)、android:layout_gravity="start"时，从左向右滑出菜单
+		2)、android:layout_gravity="end"时，从右向左滑出菜单
+ 		3)、不推荐使用“left”和“right”
+	
+	4、抽屉视图的宽度以dp为单位，，请不要超过320dp（为了总能看到一些主内容视图）
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//
+//
+//这段其实有问题，，，，有空找一个新的
 
+初始化导航列表 09:44
 
+本课时在 Java 文件中使用 DrawerLayout，完成导航列表项的填充，添加点击事件来插入相应的 Fragment。
 
 
+1.
+	在 MainActivity 中 、
+	
+		package com.example.fangyi.drawerlayoutusing;
+
+		import android.app.Fragment;
+		import android.app.FragmentManager;
+		import android.os.Bundle;
+		import android.support.design.widget.FloatingActionButton;
+		import android.support.design.widget.Snackbar;
+		import android.support.v4.widget.DrawerLayout;
+		import android.support.v7.app.AppCompatActivity;
+		import android.support.v7.widget.Toolbar;
+		import android.view.View;
+		import android.view.Menu;
+		import android.view.MenuItem;
+		import android.widget.AdapterView;
+		import android.widget.ArrayAdapter;
+		import android.widget.ListView;
+
+		import java.util.ArrayList;
+
+		public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+		    private DrawerLayout mDrawerLayout;
+		    private ListView mDrawerlist;
+		    private ArrayList<String> menuList;
+		    private ArrayAdapter<String> adapter;
+
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+		        setContentView(R.layout.activity_main);
+
+		        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		        mDrawerlist = (ListView) findViewById(R.id.left_drawer);
+		        menuList = new ArrayList<String>();
+		        for (int i = 0; i < 5; i++) {
+		            menuList.add("知乎0" + i);
+		        }
+		        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuList);
+		        mDrawerlist.setAdapter(adapter);//就为左侧的抽屉添加上了内容
+
+		        mDrawerlist.setOnItemClickListener(this);
+
+		        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		        setSupportActionBar(toolbar);
+
+		       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+		        fab.setOnClickListener(new View.OnClickListener() {
+		            @Override
+		            public void onClick(View view) {
+		                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+		                        .setAction("Action", null).show();
+		            }
+		        });
+		    }
+
+		    @Override
+		    public boolean onCreateOptionsMenu(Menu menu) {
+		        // Inflate the menu; this adds items to the action bar if it is present.
+		        getMenuInflater().inflate(R.menu.menu_main, menu);
+		        return true;
+		    }
+
+		    @Override
+		    public boolean onOptionsItemSelected(MenuItem item) {
+		        // Handle action bar item clicks here. The action bar will
+		        // automatically handle clicks on the Home/Up button, so long
+		        // as you specify a parent activity in AndroidManifest.xml.
+		        int id = item.getItemId();
+
+		        //noinspection SimplifiableIfStatement
+		        if (id == R.id.action_settings) {
+		            return true;
+		        }
+
+		        return super.onOptionsItemSelected(item);
+		    }
+
+		    @Override
+		    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		        //动态插入一个Fragment到FrameLayout当中
+		        Fragment contentFragment = new ContentFragment();
+		        Bundle args = new Bundle();
+		        args.putString("text", menuList.get(position));
+
+		        FragmentManager fm = getFragmentManager();
+		        fm.beginTransaction().replace(R.id.content_frame, contentFragment).commit();
+
+		        mDrawerLayout.closeDrawer(mDrawerlist);
+
+
+		    }
+		}
+
+
+
+2.
+	创建一个 ContentFragment 类
+
+		package com.example.fangyi.drawerlayoutusing;
+
+		import android.app.Fragment;
+		import android.os.Bundle;
+		import android.support.annotation.Nullable;
+		import android.view.LayoutInflater;
+		import android.view.View;
+		import android.view.ViewGroup;
+		import android.widget.TextView;
+
+		/**
+		 * Created by FANGYI on 2016/2/16.
+		 */
+		public class ContentFragment extends Fragment {
+		    private TextView textView;
+
+		    @Nullable
+		    @Override
+		    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		        View view = inflater.inflate(R.layout.fragment_content, container, false);
+		        textView = (TextView) view.findViewById(R.id.textView);
+
+		        String text = getArguments().getString("text");
+		        textView.setText(text);
+
+		        return view;
+		    }
+		}
+
+
+3.
+
+	给 ContentFragment 类 创建一个布局 fragment_content.xml 
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		    android:orientation="vertical" android:layout_width="match_parent"
+		    android:layout_height="match_parent">
+
+		    <TextView
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:id="@+id/textView"
+		        android:textSize="25sp"/>
+
+		</LinearLayout>
+
+android:textSize="25sp"//字的
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+监听抽屉的打开关闭事件 13:00
+
+本课时结合 ActionBar 的基本使用，详解 ActionBarDrawerToggle 实现机制，为 DrawerLayout 设置 ActionBarDrawerToggle 监听事件，来完成监听抽屉状态变化的功能。
+
+
+1、mDrawerLayout.setDrawerListener(DrawerLayout.DrawerListener);
+2、ActionBarDrawerToggle 是 DrawerLayout.DrawerListener 的具体实现类
+	1）、改变android.R.id.home图标(构造方法)
+	2）、Drawer拉出、隐藏，带有android.R.id.home动画效果(syncState())
+	3）、监听Drawer拉出、隐藏事件
+3、覆写 ActionBarDrawerToggle 的 onDrawerOpened() 和 onDrawerClosed() 以监       听抽屉拉出或隐藏事件
+4、覆写 Activity的onPostCreate() 和 onConfigurationChanged() 方法
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
