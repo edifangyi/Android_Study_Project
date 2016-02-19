@@ -5247,8 +5247,8 @@ http://developer.android.com/intl/zh-cn/training/implementing-navigation/nav-dra
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    
     <!-- The main content view -->
-
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
@@ -5385,7 +5385,7 @@ http://developer.android.com/intl/zh-cn/training/implementing-navigation/nav-dra
 		        FragmentManager fm = getFragmentManager();
 		        fm.beginTransaction().replace(R.id.content_frame, contentFragment).commit();
 
-		        mDrawerLayout.closeDrawer(mDrawerlist);
+		        mDrawerLayout.closeDrawer(mDrawerlist);//隐藏菜单
 
 
 		    }
@@ -5419,6 +5419,7 @@ http://developer.android.com/intl/zh-cn/training/implementing-navigation/nav-dra
 		        View view = inflater.inflate(R.layout.fragment_content, container, false);
 		        textView = (TextView) view.findViewById(R.id.textView);
 
+		        //接收
 		        String text = getArguments().getString("text");
 		        textView.setText(text);
 
@@ -5466,11 +5467,6 @@ android:textSize="25sp"//字的
 4、覆写 Activity的onPostCreate() 和 onConfigurationChanged() 方法
 
 
-0
-
-
-
-
 
 
 
@@ -5480,23 +5476,56 @@ android:textSize="25sp"//字的
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+启用 Action Bar 11:32
+
+本课时讲解针对不同 Android 版本，在 AndroidManifest 文件中启用 Action Bar。
+
+
+1. 在AndroidManifest中进行配置
+		修改
+       android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+2.
+	MainActivity 修改继承 为 
+
+	ActionBarActivity 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+在 Action Bar 上添加按钮 17:33
+
+本课时讲解在XML文件中定义按钮，在 Java 文件中使用按钮并添加点击事件，启用 Action Bar 左上角的向上或返回按钮。
 
 
 
+在Action Bar上添加按钮
 
 
+		1、For Android 3.0 and higher only
+			1）、android:showAsAction=“always“    
+					一直显示在Action Bar上
+			2）、android:showAsAction=“ifRoom“    
+					如果Action Bar空间足够，则显示
+		 	3）、android:showAsAction=“never“     
+					不显示在Action Bar中，折叠在OverFlow里
+			4）、android:showAsAction=“withText“
+					菜单项和它的图标，菜单文本一起显示
 
 
+		2、For Android 2.1 and higher 
+			1）、在menu.xml中加入自定义命名空间
+			   	xmlns:yourapp="http://schemas.android.com/apk/res-auto"
 
-
-
-
+			2）、在showAsAction属性前指定命名空间
+				yourapp:showAsAction="ifRoom"
 
 
 
