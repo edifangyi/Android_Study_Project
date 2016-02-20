@@ -6219,12 +6219,21 @@ Android 中的消息通知 Toast 和 Notification
 
 
 
+    private Button showToastShort;
+    private Button showToastLong;
+    private Button showToastImage;
+
+
         showToastShort = (Button) findViewById(R.id.shouToast);
         showToastLong = (Button) findViewById(R.id.shouToastLong);
+        showToastImage = (Button) findViewById(R.id.showToastImage);
         showToastShort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "显示一个简短的Toast", Toast.LENGTH_SHORT).show();//显示时间短一点
+                // Toast.makeText(MainActivity.this, "显示一个简短的Toast", Toast.LENGTH_SHORT).show();//显示时间短一点
+                Toast ashortToast = Toast.makeText(MainActivity.this, "显示一个简短的Toast", Toast.LENGTH_SHORT);//需要把show()去掉，不然传进去的是空值
+                ashortToast.setGravity(Gravity.CENTER, 0, 0);//Gravity.CENTER 屏幕的正中间，原点就在正中间，后面两个值，是偏移量
+                ashortToast.show();
             }
         });
         showToastLong.setOnClickListener(new View.OnClickListener() {
@@ -6234,6 +6243,50 @@ Android 中的消息通知 Toast 和 Notification
             }
         });
 
+        showToastImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast imageToast = Toast.makeText(MainActivity.this, "显示图片的Toaset", Toast.LENGTH_LONG);
+                ImageView imageView = new ImageView(MainActivity.this);
+                imageView.setImageResource(R.mipmap.ic_launcher);
+                imageToast.setView(imageView);
+                imageToast.show();
+            }
+        });
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+状态栏提示Notification 12:02
+
+本课时学习创建Notification对象，为其指定标题、内容和图标，以及Notification的更新方法。
+
+
+    private static final int NOTIFICATION_ID = 1200;
+    private Button showNotification;
+    private int counter = 0;
+
+
+        showNotification = (Button) findViewById(R.id.button);
+        showNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                counter ++;
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this);
+                builder.setSmallIcon(R.mipmap.ic_launcher);
+                builder.setContentTitle("哇哦！有"+ counter +"个新消息！");
+                builder.setContentText("你已经可以创建新的Notification了。");
+                Notification notification = builder.build();
+
+                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(NOTIFICATION_ID, notification);
+            }
+        });
 
 
 
@@ -6242,53 +6295,140 @@ Android 中的消息通知 Toast 和 Notification
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Android项目开发实战:自定义左右菜单
+
+
+完成菜单布局 11:49
+
+本课时讲解通过扩展，完成基本布局。包含左右菜单布局和中间内容区域，并设置颜色用于区分。
+
+1.
+	新建类 MainUI 
+
+
+		package com.example.fangyi.mymenu;
+
+		import android.content.Context;
+		import android.graphics.Color;
+		import android.util.AttributeSet;
+		import android.widget.FrameLayout;
+		import android.widget.RelativeLayout;
+
+		/**
+		 * Created by FANGYI on 2016/2/21.
+		 */
+		public class MainUI extends RelativeLayout{
+		    private Context context;
+		    private FrameLayout leftMenu;
+		    private FrameLayout middleMenu;
+		    private FrameLayout rightMenu;
+
+		    public MainUI(Context context) {
+		        super(context);
+		        initView(context);
+		    }
+
+		    public MainUI(Context context, AttributeSet attrs) {
+		        super(context, attrs);
+		        initView(context);
+		    }
+
+		    private void initView(Context context) {
+		        this.context = context;
+		        leftMenu = new FrameLayout(context);
+		        middleMenu = new FrameLayout(context);
+		        rightMenu = new FrameLayout(context);
+
+		        leftMenu.setBackgroundColor(Color.RED);
+		        middleMenu.setBackgroundColor(Color.GREEN);
+		        rightMenu.setBackgroundColor(Color.BLUE);
+
+		        addView(leftMenu);//填充到最大的RelativeLayout中
+		        addView(middleMenu);
+		        addView(rightMenu);
+		    }
+
+		    @Override//测量高度宽度
+		    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+		        middleMenu.measure(widthMeasureSpec, heightMeasureSpec);
+
+		        //先获取当前屏幕最大的宽度
+		        int realWidth = MeasureSpec.getSize(widthMeasureSpec);
+		        //屏幕的百分之80，第一个参数是size，第二个参数是以怎样的方式进行测量，EXACTLY精准,AT_MOST自适应，UNSPECIFIED未定义
+		        int temoWidthMeasure = MeasureSpec.makeMeasureSpec((int)(realWidth*0.8f), MeasureSpec.EXACTLY);
+
+		        leftMenu.measure(temoWidthMeasure, heightMeasureSpec);
+		        rightMenu.measure(temoWidthMeasure, heightMeasureSpec);
+		    }
+
+		    @Override//当前上下左右边界的位置，左l 上t，下b，右r
+		    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		        super.onLayout(changed, l, t, r, b);
+
+		        middleMenu.layout(l, t, r ,b);
+
+		        leftMenu.layout(l - leftMenu.getMeasuredWidth(), t, r, b);
+		        rightMenu.layout(l + middleMenu.getMeasuredWidth(),
+		                t,
+		                l + middleMenu.getMeasuredWidth()
+		                        + rightMenu.getMeasuredWidth(), b);
+		    }
+		}
 
 
 
 
 
 
+2.
+	在 MainActivity 中添加
+
+
+			package com.example.fangyi.mymenu;
+
+			import android.support.v7.app.AppCompatActivity;
+			import android.os.Bundle;
+
+			public class MainActivity extends AppCompatActivity {
+
+			    private MainUI mainUI;
+
+			    @Override
+			    protected void onCreate(Bundle savedInstanceState) {
+			        super.onCreate(savedInstanceState);
+			        mainUI = new MainUI(this);
+			        setContentView(mainUI);
+			    }
+			}
 
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+菜单左右滑动 12:25
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+本课时讲解使用逻辑，找出滑动中间点，并对事件做处理，主要针对滑动事件。
 
 
 
