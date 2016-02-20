@@ -5460,13 +5460,170 @@ android:textSize="25sp"//字的
 
 1、mDrawerLayout.setDrawerListener(DrawerLayout.DrawerListener);
 2、ActionBarDrawerToggle 是 DrawerLayout.DrawerListener 的具体实现类
-	1）、改变android.R.id.home图标(构造方法)
-	2）、Drawer拉出、隐藏，带有android.R.id.home动画效果(syncState())
+	1）、改变 android.R.id.home图标(构造方法)
+	2）、Drawer拉出、隐藏，带有 android.R.id.home动画效果(syncState())
 	3）、监听Drawer拉出、隐藏事件
 3、覆写 ActionBarDrawerToggle 的 onDrawerOpened() 和 onDrawerClosed() 以监       听抽屉拉出或隐藏事件
 4、覆写 Activity的onPostCreate() 和 onConfigurationChanged() 方法
 
 
+编写过程
+
+1.
+	在 MainActivity 中添加
+
+			package com.example.fangyi.drawerlayoutusing;
+
+			import android.app.Fragment;
+			import android.app.FragmentManager;
+			import android.content.Intent;
+			import android.content.res.Configuration;
+			import android.net.Uri;
+			import android.support.annotation.Nullable;
+			import android.support.v4.widget.DrawerLayout;
+			import android.support.v4.app.ActionBarDrawerToggle;
+			import android.support.v7.app.AppCompatActivity;
+			import android.os.Bundle;
+			import android.view.Menu;
+			import android.view.MenuItem;
+			import android.view.View;
+			import android.widget.AdapterView;
+			import android.widget.ArrayAdapter;
+			import android.widget.ListView;
+
+			import java.util.ArrayList;
+
+			public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+
+			    private DrawerLayout mDrawerLayout;
+			    private ListView mDrawerlist;
+			    private ArrayList<String> menuList;
+			    private ArrayAdapter<String> adapter;
+			    private ActionBarDrawerToggle mDrawerToggle;
+			    private String mTitle;
+
+
+			    @Override
+			    protected void onCreate(Bundle savedInstanceState) {
+			        super.onCreate(savedInstanceState);
+			        setContentView(R.layout.activity_main);
+
+			        mTitle = (String) getTitle();
+
+			        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+			        mDrawerlist = (ListView) findViewById(R.id.left_drawer);
+			        menuList = new ArrayList<String>();
+			        for (int i = 0; i < 5; i++) {
+			            menuList.add("知乎0" + i);
+			        }
+			        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuList);
+			        mDrawerlist.setAdapter(adapter);//就为左侧的抽屉添加上了内容
+
+			        mDrawerlist.setOnItemClickListener(this);
+
+			        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+			            @Override
+			            public void onDrawerOpened(View drawerView) {
+			                super.onDrawerOpened(drawerView);
+			                //更改标题
+			                getSupportActionBar().setTitle("请选择");
+			                invalidateOptionsMenu();
+			            }
+
+			            @Override
+			            public void onDrawerClosed(View drawerView) {
+			                super.onDrawerClosed(drawerView);
+			                getSupportActionBar().setTitle(mTitle);
+			                invalidateOptionsMenu();
+			            }
+			        };
+			        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+			        //开启ActionBar上APP ICON 功能
+			        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//启动左上角返回图标
+			        getSupportActionBar().setHomeButtonEnabled(true);//使左上角的HomeButton可用
+			    }
+
+			    @Override
+			    public boolean onPrepareOptionsMenu(Menu menu) {
+			        boolean isDrawerOpen = mDrawerLayout.isDrawerOpen(mDrawerlist);
+			        menu.findItem(R.id.action_websearch).setVisible(!isDrawerOpen);
+			        return super.onPrepareOptionsMenu(menu);
+			    }
+
+			    @Override
+			    public boolean onOptionsItemSelected(MenuItem item) {
+			        //将ActionBar上的图标与Drawer结合起来
+			        if (mDrawerToggle.onOptionsItemSelected(item)) {
+			            return true;//左上角图标打开或关闭抽屉
+			        }
+			        switch (item.getItemId()) {
+			            case R.id.action_websearch:
+			                Intent intent = new Intent();
+			                intent.setAction("android.intent.action.VIEW");
+			                Uri uri = Uri.parse("http://www.baidu.com");
+			                intent.setData(uri);
+			                startActivity(intent);
+			            default:
+			                break;
+			        }
+			        return super.onOptionsItemSelected(item);
+			    }
+
+			    @Override
+			    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+			        super.onPostCreate(savedInstanceState);
+			        //需要将ActionDrawerToggle与DrawerLayout的状态同步
+			        //将ActionBarDrawerToggle中的drawer图标，设置为ActionBar中的Home-Buttond的ICON
+			        mDrawerToggle.syncState();
+			    }
+
+			    @Override//屏幕发生旋转
+			    public void onConfigurationChanged(Configuration newConfig) {
+			        super.onConfigurationChanged(newConfig);
+			        mDrawerToggle.onConfigurationChanged(newConfig);
+			    }
+
+			    @Override
+			    public boolean onCreateOptionsMenu(Menu menu) {
+			        // Inflate the menu; this adds items to the action bar if it is present.
+			        getMenuInflater().inflate(R.menu.main, menu);
+			        return true;
+			    }
+
+			    @Override
+			    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			        Fragment contentFragment = new ContentFragment();
+			        Bundle args = new Bundle();
+			        args.putString("text", menuList.get(position));
+			        contentFragment.setArguments(args);
+
+
+			        FragmentManager fragmentManager = getFragmentManager();
+			        fragmentManager.beginTransaction().replace(R.id.content_frame, contentFragment).commit();
+			        mDrawerLayout.closeDrawer(mDrawerlist);
+
+			    }
+			}
+
+
+
+2.
+
+	在 menu 中添加
+
+	
+			<?xml version="1.0" encoding="utf-8"?>
+		<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+		        <item
+		            android:id="@+id/action_websearch"
+		            android:icon="@drawable/action_search"
+		            android:title="webSearch"
+		            android:showAsAction="ifRoom">
+
+		        </item>
+		</menu>
 
 
 
@@ -5530,7 +5687,13 @@ android:textSize="25sp"//字的
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+SurfaceView是简单高效的用于渲染图形的类，适合用于简单的2D游戏开发。
 
 
 
@@ -5538,92 +5701,538 @@ android:textSize="25sp"//字的
 
 
 
+AndroidSurfaceView的使用 05:34
 
+AndroidSurfaceView的使用视频教程,主讲surfaceview,android surfaceview,surfaceview 大小,了解surfaceview和view的区别,学习surfaceview的使用
 
 
 
+2
+AndroidSurfaceView绘制单个图形 04:05
 
+AndroidSurfaceView绘制图形视频教程,主讲AndroidSurfaceView绘制图形,surfaceview,android surfaceview,surfaceview 透明,surfaceview 大小,学会用AndroidSurfaceView绘制单个图形
 
+1.
 
+	新建一个类 MyView 
 
+			package com.example.fangyi.surfaceview;
 
+			import android.content.Context;
+			import android.graphics.Canvas;
+			import android.graphics.Color;
+			import android.graphics.Paint;
+			import android.view.SurfaceHolder;
+			import android.view.SurfaceView;
 
+			/**
+			 * Created by FANGYI on 2016/2/20.
+			 */
+			public class MyView extends SurfaceView implements SurfaceHolder.Callback{
 
+			    private Paint paint = null;
+			    public MyView(Context context) {
+			        super(context);
+			        paint = new Paint();
+			        paint.setColor(Color.RED);
+			        getHolder().addCallback(this);//回调函数
+			    }
 
+			    public void draw() {
+			        Canvas canvas = getHolder().lockCanvas();//创建锁定画布
+			        canvas.drawColor(Color.WHITE);
+			        canvas.drawRect(0, 0, 100, 100, paint);//绘制方格
 
 
 
+			        getHolder().unlockCanvasAndPost(canvas);//解锁画布
+			    }
 
+			    @Override//创建之后
+			    public void surfaceCreated(SurfaceHolder holder) {
+			        draw();
+			    }
 
+			    @Override//状态改变
+			    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
+			    }
 
+			    @Override//结束
+			    public void surfaceDestroyed(SurfaceHolder holder) {
 
+			    }
+			}
 
 
+2.
 
+	把 MainActivity 中的
 
+	setContentView(R.id.activity_main);
 
+	改成
 
+	setContentView(new MyView(this));
 
 
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+AndroidSurfaceView绘制多个图形 07:08
 
+AndroidSurfaceView绘制多个图形视频教程,以android实例讲解AndroidSurfaceView绘制图形,了解surfaceview,android surfaceview,surfaceview 透明,surfaceview 大小等,掌握AndroidSurfaceView绘制多个图形
 
 
 
+package com.example.fangyi.surfaceview;
 
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
+/**
+ * Created by FANGYI on 2016/2/20.
+ */
+public class MyView_2 extends SurfaceView implements SurfaceHolder.Callback{
+    private Paint paint = null;
+    public MyView_2(Context context) {
+        super(context);
 
+        paint = new Paint();
+        paint.setColor(Color.RED);
 
+        getHolder().addCallback(this);
+    }
 
+    private  void draw() {
+        Canvas canvas = getHolder().lockCanvas();
+        canvas.drawColor(0xFFFFFFFF);
+        canvas.save();//保存
+        canvas.rotate(90, getWidth()/2, getHeight()/2);//旋转
+        canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight(), paint);//画线
+        canvas.restore();//复原，如果没有这句，下面的也都是旋转90度的效果
+        canvas.drawLine(0, getHeight() / 2 + 100, getWidth(), getHeight() + 100, paint);
 
+        getHolder().unlockCanvasAndPost(canvas);
+    }
 
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        draw();
+    }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
+    }
 
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
 
+    }
+}
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
+AndroidSurfaceView绘制组合图形1 11:13
 
+AndroidSurfaceView绘制组合图形视频教程,主讲AndroidSurfaceView绘制组合图形,绘图api,绘图 api,掌握用SurfaceView绘制组合图形的方法
 
 
+1.
 
+	package com.example.fangyi.surfaceview;
 
+	import android.content.Context;
+	import android.graphics.Canvas;
+	import android.graphics.Color;
+	import android.view.SurfaceHolder;
+	import android.view.SurfaceView;
 
+	import java.util.List;
 
+	/**
+	 * Created by FANGYI on 2016/2/20.
+	 */
+	public class MyView_3 extends SurfaceView implements SurfaceHolder.Callback{
 
+	    private Contanier contanier;
+	    private Rect rect;
+	    private Circle circle;
 
 
+	    public MyView_3(Context context) {
+	        super(context);
 
+	        contanier = new Contanier();
+	        rect = new Rect();
+	        circle = new Circle();
 
+	        rect.addChildrenView(circle);
+	        contanier.addChildrenView(rect);
 
+	        getHolder().addCallback(this);
+	    }
 
+	    public void draw() {
+	        Canvas canvas = getHolder().lockCanvas();
+	        canvas.drawColor(Color.WHITE);
+	        contanier.draw(canvas);
 
+	        getHolder().unlockCanvasAndPost(canvas);
+	    }
 
 
 
+	    @Override
+	    public void surfaceCreated(SurfaceHolder holder) {
+	        draw();
+	    }
 
+	    @Override
+	    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
+	    }
 
+	    @Override
+	    public void surfaceDestroyed(SurfaceHolder holder) {
 
+	    }
+	}
 
 
 
 
+2.
 
+	package com.example.fangyi.surfaceview;
 
+	import android.graphics.Canvas;
 
+	import java.util.ArrayList;
+	import java.util.List;
 
+	/**
+	 * Created by FANGYI on 2016/2/20.
+	 */
+	public class Contanier {
+	    private List<Contanier> children = null;
+	    public Contanier() {
+	        children = new ArrayList<Contanier>();
+	    }
 
+	    public void draw(Canvas canvas) {
+	        childrenView(canvas);
+	        for (Contanier c : children) {
+	            c.draw(canvas);
+	        }
+
+	    }
+
+	    public void childrenView(Canvas canvas) {
+
+	    }
+
+	    public void addChildrenView(Contanier child) {
+	        children.add(child);
+	    }
+
+	    public void removechildrenView(Contanier child) {
+	        children.remove(child);
+	    }
+	}
+
+
+3.
+
+
+	package com.example.fangyi.surfaceview;
+
+	import android.graphics.Canvas;
+	import android.graphics.Color;
+	import android.graphics.Paint;
+
+
+	/**
+	 * Created by FANGYI on 2016/2/20.
+	 */
+	public class Rect extends Contanier {
+
+	    private Paint paint = null;
+	    public Rect() {
+	        paint = new Paint();
+	        paint.setColor(Color.RED);
+	    }
+
+	    @Override
+	    public void childrenView(Canvas canvas) {
+	        super.childrenView(canvas);
+	        canvas.drawRect(0, 0, 100, 100 , paint);
+	    }
+	}
+
+
+4.
+
+	package com.example.fangyi.surfaceview;
+
+	import android.graphics.Canvas;
+	import android.graphics.Color;
+	import android.graphics.Paint;
+
+	/**
+	 * Created by FANGYI on 2016/2/20.
+	 */
+	public class Circle extends Contanier{
+	    private Paint paint = null;
+	    public Circle() {
+	        paint = new Paint();
+	        paint.setColor(Color.BLUE);
+	    }
+
+	    @Override
+	    public void childrenView(Canvas canvas) {
+	        super.childrenView(canvas);
+	        canvas.drawCircle(50, 50, 50, paint);
+	    }
+	}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+AndroidSurfaceView绘制组合图形2 05:10
+
+AndroidSurfaceView绘制组合图形2视频教程,继续主讲AndroidSurfaceView绘制组合图形,SurfaceView api,绘图api,绘图 api,全面掌握SurfaceView绘制组合图形的用法
+
+
+
+
+
+1.
+
+
+package com.example.fangyi.surfaceview;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * Created by FANGYI on 2016/2/20.
+ */
+public class MyView_3 extends SurfaceView implements SurfaceHolder.Callback{
+
+    private Contanier contanier;
+    private Rect rect;
+    private Circle circle;
+
+
+    public MyView_3(Context context) {
+        super(context);
+
+        contanier = new Contanier();
+        rect = new Rect();
+        circle = new Circle();
+
+        rect.addChildrenView(circle);
+        contanier.addChildrenView(rect);
+
+        getHolder().addCallback(this);
+    }
+
+    private Timer timer = null;
+    private TimerTask task = null;
+
+    public void startTimer() {
+        timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                draw();
+            }
+        };
+        timer.schedule(task, 100, 100);
+    }
+
+    public void stopTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    public void draw() {
+        Canvas canvas = getHolder().lockCanvas();
+        canvas.drawColor(Color.WHITE);
+        contanier.draw(canvas);
+
+        getHolder().unlockCanvasAndPost(canvas);
+    }
+
+
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        startTimer();
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        stopTimer();
+    }
+}
+
+
+
+2.
+
+
+package com.example.fangyi.surfaceview;
+
+import android.graphics.Canvas;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by FANGYI on 2016/2/20.
+ */
+public class Contanier {
+    private List<Contanier> children = null;
+    private float x = 0, y = 0;
+    public Contanier() {
+        children = new ArrayList<Contanier>();
+    }
+
+    public void draw(Canvas canvas) {
+
+        canvas.save();
+        canvas.translate(getX(), getY());//移动
+        childrenView(canvas);
+        for (Contanier c : children) {
+            c.draw(canvas);
+        }
+        canvas.restore();
+    }
+
+    public void childrenView(Canvas canvas) {
+
+    }
+
+    public void addChildrenView(Contanier child) {
+        children.add(child);
+    }
+
+    public void removechildrenView(Contanier child) {
+        children.remove(child);
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+}
+
+
+
+
+
+3.
+
+package com.example.fangyi.surfaceview;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+
+
+/**
+ * Created by FANGYI on 2016/2/20.
+ */
+public class Rect extends Contanier {
+
+    private Paint paint = null;
+    public Rect() {
+        paint = new Paint();
+        paint.setColor(Color.RED);
+    }
+
+    @Override
+    public void childrenView(Canvas canvas) {
+        super.childrenView(canvas);
+        canvas.drawRect(0, 0, 100, 100 , paint);
+        this.setY(this.getY() +1);
+    }
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Android 中的消息通知 Toast 和 Notification
+
+
+
+弹出通知Toast 15:22
+
+本课时学习创建长短不一的Toast提示，并自定义Toast在屏幕上的位置以及Toast的外观。
+
+
+
+        showToastShort = (Button) findViewById(R.id.shouToast);
+        showToastLong = (Button) findViewById(R.id.shouToastLong);
+        showToastShort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "显示一个简短的Toast", Toast.LENGTH_SHORT).show();//显示时间短一点
+            }
+        });
+        showToastLong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "显示一个较长的Toast", Toast.LENGTH_LONG).show();//显示时间长一点
+            }
+        });
 
 
 
