@@ -6322,17 +6322,33 @@ Android项目开发实战:自定义左右菜单
 	新建类 MainUI 
 
 
-		package com.example.fangyi.mymenu;
+		ppackage com.example.fangyi.mymenu;
 
 		import android.content.Context;
 		import android.graphics.Color;
 		import android.util.AttributeSet;
+		import android.view.MotionEvent;
 		import android.widget.FrameLayout;
 		import android.widget.RelativeLayout;
 
 		/**
 		 * Created by FANGYI on 2016/2/21.
 		 */
+
+		//                   RelativeLayout(最大的边框)
+		//        ***************(t)***************
+		//        *         *           *         *
+		//        *         *          (r)        *
+		//        *leftMenu *           *         *
+		//        *         *           *         *
+		//        *         *middleMenu *         *
+		//        *         *           *         *
+		//        *        (L)          *rightMenu*
+		//        *         *           *         *
+		//        *         *           *         *
+		//        ***************(b)***************
+
+
 		public class MainUI extends RelativeLayout{
 		    private Context context;
 		    private FrameLayout leftMenu;
@@ -6349,13 +6365,14 @@ Android项目开发实战:自定义左右菜单
 		        initView(context);
 		    }
 
+		    //初始化方法
 		    private void initView(Context context) {
 		        this.context = context;
-		        leftMenu = new FrameLayout(context);
-		        middleMenu = new FrameLayout(context);
-		        rightMenu = new FrameLayout(context);
+		        leftMenu = new FrameLayout(context);//左菜单
+		        middleMenu = new FrameLayout(context);//中间屏幕区域
+		        rightMenu = new FrameLayout(context);//右菜单
 
-		        leftMenu.setBackgroundColor(Color.RED);
+		        leftMenu.setBackgroundColor(Color.RED);//赋色
 		        middleMenu.setBackgroundColor(Color.GREEN);
 		        rightMenu.setBackgroundColor(Color.BLUE);
 
@@ -6364,7 +6381,7 @@ Android项目开发实战:自定义左右菜单
 		        addView(rightMenu);
 		    }
 
-		    @Override//测量高度宽度
+		    @Override//测量宽度、高度，下面函数的宽度和高度是屏幕的
 		    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
@@ -6379,20 +6396,22 @@ Android项目开发实战:自定义左右菜单
 		        rightMenu.measure(temoWidthMeasure, heightMeasureSpec);
 		    }
 
-		    @Override//当前上下左右边界的位置，左l 上t，下b，右r
+		    @Override//填充，当前上下左右边界的位置，左l 上t，下b，右r
 		    protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		        super.onLayout(changed, l, t, r, b);
 
+		        //当前屏幕位置
 		        middleMenu.layout(l, t, r ,b);
 
 		        leftMenu.layout(l - leftMenu.getMeasuredWidth(), t, r, b);
-		        rightMenu.layout(l + middleMenu.getMeasuredWidth(),
-		                t,
+
+		        rightMenu.layout(
+		                l + middleMenu.getMeasuredWidth(), t,
 		                l + middleMenu.getMeasuredWidth()
 		                        + rightMenu.getMeasuredWidth(), b);
 		    }
-		}
 
+		}
 
 
 
@@ -6429,6 +6448,651 @@ Android项目开发实战:自定义左右菜单
 菜单左右滑动 12:25
 
 本课时讲解使用逻辑，找出滑动中间点，并对事件做处理，主要针对滑动事件。
+
+
+
+
+
+
+    private boolean isTestCompete;//判断事件
+    private boolean isleftrightEvent;
+
+    @Override//事件分发
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (!isTestCompete) {
+            getEventType(ev);//对事件进行处理
+            return true;
+        }
+        if (isleftrightEvent) {//如果是左右滑动
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_MOVE:
+                    int curScrollX = getScrollX();//滚动的距离
+                    int dis_x = (int) (ev.getX()-point.x);//手指放下，以及滑动的距离
+
+                    int expectX = -dis_x + curScrollX;//>20向右，<20向左，他俩差值在20之间，只不过一个是正的一个是负的
+
+                    int finalX = 0;//滑动多少滚动多少，
+
+                    if (expectX <0) {
+                        finalX = Math.max(expectX, -leftMenu.getMeasuredWidth());
+                    }else {
+                        finalX = Math.min(expectX, rightMenu.getMeasuredHeight());
+                    }
+                    scrollTo(finalX, 0);//移动到当前这个位置
+                    point.x = (int) ev.getX();
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                        isleftrightEvent = false;
+                        isTestCompete = false;
+            }
+        }else {//其他的初始化操作，
+            switch (ev.getActionMasked()) {
+                case MotionEvent.ACTION_UP:
+                    isleftrightEvent = false;
+                    isTestCompete = false;
+                    break;
+            }
+
+        }
+
+
+        return super.dispatchTouchEvent(ev);
+    }
+
+    private Point point = new Point(); //获取点，根据点来获取到滑动的距离，根据滑动距离判断是滑动还是点击
+    private static final int TEST_DIS = 20;//大于20，滑动，小于20点击
+
+
+    private void getEventType(MotionEvent ev) {
+        switch (ev.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+                point.x = (int) ev.getX();
+                point.y = (int) ev.getY();
+
+                break;
+
+            case MotionEvent.ACTION_MOVE:   //移动
+                int dX = (int) Math.abs(ev.getX() - point.x);//左右滑动的距离
+                int dY = (int) Math.abs(ev.getY() - point.y);//上下滑动的距离
+                if (dX >= TEST_DIS && dX>dY) {
+                    //左右滑动
+                    isleftrightEvent = true;
+                    isTestCompete = true;
+                    //为了保证每次滑动以后继续滑动，我们还要获取当前点的坐标
+                    point.x = (int) ev.getX();
+                    point.y = (int) ev.getY();
+
+
+
+                }else if (dY >= TEST_DIS && dY>dX) {
+                    //上下滑动
+                    isleftrightEvent = false;
+                    isTestCompete = true;
+                    //为了保证每次滑动以后继续滑动，我们还要获取当前点的坐标
+                    point.x = (int) ev.getX();
+                    point.y = (int) ev.getY();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL: //触摸边缘
+                break;
+        }
+    }
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+加入左右滑动动画 06:12
+
+本课时讲解通过使用 Scroll 进行滑动事件处理，主要是自动滑动，增加用户体验。
+
+添加蒙版效果 05:39
+
+本课时讲解如何添加蒙版效果，通过增加 View，对 View 的透明度做处理，完成蒙版的添加。
+
+1.
+
+
+
+package com.jikexueyuan.mymenu;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.Scroller;
+
+
+/**
+ * Created by FANGYI on 2016/2/21.
+ */
+
+//                   RelativeLayout(最大的边框)
+//        ***************(t)***************
+//        *         *           *         *
+//        *         *          (r)        *
+//        *leftMenu *           *         *
+//        *         *           *         *
+//        *         *middleMenu *         *
+//        *         *           *         *
+//        *        (L)          *rightMenu*
+//        *         *           *         *
+//        *         *           *         *
+//        ***************(b)***************
+//        
+//        
+
+public class MainUI extends RelativeLayout {
+	private Context context;
+	private FrameLayout leftMenu;
+	private FrameLayout middleMenu;
+	private FrameLayout rightMenu;
+	private FrameLayout middleMask;
+	private Scroller mScroller;
+	public static final int LEFT_ID = 0xaabbcc;
+	public static final int MIDEELE_ID = 0xaaccbb;
+	public static final int RIGHT_ID = 0xccbbaa;
+
+	public MainUI(Context context) {
+		super(context);
+		initView(context);
+	}
+
+	public MainUI(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		initView(context);
+	}
+ //初始化方法
+	private void initView(Context context) {
+		this.context = context;
+		mScroller = new Scroller(context, new DecelerateInterpolator());
+
+		leftMenu = new FrameLayout(context);//左菜单
+		middleMenu = new FrameLayout(context);//中间屏幕区域
+		rightMenu = new FrameLayout(context);//右菜单
+		middleMask = new FrameLayout(context);
+
+		leftMenu.setBackgroundColor(Color.RED);
+		middleMenu.setBackgroundColor(Color.GREEN);
+		rightMenu.setBackgroundColor(Color.RED);
+		middleMask.setBackgroundColor(0x88000000);
+
+		leftMenu.setId(LEFT_ID);
+		middleMenu.setId(MIDEELE_ID);
+		rightMenu.setId(RIGHT_ID);
+
+		addView(leftMenu);//填充到最大的RelativeLayout中
+		addView(middleMenu);
+		addView(rightMenu);
+		addView(middleMask);
+
+		middleMask.setAlpha(0);
+	}
+	
+	public float onMiddleMask(){
+		System.out.println("透明度:"+middleMask.getAlpha());
+		return middleMask.getAlpha();
+	}
+	
+	@Override//根据滑动的距离变化而变化
+	public void scrollTo(int x, int y) {
+		super.scrollTo(x, y);
+		onMiddleMask();
+		int curX = Math.abs(getScrollX());
+		float scale = curX/(float)leftMenu.getMeasuredWidth();
+		middleMask.setAlpha(scale);
+		
+	}
+
+	@Override//测量宽度、高度，下面函数的宽度和高度是屏幕的
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		middleMenu.measure(widthMeasureSpec, heightMeasureSpec);
+		middleMask.measure(widthMeasureSpec, heightMeasureSpec);
+
+		//先获取当前屏幕最大的宽度
+		int realWidth = MeasureSpec.getSize(widthMeasureSpec);
+		//屏幕的百分之80，第一个参数是size，第二个参数是以怎样的方式进行测量，EXACTLY精准,AT_MOST自适应，UNSPECIFIED未定义
+		int tempWidthMeasure = MeasureSpec.makeMeasureSpec(
+				(int) (realWidth * 0.8f), MeasureSpec.EXACTLY);
+
+		leftMenu.measure(tempWidthMeasure, heightMeasureSpec);
+		rightMenu.measure(tempWidthMeasure, heightMeasureSpec);
+	}
+
+	@Override//填充，当前上下左右边界的位置，左l 上t，下b，右r
+	protected void onLayout(boolean changed, int l, int t, int r, int b) {
+		super.onLayout(changed, l, t, r, b);
+		//当前屏幕位置
+		middleMenu.layout(l, t, r, b);
+		middleMask.layout(l, t, r, b);
+		leftMenu.layout(l - leftMenu.getMeasuredWidth(), t, r, b);
+		rightMenu.layout(
+				l + middleMenu.getMeasuredWidth(),
+				t,
+				l + middleMenu.getMeasuredWidth()
+						+ rightMenu.getMeasuredWidth(), b);
+	}
+
+	private boolean isTestCompete;
+	private boolean isleftrightEvent;
+
+	@Override//事件分发
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		if (!isTestCompete) {
+			getEventType(ev);//对事件进行处理
+			return true;
+		}
+		if (isleftrightEvent) {//如果是左右滑动
+			switch (ev.getActionMasked()) {
+			case MotionEvent.ACTION_MOVE:
+				int curScrollX = getScrollX();//滚动的距离
+				int dis_x = (int) (ev.getX() - point.x);//手指放下，以及滑动的距离
+				int expectX = -dis_x + curScrollX;//>20向右，<20向左，他俩差值在20之间，只不过一个是正的一个是负的
+
+				int finalX = 0;//滑动多少滚动多少，
+
+				if (expectX < 0) {
+					finalX = Math.max(expectX, -leftMenu.getMeasuredWidth());
+				} else {
+					finalX = Math.min(expectX, rightMenu.getMeasuredWidth());
+				}
+				scrollTo(finalX, 0);//移动到当前这个位置
+				point.x = (int) ev.getX();
+				break;
+
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				curScrollX = getScrollX();
+				if (Math.abs(curScrollX) > leftMenu.getMeasuredWidth() >> 1) {
+					//当滚动的距离大于一半时候，弹出来
+					if (curScrollX < 0) {
+						//<0,手指向右动，出现左菜单
+						////为了体验效果，从手指的位置开始滚动出来,第五个参数是动画时间
+						mScroller.startScroll(curScrollX, 0,
+								-leftMenu.getMeasuredWidth() - curScrollX, 0,
+								200);
+					} else {
+						//当滚动的距离小于一半，复原回原位
+						mScroller.startScroll(curScrollX, 0,
+								leftMenu.getMeasuredWidth() - curScrollX, 0,
+								200);
+					}
+
+				} else {
+					mScroller.startScroll(curScrollX, 0, -curScrollX, 0, 200);
+				}
+				invalidate();//View的重绘，刷新
+				isleftrightEvent = false;
+				isTestCompete = false;
+				break;
+			}
+		} else {//其他的初始化操作
+			switch (ev.getActionMasked()) {
+			case MotionEvent.ACTION_UP:
+				isleftrightEvent = false;
+				isTestCompete = false;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		return super.dispatchTouchEvent(ev);
+	}
+
+	@Override//回调的机制
+	public void computeScroll() {
+		super.computeScroll();
+		if (!mScroller.computeScrollOffset()) {
+			return;
+		}
+		int tempX = mScroller.getCurrX();//定义一个滑动整体的值
+		scrollTo(tempX, 0);
+	}
+
+	private Point point = new Point();//获取点，根据点来获取到滑动的距离，根据滑动距离判断是滑动还是点击
+	private static final int TEST_DIS = 20;//大于20，滑动，小于20点击
+
+	private void getEventType(MotionEvent ev) {
+		switch (ev.getActionMasked()) {
+		case MotionEvent.ACTION_DOWN:
+			point.x = (int) ev.getX();
+			point.y = (int) ev.getY();
+			super.dispatchTouchEvent(ev);
+			break;
+
+		case MotionEvent.ACTION_MOVE://移动
+			int dX = Math.abs((int) ev.getX() - point.x);//左右滑动的距离
+			int dY = Math.abs((int) ev.getY() - point.y);//上下滑动的距离
+			if (dX >= TEST_DIS && dX > dY) { // 左右滑动
+				isleftrightEvent = true;
+				isTestCompete = true;
+				//为了保证每次滑动以后继续滑动，我们还要获取当前点的坐标
+				point.x = (int) ev.getX();
+				point.y = (int) ev.getY();
+			} else if (dY >= TEST_DIS && dY > dX) { // 上下滑动
+				isleftrightEvent = false;
+				isTestCompete = true;
+				//为了保证每次滑动以后继续滑动，我们还要获取当前点的坐标
+				point.x = (int) ev.getX();
+				point.y = (int) ev.getY();
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_CANCEL://触摸边缘
+			super.dispatchTouchEvent(ev);
+			isleftrightEvent = false;
+			isTestCompete = false;
+			break;
+		}
+	}
+
+}
+
+
+
+
+2.
+
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+
+public class LeftMenu extends Fragment{
+
+	@Override
+	public View onCreateView(LayoutInflater inflater,
+			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.left, container,false);
+		v.findViewById(R.id.button1).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				System.out.println("Hello jikexueyuan.com");
+			}
+		});
+		return v;
+	}
+}
+
+
+
+
+3.
+
+	新建一个 left.xml 文件
+	添加一个按钮，ID 为 button
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+2D翻转-创建动画 10:12
+
+本课时讲解通过使用ScaleAnimation完成动画的创建，并且添加点击事件完成图片的缩放。
+
+本课时讲解添加动画监听事件，复写方法，在动画结束后执行第二个动画并隐藏之前的View，实现2D卡片的翻转效果。
+
+
+
+
+
+package com.example.fangyi.myapplication;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity {
+
+    private ImageView imageA;
+    private ImageView imageB;
+
+    private ScaleAnimation sato0 = new ScaleAnimation(1, 0, 1, 1,
+            Animation.RELATIVE_TO_PARENT, 0.5f, Animation.RELATIVE_TO_PARENT,
+            0.5f);
+    private ScaleAnimation sato1 = new ScaleAnimation(0, 1, 1, 1,
+            Animation.RELATIVE_TO_PARENT, 0.5f, Animation.RELATIVE_TO_PARENT,
+            0.5f);
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initView();
+        findViewById(R.id.root).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (imageA.getVisibility() == View.VISIBLE) {
+                    imageA.startAnimation(sato0);
+                }else{
+                    imageB.startAnimation(sato0);
+                }
+            }
+        });
+
+    }
+
+    private void shwoImageA(){
+        imageA.setVisibility(View.VISIBLE);
+        imageB.setVisibility(View.INVISIBLE);
+    }
+
+    private void showImageB(){
+        imageA.setVisibility(View.INVISIBLE);
+        imageB.setVisibility(View.VISIBLE);
+    }
+
+    private void initView(){
+        imageA = (ImageView) findViewById(R.id.ivA);
+        imageB = (ImageView) findViewById(R.id.ivB);
+        shwoImageA();
+        sato0.setDuration(500);
+        sato1.setDuration(500);
+
+        sato0.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (imageA.getVisibility() == View.VISIBLE) {
+                    imageA.setAnimation(null);
+                    showImageB();
+                    imageB.startAnimation(sato1);
+                }else{
+                    imageB.setAnimation(null);
+                    shwoImageA();
+                    imageA.startAnimation(sato1);
+                }
+            }
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
