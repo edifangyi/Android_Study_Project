@@ -7524,24 +7524,133 @@ Android开发中，离不开对文件的操作，因为文件可以存储大量�
 
 
 
+package com.example.fangyi.fileoperation;
+
+/**
+ * Created by FANGYI on 2016/2/22.
+ */
+public class FileUtil {
+    //公用文件名
+    public static final String FILE__NAME = "myfile.txt";
+    public static final String FOLDER__NAME = "NewFolder";//新文件夹
+    public static final String FOLDER__NAME = 
+    			"NewFolder2" + File.separator + "Subfolder2";//多级目录
+}
+
+
+
+package com.example.fangyi.fileoperation;
+
+import java.io.File;
+
+/**
+ * Created by FANGYI on 2016/2/22.
+ */
+public class CreatFile {
+	public static void main(String[] args) {
+	    File file = new File(FileUtil.FILE__NAME);//传入一个文件名称，可以是绝对路径的也可是相对路径的,也可以仅仅是文件名
+	    if (!file.exists()) {//如果不存在
+	    	try {
+	    		file.createNewFile();
+	    		System.out.protected("文件已经创建了");
+	    	} catch (IOExption e) {
+	    		e.printStackTrace();
+	    	}
+	    }else {
+	    	System.out.protected("文件已经存在");
+	    	System.out.protected("文件名为：" + file.getName());
+	    	System.out.protected("文件相对路径为：" + file.getPath() + "绝对路径：" + file.getAbsolutePath());
+	    	//相对路径：my.file.txt
+	    	//文件绝对路径：/Users/acely/Desktop`````````/myfile.txt
+	    }
+	} 
+}
 
 
 
 
 
+package com.example.fangyi.fileoperation;
+
+/**
+ * Created by FANGYI on 2016/2/22.
+ * 删除
+ */
+public class DeleteFile {
+    public static void main(String[] args) {
+	    File file = new File(FileUtil.FILE__NAME);//传入一个文件名称，可以是绝对路径的也可是相对路径的,也可以仅仅是文件名
+	    if (!file.exists()) {//如果当前的文件不存在
+	    	try {
+	    		file.createNewFile();//创建一个新的
+	    		System.out.protected("文件已经创建了");
+	    	} catch (IOExption e) {
+	    		e.printStackTrace();
+	    	}
+	    }else {//如果当前文件存在
+	    	System.out.protected("文件已经存在");
+	    	System.out.protected("文件名为：" + file.getName());
+	    	System.out.protected("文件相对路径为：" + file.getPath() + "绝对路径：" + file.getAbsolutePath());
+	    	//相对路径：my.file.txt
+	    	//文件绝对路径：/Users/acely/Desktop`````````/myfile.txt
+	    	//
+	    	file.delete();
+	    	System.out.protected("文件已经删除了");
+	    }
+	} 
+}
 
 
 
+package com.example.fangyi.fileoperation;
+
+/**
+ * Created by FANGYI on 2016/2/22.
+ * 重命名
+ */
+public class RenameFile {
+    public static void main(String[] args) {
+	    File file = new File(FileUtil.FILE__NAME);//myfile.txt
+	    File newfile = new File("anotherFile.txt");
+
+	    file.renameTo(newfile);//仅仅操作了文件本身，而文件对象本身（内容）是不会改变的
+	    System.out.printlned("文件已经成功的重命名了：" + file.getName());//输出结果：myfile.txt,已经重命名了，但是并没有改变对象的名字
+	    System.out.protected("文件大小为：" + file.length());//31，返回的是字节
+	    System.out.protected("文件是否可读：" + file.canRead());
+	    System.out.protected("文件是否可读：" + file.canRead());
+	    System.out.protected("文件是否可写：" + file.canWride());
+	   	System.out.protected("文件是否隐藏：" + file.isHidden());
+	} 
+}
 
 
 
+package com.example.fangyi.fileoperation;
+
+/**
+ * Created by FANGYI on 2016/2/22.
+ * 文件夹的操作
+ */
+public class RenameFile {
+    public static void main(String[] args) {
+	    File Folder = new File(FileUtil.FOLDER__NAME);//myfile.txt
+	    if (!folder.exists()) {
+	    	// try {
+	    	// 	// folder.createNewFile();//创建一个新的不带后缀的文件
+	    	// } catch (IOExption e) {
+	    	// 	e.printStackTrace();
+	    	// }
+
+	    	folder.mkdir();
+	    	folder.mkdirs();//可以创建多级目录中所有的文件夹
+
+	    	folder.delete();	//文件夹的删除，不可能移除多级目录，必须是空的
+	    }
+	    
+	} 
+}
 
 
-
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
