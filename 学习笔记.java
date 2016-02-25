@@ -7655,13 +7655,25 @@ public class RenameFile {
 
 
 
+读取 Assets 中的文件数据 09:39
 
+本课时讲解 使用 getResources().getAssets().open(“filename”) 获取Assets文件夹中的文件数据流。
+private static final String TAG = "ReadAssets";
 
+		try {
+			InputStream is = getResources().getAssets().open("info.txt");//open 返回 InputStream 类型，返回字节流bit，所以当我们读取文本文件时候，需要包装成字符流
+			InputStreamReader isr = new InputStreamReader(is, "UTF-8");//字节流包装字符流
+			BufferedReader bfr = new BufferedReader(isr); //提供一个缓冲区
+			// Log.i(TAG, bfr.readLine());//每次点击都重新读取一行
 
+			String in = "";							//一次输出所有行的数据
+			while ((in = bfr.readLine()) != null) {
+				Log.i(TAG, in);
+			}
 
-
-
-
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 
 
