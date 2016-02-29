@@ -3269,7 +3269,60 @@ Android 常用控件
                 if (rbA.isChecked()) {
                     Toast.makeText(SingleChoose.this,"所选是正确的",Toast.LENGTH_SHORT).show();
                 }else {
-                    Toast.makeText(SingleChoose.this,"所选是错误的",Toast.LENGTH_SHORT).show();
+                            et = (EditText) findViewById(R.id.er);
+        show = (TextView) findViewById(R.id.show);
+
+        findViewById(R.id.writeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                    OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+                    osw.write(et.getText().toString());
+                    //输出所有缓冲区的内容
+                    osw.flush();
+                    fos.flush();
+
+                    //关闭顺序，fos先打开的，后打开的先关闭，逐层关闭
+                    osw.close();
+                    fos.close();
+                    Toast.makeText(getApplicationContext(), "写入完成", Toast.LENGTH_LONG).show();
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        findViewById(R.id.readBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    FileInputStream fis = openFileInput(filename);
+                    InputStreamReader is = new InputStreamReader(fis, "UTF-8");
+                    char input[] = new char[fis.available()];//获取文件长度
+                    is.read(input);
+
+                    is.close();
+                    fis.close();
+                    String readed = new String(input);
+
+                    show.setText(readed);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });.makeText(SingleChoose.this,"所选是错误的",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -7658,16 +7711,20 @@ public class RenameFile {
 读取 Assets 中的文件数据 09:39
 
 本课时讲解 使用 getResources().getAssets().open(“filename”) 获取Assets文件夹中的文件数据流。
-private static final String TAG = "ReadAssets";
+
+
+
+private static final String TAG = "ReadAssets"; 
 
 		try {
+			//getAssets() 固定读取Assets文件夹的数据
 			InputStream is = getResources().getAssets().open("info.txt");//open 返回 InputStream 类型，返回字节流bit，所以当我们读取文本文件时候，需要包装成字符流
 			InputStreamReader isr = new InputStreamReader(is, "UTF-8");//字节流包装字符流
-			BufferedReader bfr = new BufferedReader(isr); //提供一个缓冲区
-			// Log.i(TAG, bfr.readLine());//每次点击都重新读取一行
+			BufferedReader bfr = new BufferedReader(isr); //进一步包装，提供一个缓冲区
+			// Log.i(TAG, bfr.readLine());//每次点击都重新读取一行,从bfr中读取
 
-			String in = "";							//一次输出所有行的数据
-			while ((in = bfr.readLine()) != null) {
+			String in = "";	//先指定一个空值						//一次输出所有行的数据
+			while ((in = bfr.readLine()) != null) {//读取的内容不为空，表明当前行有内容
 				Log.i(TAG, in);
 			}
 
@@ -7675,50 +7732,173 @@ private static final String TAG = "ReadAssets";
 			e.printStackTrace();
 		}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+读取raw目录中的文件数据 08:03
+
+本课时讲解使用 getResources().openRawResource(fileid) 方法获取raw文件夹中文件的数据流。
+
+Ctrl+Alt+T：选中一块代码，按此组合键，可快速添加if 、for、try/catch等语句。
+
+
+
+在res文件夹中默认没有raw文件夹
+
+private static final String TAG = "RawData"; 
+
+
+                try {
+                    InputStream is = getResources().openRawResource(R.raw.info);//直接调用目录id，返回inputStream 类型
+                    InputStreamReader isr = new InputStreamReader(is, "UTF-8");//字节流包装字符流
+                    BufferedReader bfr = new BufferedReader(isr); //进一步包装，提供一个缓冲区
+                    String inString = "";
+                    while(inString = bfr.readLine()) != null) {
+                        Log.i(Tag, inString)
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+读写内部存储的文件数据 17:53
+
+本课讲解使用 openFileOutput() 方法获取内部文件的输出流与文件数据的写入，使用 openFileInput() 获取内部文件的输入流并将数据读取出来。 
 
 
 
 
-
-2
-
-2
-
+    private String filename = "test";
+    private EditText et;
+    private TextView show;
 
 
 
+        et = (EditText) findViewById(R.id.er);
+        show = (TextView) findViewById(R.id.show);
+
+        findViewById(R.id.writeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    FileOutputStream fos = openFileOutput(filename, Context.MODE_PRIVATE);
+                    OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+                    osw.write(et.getText().toString());
+                    //输出所有缓冲区的内容
+                    osw.flush();
+                    fos.flush();
+
+                    //关闭顺序，fos先打开的，后打开的先关闭，逐层关闭
+                    osw.close();
+                    fos.close();
+                    Toast.makeText(getApplicationContext(), "写入完成", Toast.LENGTH_LONG).show();
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+        findViewById(R.id.readBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    FileInputStream fis = openFileInput(filename);
+                    InputStreamReader is = new InputStreamReader(fis, "UTF-8");
+                    char input[] = new char[fis.available()];//获取文件长度
+                    is.read(input);
+
+                    is.close();
+                    fis.close();
+                    String readed = new String(input);
+
+                    show.setText(readed);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+读取外部存储的文件数据 20:30
+
+ 本课讲解使用Environment.getExternalStorageDirectory()获取系统SD卡路径，并使用File类进行后续的操作。
 
 
 
+        findViewById(R.id.writeBtn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                File myfile = new File(sdcard, "This is my file.txt");//参数第一个是存储路径，存在内存卡里
+                if (!sdcard.exists()) {
+                    //如果没有sd卡，报错
+                    Toast.makeText(getApplicationContext(), "当前系统不具备SD卡目录", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                try {
+                    myfile.createNewFile();
+                    Toast.makeText(getApplicationContext(), "文件已经创建完成", Toast.LENGTH_LONG).show();
+                    FileOutputStream fos = new FileOutputStream(myfile);
+                    OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+                    osw.write(et.getText().toString());
+                    osw.flush();
+                    osw.close();
+                    fos.close();
+
+                    Toast.makeText(getApplicationContext(), "文件已经写入完成", Toast.LENGTH_LONG).show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
 
+        findViewById(R.id.readBtn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File myfile = new File(sdcard, "This is my file.txt");//参数第一个是存储路径，存在内存卡里
+                if (myfile.exists()) {
+                    try {
+                        FileOutputStream fis = new FileOutputStream(myfile);
+                        InputStreamReader is = new InputStreamReader(fis, "UTF-8");
+                        char input[] = new char[fis.available()];//获取文件长度
+                        is.read(input);
+                        is.close();
+                        fis.close();
+
+                        String inString = new String(input);
+                        show.setText(inString);
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                }
+            }
+        });
 
 
 
