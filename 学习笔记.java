@@ -7909,10 +7909,16 @@ private static final String TAG = "RawData";
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Android 读写首选项
 
+
+
+
 SharedPreference 简介 01:41
 
 SharedPreferences 是一种轻型的数据存储方式，它的本质是基于XML文件存储 Key-Value键值对数据，通常用来存储一些简单的配置信息，其存储位置在/data/data/<包名>/shared_prefs目录下。
 本课时介绍 SharedPreference。
+
+
+
 
 
 SharedPreference 数据的读写操作 13:43
@@ -7953,24 +7959,169 @@ EditText editor;
 		 });
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+PreferenceActivity使用方法  26:57
+
+SharedPreference 是纯操作，如果需要配合界面的话，则需要额外的开发，PreferenceActivity 提供了一种快速创建配置首选项界面的方法，并且自动在后台存储首选项数据。
+
+
+1.
+
+	创建一个 MyPreferenceActivity.class
+
+		package com.example.fangyi.preferenceactivity;
+
+		import android.os.Bundle;
+		import android.preference.PreferenceActivity;
+
+		/**
+		 * Created by FANGYI on 2016/3/2.
+		 */
+		public class MyPreferenceActivity extends PreferenceActivity {
+		    @Override
+		    protected void onCreate(Bundle savedInstanceState) {
+		        super.onCreate(savedInstanceState);
+		        addPreferencesFromResource(R.xml.mypreference);
+		    }
+		}
+
+2.
+
+	在 res 文件夹下创建 xml文件夹，在里面添加 mypreference.xml 文件
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+		    <CheckBoxPreference
+		        android:key="checkbox"
+		        android:title="是否开启"
+		        android:summaryOn="已经开启"
+		        android:summaryOff="已经关闭">
+
+		    </CheckBoxPreference>
+		</PreferenceScreen>
+
+
+
+3.
+	创建一个按钮
+
+        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), MyPreferenceActivity.class));
+            }
+        });
+
+
+4.
+	在 AndroidManifest 文件中对 MyPreferenceActivity 进行注册
+       
+
+        <activity android:name=".MyPreferenceActivity"
+            ></activity>
+
+
+
+5.
+
+	在 mypreference.xml 文件下添加
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	    <CheckBoxPreference
+	        android:key="checkbox"
+	        android:title="是否开启"
+	        android:summaryOn="已经开启"
+	        android:summaryOff="已经关闭">
+	    </CheckBoxPreference>
+
+	    <ListPreference
+	        android:key="list"
+	        android:title="选择一个选项"
+	        android:summary="请点击选择"
+	        android:entries="@array/entries"
+	        android:entryValues="@array/values">
+	    </ListPreference>
+
+	    <EditTextPreference
+	        android:key="text"
+	        android:dialogTitle="请输入你的名字"
+	        android:dialogMessage="有劳了"
+	        android:summary="请在此输入"
+	        android:title="请输入">
+
+	    </EditTextPreference>
+	</PreferenceScreen>
 
 
 
 
 
+6.
+
+	在 values 中创建 mylistpreference.xml 文件
+
+	上下选项一一对应的
 
 
+		<?xml version="1.0" encoding="utf-8"?>
+		<resources>
+		    <string-array name="entries">
+		        <item>Java</item>
+		        <item>C++</item>
+		        <item>C#</item>
+		        <item>Swift</item>
+		    </string-array>
+
+		    <string-array name="values">
+		        <item>Eclips</item>
+		        <item>Visual Studio</item>
+		        <item>Visual Studio</item>
+		        <item>Xcode</item>
+		    </string-array>
+		</resources>
 
 
+7.
+
+	在程序中 对项目的数据读取
+
+	public class MyPreferenceActivity extends PreferenceActivity {
+
+	    //checkboxPreference
+	    //listPreference
+	    //edittextPreference
+
+	    PreferenceManager manager;
+	    CheckBoxPreference checkBoxPreference;
+	    ListPreference listPreference;
+    	EditTextPreference editTextPreference;
+
+	    @Override
+	    protected void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        addPreferencesFromResource(R.xml.mypreference);
+
+	        manager = getPreferenceManager();
+	    
+	    //checkboxPreference
+	        checkBoxPreference = (CheckBoxPreference) manager.findPreference("checkbox");
+	        Toast.makeText(getApplicationContext(), "当前的状态为：" + checkBoxPreference.isChecked(), Toast.LENGTH_LONG).show();
+		
+		//listPreference
+	        listPreference = (ListPreference) manager.findPreference("list");
+	        Toast.makeText(getApplicationContext(), listPreference.getEntry() + "的开发环境为：" + listPreference.getValue(), Toast.LENGTH_LONG).show();
+	    
+	    //edittextPreference
+            editTextPreference = (EditTextPreference) manager.findPreference("text");
+    		Toast.makeText(getApplicationContext(), "你输入的内容为：" + editTextPreference.getText(), Toast.LENGTH_LONG).show();
 
 
-
-
-
-
-
-
-
+	    }
+	}
 
 
 
