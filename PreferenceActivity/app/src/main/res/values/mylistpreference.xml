@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries">
+        <item>Java</item>
+        <item>C++</item>
+        <item>C#</item>
+        <item>Swift</item>
+    </string-array>
+
+    <string-array name="values">
+        <item>Eclips</item>
+        <item>Visual Studio</item>
+        <item>Visual Studio</item>
+        <item>Xcode</item>
+    </string-array>
+
+
+</resources>

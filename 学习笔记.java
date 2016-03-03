@@ -8124,61 +8124,427 @@ SharedPreference 是纯操作，如果需要配合界面的话，则需要额外
 	}
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+SQLite是一种关系型数据库，并且SQLite是轻量级的数据库解决方案。SQLite支持多数的SQL92标准，在一些场合下其性能优于MySql等数据库引擎。本课程介绍了SQLite存储的使用方法。
+
+
+SQLite数据库的数据读取和写入 22:47
+
+创建扩展自SQLiteOpenHelper的类用于操作数据库，本课时讲解数据库的读取和写入方法，并将结果呈现在ListView当中。
+
+1.
+
+创建 Db.class 文件
+
+		package com.example.fangyi.preferenceactivity;
+
+		import android.content.Context;
+		import android.database.sqlite.SQLiteDatabase;
+		import android.database.sqlite.SQLiteOpenHelper;
+
+		/**
+		 * Created by FANGYI on 2016/3/2.
+		 */
+		public class Db extends SQLiteOpenHelper {
+
+			//name是存储的数据库的名字。CursorFactory数据库查询的结果，相当于一个指针，指向第一行。
+			//version 存储数据库的版本，他与onUpgrade有关，他是数据库升级的脚本
+		    public Db(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+		        super(context, "db", null, version);
+		    }
+
+		    @Override
+		    public void onCreate(SQLiteDatabase db) {
+		        //创建表 在SQLlist官网，语法部分有详细介绍
+        db.execSQL("CREATE TABLE user(" +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "name TEXT DEFAULT \"\"," +
+                "sex TEXT DEFAULT \"\")");
+		    }
+
+		    @Override
+		    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+		    }
+		}
+
+
+2.
+
+在 MainActivity 中添加
+
+
+
+        Db db = new Db(this);
+//写入
+//        SQLiteDatabase dbWrite = db.getWritableDatabase();
+//        ContentValues cv = new ContentValues();
+//        cv.put("name", "小张");
+//        cv.put("sex", "男");
+//        dbWrite.insert("user", null, cv);
+//
+//        cv.put("name", "小李");
+//        cv.put("sex", "女");
+//        dbWrite.insert("user", null, cv);
+//        dbWrite.close();//需要在用getWritableDatabase()获取
+
+		
+        SQLiteDatabase dbRead = db.getReadableDatabase();
+
+        //第二个参数new String[]{"name"}，返回name的
+        //第三个参数，查询的条件"name =\"小张\"，这样只查询小张
+        //第四个参数，查询的条件的参数，有时候我们防止SQL注入攻击，第三个参数位置我们写上"name=？",第四个参数写上new String[]{"小张"}，多个人名继续往下写
+        Cursor c = dbRead.query("uesr", null, "name=", null, null, null, null);
+
+        while (c.moveToNext()) {
+            //只要可以移到下一个，我们就读它的值
+            String name = c.getString(c.getColumnIndex("name")/*指定列的索引*/);
+            String sex = c.getString(c.getColumnIndex("sex"));
+
+            //输出
+            System.out.println(String.format("name=%s,sex=%s", name,sex));
+        }
+
+
+
+
+3.
+	如何把数据库和 Lsitview 结合起来
+
+	通过界面操作数据库 28:28
+
+	本课讲解在界面中实现数据的查找、插入、删除。
+
+
+
+
+import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SimpleCursorAdapter;
+
+public class MainActivity extends ListActivity {
+
+    private SimpleCursorAdapter adapter;
+    private EditText etName,etSex;
+    private Button btnAdd;
+    private Db db;
+    private SQLiteDatabase dbRead,dbWrite;
+    private View.OnClickListener btnAddListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ContentValues cv = new ContentValues();
+            cv.put("name", etName.getText().toString());
+            cv.put("sex", etSex.getText().toString());
+
+            dbWrite.insert("user", null, cv);
+
+            refreshListView();//刷新列表
+        }
+    };
+
+
+    private AdapterView.OnItemLongClickListener ListViewItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+            //弹出对话框是否真的删除
+            new AlertDialog.Builder(MainActivity.this).setTitle("提醒").setMessage("您确定要删除该项嘛").setNegativeButton("取消", null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Cursor c = adapter.getCursor();
+                    c.moveToPosition(position);//在参数里面加上final 就可以解除错误
+
+                    //数据所在数据库中的id，不是上边函数中的id，_id列
+                    int itemId = c.getInt(c.getColumnIndex("_id"));
+                    //删除
+                    dbWrite.delete("user", "_id=?", new String[]{itemId+""});
+
+                    refreshListView();
+                }
+            }).show();
+            return true;//长按返回true
+        }
+    };
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        etName = (EditText) findViewById(R.id.etName);
+        etSex = (EditText) findViewById(R.id.etSex);
+        btnAdd = (Button) findViewById(R.id.btnAdd);
+        btnAdd.setOnClickListener(btnAddListener);
+
+        db = new Db(this);
+        dbRead = db.getReadableDatabase();
+        dbWrite = db.getWritableDatabase();
+
+        adapter = new SimpleCursorAdapter(this, R.layout.user_list_cell, null, new String[]{"name","sex"}, new int[]{R.id.tvName,R.id.tvSex});
+        setListAdapter(adapter);
+
+        refreshListView();
+        getListView().setOnItemLongClickListener(ListViewItemLongClickListener);
+
+    }
+
+    //刷新列表
+    private void refreshListView() {
+        Cursor c = dbRead.query("user", null, null, null, null, null, null);
+        adapter.changeCursor(c);
+    }
+}
 
 jintianduanwang
 
+4. 
+
+	在 content_main 文件中添加
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.fangyi.preferenceactivity.MainActivity"
+    tools:showIn="@layout/activity_main"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Android 读写首选项"
+        android:id="@+id/btn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="293dp"
+        android:layout_weight="0.24">
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name:"/>
+
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sex:"/>
+
+        <EditText
+            android:id="@+id/etSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加"
+            android:id="@+id/btnAdd"/>
+
+    </LinearLayout>
+</LinearLayout>
 
 
 
 
+5.
+
+	在 layout 创建 user_list_cell.xml
+
+	<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+//大文本显示名字
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tvName" />
+//中文本显示性别
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="tvSex"
+        android:id="@+id/textView2" />
+</LinearLayout>
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+使用 ContentProvider 在应用间传递数据 19:58
+
+本课时讲解使用 ContentProvider 在应用间传递数据。
 
 
 
 
+1. 创建 Myprovider.class 
+
+package com.example.fangyi.contenwriter;
+
+import android.content.ContentProvider;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.support.annotation.Nullable;
+
+/**
+ * Created by FANGYI on 2016/3/3.
+ */
+public class MyProvder extends ContentProvider {
+
+    public  static final Uri URI = Uri.parse("content://com.example.fangyi.cp");
+    SQLiteDatabase database;
+
+    @Override
+    public boolean onCreate() {
+        database = getContext().openOrCreateDatabase("mucp.db3", Context.MODE_PRIVATE, null);
+        database.execSQL("create table tab(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL)");
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Cursor cursor = database.query("tab",  null, null, null, null, null, null);
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        database.insert("tab", "id", values);
+//        database.close();
+        return null;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        return 0;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        return 0;
+    }
+}
 
 
 
+2.
+	在 AndroidManifest 中进行配置
+
+        <provider
+            android:authorities="com.example.fangyi.cp"
+            android:name=".MyProvder"
+            android:exported="true">	//默认或者写false，外部应用无法访问
+
+        </provider>
+
+
+3.
+
+        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                write();
+            }
+        });
 
 
 
+    public void write() {
+        ContentValues values = new ContentValues();
+        values.put("name", "Java");
+        values.put("name", "Swift");
+        values.put("name", "C#");
+        values.put("name", "C++");
+        values.put("name", "Python");
+
+        getContentResolver().insert(MyProvder.URI, values);
+
+    }
 
 
+4.
+
+	在另一个应用中
+
+    Uri URI = Uri.parse("content://com.example.fangyi.cp");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        Cursor cursor = getContentResolver().query(URI, null, null, null, null);
+        cursor.moveToFirst();
+        for (int i = 0; i <cursor.getCount(); i++) {
+            String value = cursor.getString(cursor.getColumnIndex("name"));
+            Toast.makeText(getApplicationContext(), value, Toast.LENGTH_SHORT).show();
+            cursor.moveToNext();
+        }
 
 
 
