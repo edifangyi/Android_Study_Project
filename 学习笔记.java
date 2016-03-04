@@ -8669,8 +8669,49 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+生成与输出XML数据 12:31
+
+使用Android平台自带的API创建符合XML规范的数据，并且将XML数据输出。本课时讲解生成与输出XML数据。
 
 
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            
+
+
+            Document newxml = builder.newDocument();
+            Element languages = newxml.createEkement("languages");
+            languages.setAttribute("cat","it");
+
+            Element lanl = newxml.createEkement("lan");
+            lan1.setAttribute("id", "1");
+            Element name1 = newxml.createEkement("name");
+            name1.setTextContent("Java");
+            Element ide1 = newxml.createEkement("ide");
+            ide1.setTextContent("Eclipse");
+            lan1.appendChild(name1);
+            lan1.appendChild(ide1);
+            languages.appendChild(lan1);
+
+            Element lan2 = newxml.createEkement("lan");
+            lan1.setAttribute("id", "2");
+            Element name2 = newxml.createEkement("name");
+            name1.setTextContent("Seift");
+            Element ide2 = newxml.createEkement("ide");
+            ide2.setTextContent("Xcode");
+            lan2.appendChild(name2);
+            lan2.appendChild(ide2);
+            languages.appendChild(lan2);
+
+
+            newxml.adoptChild(languages);
+
+            TransFormerFactory tansFormerFactory = TransFormerFactory.newInstance();
+            Transformer transformer = transFormerFactory.newTransformer();
+            transformer.setOutputProperty("encoding", "utf-8");
+            StringWriter sw =  new StringWriter();
+            transformer.transform(new DOMSource(newxml), new streamResult(sw));
+            text.setText(sw.toString());
 
 
 
