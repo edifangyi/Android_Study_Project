@@ -8548,25 +8548,123 @@ public class MyProvder extends ContentProvider {
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+XML数据格式简介 03:44
+
+XML，即可扩展标记语言（Extensible Markup Language），标准通用标记语言的子集，一种用于标记电子文件使其具有结构性的标记语言。它可以用来标记数据、定义数据类型，
+是一种允许用户对自己的标记语言进行定义的源语言。本课时对XML数据格式进行介绍。
+
+
+2
+读取与解析XML数据 11:42
+
+使用Android平台自带的API加载XML数据，并且按照XML的结构将所有数据解析出来。本课时讲解读取与解析XML数据。
+
+
+
+3
+生成与输出XML数据 12:31
+
+使用Android平台自带的API创建符合XML规范的数据，并且将XML数据输出。本课时讲解生成与输出XML数据。
 
 
 
 
+1.
+
+
+新建 assets 文件夹  ,Languages.xml 
+
+			<?xml version="1.0" encoding="utf-8"?>
+			<Languages cat="it">
+			    <lan id="1">
+			        <name>Java</name>
+			        <ide>Eclipse</ide>
+			    </lan>
+			    <lan id="2">
+			        <name>Swift</name>
+			        <ide>Xcode</ide>
+			    </lan>
+			    <lan id="3">
+			        <name>C#</name>
+			        <ide>Visual Studio</ide>
+			    </lan>
+			</Languages>
+
+2.
+
+在 content_main 中添加一个 TextView
 
 
 
+3.
 
 
 
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView text;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        text = (TextView) findViewById(R.id.text);
+
+        try {
 
 
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            Document document = builder.parse(getAssets().open("languages.xml"));
+            Element element = document.getDocumentElement();//获取根元素
+
+            NodeList list = element.getElementsByTagName("lan");
+            for (int i = 0; i <list.getLength(); i++) {
+                Element lan = (Element) list.item(i);
+                text.append(lan.getAttribute("id") + "\n");
+                text.append(lan.getElementsByTagName("name").item(0).getTextContent() + "\n");
+                text.append(lan.getElementsByTagName("ide").item(0).getTextContent() + "\n");
+
+            }
 
 
-
-
-
-
-
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
 
 
 
