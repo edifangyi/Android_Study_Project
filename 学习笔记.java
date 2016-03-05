@@ -8717,6 +8717,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -8724,202 +8730,819 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+JSON数据格式简介 03:19
 
+JSON ：JavaScript 对象表示法（JavaScript Object Notation）。独立于语言和平台，比 XML 更小、更快，更易解析。本课时介绍JSON数据格式。
 
+JSON 语法是 JavaScript 对象表示法语法的子集
+	数据在名称/值中
+	数据由逗号分隔
+	花括号保存对象
+	方括号保存数组
 
+JSON 值可以是
+	数字（整数或浮点数
+	字符串（在双引号中）
+	逻辑值（true 或 false）
+	数组（方括号）
+	对象（花括号）
+	null
 
 
+JSON 对象在花括号中书写，对象可以包含多个名称/值对
+{"firstName":"John","lastName":"Doe"}
 
+firstName 表示 当前对应的键，或者是当前的名称
+John 是 firstName 的值
+使用 ， 就是下一个
 
+JSON 数组在方括号中书写，数组可包含多个对象
+{
+	"employees":[
+		{"firstName":"John","lastName":"Doe"},
+		{"firstName":"Anna","lastName":"Smith"},
+		{"firstName":"Peter","lastName":"Jones"}
+	],
+}
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+读取JSON格式数据 08:06
 
+Android平台自带了JSON解析的相关API，可以将文件、输入流中的数据转化为JSON对象，然后从对象中获取JSON保存的数据内容。本课时讲解读取JSON格式数据。
 
+1.
 
 
+在 assets 文件夹中存放 test.json
 
+{
+	"language":[
+		{"id":1,"ide":"Eclipse","name":"Java"},
+		{"id":2,"ide":"Xcode","name":"Swift"},
+		{"id":3,"ide":"Visual Studio","name":"C#"}
+	],
+	"cat":"it"//标准键字对
+}
 
 
 
 
 
+2.MainActivity 当中
 
+InputStreamReader isr = new InputStreamReader(getAssets()open("test.json"), "UTF-8");
+BufferedReader br = new BufferedReader(isr);
+String line;
+StringBuilder builder = new StringBuilder();
+while ((line = br.readLine()) != null) {
+	builder.append(line);
+}
+br.close();
+isr.close();
+JSONObject root = new JSONObject(builder.toString());
+System.out.println("cat="+root.getString("cat"));
+JSONArray array = root.getJSONArray("languages");
+for(int i = 0; i < array.length(); i++) {
+	JSONObject lan = array.getJSONObject(i);
+	System.out.println("----------------------------");
+	System.out.println("id="+lan.getInt("id"));
+	System.out.println("name="+lan.getString("name"))
+	System.out.println("ide="+lan.getString("ide"))
+}
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+3
+创建JSON格式数据 07:25
 
+Android平台自带了JSON构造的相关API，可以轻松地构造JSON对象、JSON数组，并且为他们赋值，而且很容易将JSON对象转换为字符串用于传播。本课时讲解创建JSON格式数据。
+// "cat":"it"
+JSONObject root = new JSONObject();
+root.put("cat", "it");//传入一个键值对 加上上面的一句用try包围
+//{"id":1,"ide":"Eclipse","name":"Java"},
+JSONObject lan1 = new JSONObject();
+lan1.put("id", 1);
+lam1.put("ide", "Eclipse");
+lan1.put("name","Java");
+// {"id":2,"ide":"Xcode","name":"Swift"},
+JSONObject lan2 = new JSONObject();
+lan2.put("id", 2);
+lam2.put("ide", "Xcode");
+lan2.put("name","Swift");
+// {"id":3,"ide":"Visual Studio","name":"C#"}
+JSONObject lan1 = new JSONObject();
+lan3.put("id", 3);
+lam3.put("ide", "Visual Studio");
+lan3.put("name","C#");
 
+//创建一个数组
+JSONArray array = new JSONArray();
+array.put(lan1);
+array.put(lan2);
+array.put(lan3);
 
+root.put("languages",array);
 
+System.out.println(root.toString());
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+Android异步任务处理
 
+线程的概念 07:05
 
+在程序开启后，就会有一个主线程，负责与用户交互。如果在主线程中执行了耗时操作，那么界面就会停止响应，所以要将耗时操作转移到别的线程中。本课时介绍线程的概念。
 
 
 
+1.
 
+button 延迟1秒弹起
 
+Thread.sleep(); 可以把主线程（界面）卡死。
 
 
 
 
+2.
 
+创建新的线程
 
+button 立马弹起，sleep(),没有影响到主线程，多线程并发
 
+new Thread() {
+	public void run() {
+		try {
+			while(ture) {
+				sleep(1000);
+				System.out.println("----------------------------");		
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	};
+}.start();
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+AsyncTask的使用方法 19:18
 
+本课时讲解 AsyncTask 的用法，包括传入参数、设定后台任务、过程信息的处理等。
 
 
 
+Ctrl + O  回调方法（复写和实现回调方法）
 
+在 AndroidManifest 中 添加
 
+    <uses-permission android:name="android.permission.INTERNET" />
 
 
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class MainActivity extends AppCompatActivity {
+
+    TextView textView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = (TextView) findViewById(R.id.textView);
+        findViewById(R.id.read).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReadURL("http://www.baidu.com");
+
+            }
+        });
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    public void ReadURL(String url) {
+        //第一个参数初始化时候传递进去的数据类型
+        //是在处理的过程中返回的数据类型
+        //结果的数据类型
+        new AsyncTask<String, Float, String>() {
+
+            @Override//执行后台的操作(耗时的)(传入的是String的数组,就是AsyncTask的初始值，第一个参数
+            protected String doInBackground(String... params) {
+                //只能执行不涉及UI的操作，如果设计UI操作，只能在底下的回调方法中执行
+                //读取网页中的数据的功能
+                try {
+                    URL url = new URL(params[0]);
+                    URLConnection connection = url.openConnection();
+
+                    long total = connection.getContentLength();//获取当前读取对象的全部长度
+
+                    InputStream inputStream = connection.getInputStream();
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String line;
+                    StringBuilder builder = new StringBuilder();
+                    while ((line = bufferedReader.readLine()) != null) {
+                        builder.append(line);
+                        publishProgress((float)builder.toString().length()/total);//进度百分比
+                    }
+
+                    bufferedReader.close();
+                    inputStream.close();
+                    return builder.toString();
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            /**
+             * Runs on the UI thread before {@link #doInBackground}.
+             *
+             * @see #onPostExecute
+             * @see #doInBackground
+             */
+            @Override//当前的AsyncTask()执行之前执行这个函数
+            protected void onPreExecute() {
+                Toast.makeText(getApplicationContext(), "开始读取",Toast.LENGTH_SHORT).show();
+                super.onPreExecute();
+            }
+
+            /**
+             * <p>Runs on the UI thread after {@link #doInBackground}. The
+             * specified result is the value returned by {@link #doInBackground}.</p>
+             * <p/>
+             * <p>This method won't be invoked if the task was cancelled.</p>
+             *
+             * @param s The result of the operation computed by {@link #doInBackground}.
+             * @see #onPreExecute
+             * @see #doInBackground
+             * @see #onCancelled(Object)
+             */
+            @Override//当前的AsyncTask()执行完以后执行这个函数，他传入的参数是 doInBackground()的返回值
+            protected void onPostExecute(String s) {
+                textView.setText(s);
+                super.onPostExecute(s);
+            }
+
+            /**
+             * Runs on the UI thread after {@link #publishProgress} is invoked.
+             * The specified values are the values passed to {@link #publishProgress}.
+             *
+             * @param values The values indicating progress.
+             * @see #publishProgress
+             * @see #doInBackground
+             */
+            @Override//在执行的过程中，对外发布当前的进度，传入的参数指定的类型是第二个参数，调用方法是publishProgress()
+            protected void onProgressUpdate(Float... values) {
+                System.err.print(values[0]);
+                super.onProgressUpdate(values);
+            }
+
+            /**
+             * <p>Runs on the UI thread after {@link #cancel(boolean)} is invoked and
+             * {@link #doInBackground(Object[])} has finished.</p>
+             * <p/>
+             * <p>The default implementation simply invokes {@link #onCancelled()} and
+             * ignores the result. If you write your own implementation, do not call
+             * <code>super.onCancelled(result)</code>.</p>
+             *
+             * @param s The result, if any, computed in
+             *          {@link #doInBackground(Object[])}, can be null
+             * @see #cancel(boolean)
+             * @see #isCancelled()
+             */
+            @Override
+            protected void onCancelled(String s) {
+                super.onCancelled(s);
+            }
+
+            /**
+             * <p>Applications should preferably override {@link #onCancelled(Object)}.
+             * This method is invoked by the default implementation of
+             * {@link #onCancelled(Object)}.</p>
+             * <p/>
+             * <p>Runs on the UI thread after {@link #cancel(boolean)} is invoked and
+             * {@link #doInBackground(Object[])} has finished.</p>
+             *
+             * @see #onCancelled(Object)
+             * @see #cancel(boolean)
+             * @see #isCancelled()
+             */
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+            }
+        }.execute(url);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Android中基于HTTP的通信技术
+
+
+使用 Http 的 Get 方式读取网络数据 09:59
+
+本课时讲解使用Http的Get方式读取网络数据，使用Get方式与网络通信是最常见的Http通信，建立链接之后就可以通过输入流读取网络数据。
+
+
+1.权限
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+
+2.xml
+    <Button
+    android:textAllCaps="false"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:text="Http Get 读取数据"
+    android:id="@+id/btnHttpGet"
+    android:layout_alignParentTop="true" />
+
+
+
+
+
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        findViewById(R.id.btnHttpGet).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //由于读取互联网数据是比较耗时的IO操作，用异步操作
+                new AsyncTask<String, Void, Void>() {
+                    /**
+                     * Override this method to perform a computation on a background thread. The
+                     * specified parameters are the parameters passed to {@link #execute}
+                     * by the caller of this task.
+                     * <p/>
+                     * This method can call {@link #publishProgress} to publish updates
+                     * on the UI thread.
+                     *
+                     * @param params The parameters of the task.
+                     * @return A result, defined by the subclass of this task.
+                     * @see #onPreExecute()
+                     * @see #onPostExecute
+                     * @see #publishProgress
+                     */
+                    @Override
+                    protected Void doInBackground(String... params) {
+                        try {
+                            URL url = new URL(params[0]);
+                            URLConnection connection = url.openConnection();//获取互联网的链接
+                            InputStream is = connection.getInputStream();
+                            InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+                            BufferedReader br = new BufferedReader(isr);
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                System.out.println(line);
+                            }
+                            br.close();
+                            isr.close();
+                            is.close();
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute("http://fanyi.youdao.com/openapi.do?keyfrom=zhanghuanli&key=70964195&type=data&doctype=xml&version=1.1&q=good");
+            }
+        });
+    }
+}
+
+
+
+
+使用 有道的 API
+
+
+http://fanyi.youdao.com/openapi?path=data-mode
+
+//我是开发者
+
+json数据格式举例
+http://fanyi.youdao.com/openapi.do?keyfrom=<keyfrom>&key=<key>&type=data&doctype=json&version=1.1&q=good
+
+放在 execute(""); 中
+W/AudioTrack: AUDIO_OUTPUT_FLAG_FAST denied by client
+I/System.out: <?xml version="1.0" encoding="UTF-8"?>
+I/System.out: <youdao-fanyi>
+I/System.out:     <errorCode>0</errorCode>
+I/System.out:     <query><![CDATA[good]]></query>
+I/System.out:     <!-- 有道翻译 -->
+I/System.out:     <translation>
+I/System.out:             <paragraph><![CDATA[好]]></paragraph>
+I/System.out:         </translation>
+I/System.out:     <!-- 有道词典-基本词典 -->
+I/System.out:     <basic>
+I/System.out:             <!-- 音标 -->
+I/System.out:         <phonetic><![CDATA[gʊd]]></phonetic>
+I/System.out:                 <!-- 美式音标 -->
+I/System.out:         <us-phonetic><![CDATA[ɡʊd]]></us-phonetic>
+I/System.out:                 <!-- 英式音标 -->
+I/System.out:         <uk-phonetic><![CDATA[gʊd]]></uk-phonetic>
+I/System.out:             <!-- 基本释义 -->
+I/System.out:         <explains>
+I/System.out:                     <ex><![CDATA[n. 好处；善行；慷慨的行为]]></ex>
+I/System.out:                     <ex><![CDATA[adj. 好的；优良的；愉快的；虔诚的]]></ex>
+I/System.out:                     <ex><![CDATA[adv. 好]]></ex>
+I/System.out:                     <ex><![CDATA[n. (Good)人名；(英)古德；(瑞典)戈德]]></ex>
+I/System.out:                 </explains>
+I/System.out:     </basic>
+I/System.out:     <!-- 有道词典-网络释义 -->
+I/System.out:     <web>
+I/System.out:             <explain>
+I/System.out:             <key><![CDATA[GOOD]]></key>
+I/System.out:             <value>
+I/System.out:                             <ex><![CDATA[好]]></ex>
+I/System.out:                             <ex><![CDATA[善]]></ex>
+I/System.out:                             <ex><![CDATA[商品]]></ex>
+I/System.out:                         </value>
+I/System.out:         </explain>
+I/System.out:             <explain>
+I/System.out:             <key><![CDATA[Good Friday]]></key>
+I/System.out:             <value>
+I/System.out:                             <ex><![CDATA[耶稣受难节]]></ex>
+I/System.out:                             <ex><![CDATA[耶稣受难日]]></ex>
+I/System.out:                             <ex><![CDATA[受难节]]></ex>
+I/System.out:                         </value>
+I/System.out:         </explain>
+I/System.out:             <explain>
+I/System.out:             <key><![CDATA[Good Time]]></key>
+I/System.out:             <value>
+I/System.out:                             <ex><![CDATA[위키백과 동음이의어 문서]]></ex>
+I/System.out:                             <ex><![CDATA[Good Time]]></ex>
+I/System.out:                             <ex><![CDATA[Good Time]]></ex>
+I/System.out:                         </value>
+I/System.out:         </explain>
+I/System.out:         </web>
+I/System.out: </youdao-fanyi>
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+使用Http的Post方式与网络交互通信 12:28
+
+本课时讲解使用Http的Post方式与网络交互通信。Post方式需要向网络传输一部分数据，同时具有输入流和输出流。
+
+
+ findViewById(R.id.btnHttpPost).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //由于读取互联网数据是比较耗时的IO操作，用异步操作
+                new AsyncTask<String, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(String... params) {
+                        try {
+                            URL url = new URL(params[0]);
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();//获取互联网的链接
+                            connection.setDoInput(true);//写不写都不会造成影响
+                            connection.setDoOutput(true);
+                            connection.setRequestMethod("POST");
+                            //数据传递到服务器的过程
+                            OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream(),"utf-8");
+                            BufferedWriter bw = new BufferedWriter(osw);
+                            //do后面的剪切，，， ? 问号不需要
+                            bw.write("keyfrom=zhanghuanli&key=70964195&type=data&doctype=xml&version=1.1&q=good");
+                            bw.flush();//强制输出
+
+                            //
+                            InputStream is = connection.getInputStream();
+                            InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+                            BufferedReader br = new BufferedReader(isr);
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                System.out.println(line);
+                            }
+                            br.close();
+                            isr.close();
+                            is.close();
+
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute("http://fanyi.youdao.com/openapi.do");
+            }
+        });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///
+///
+
+使用HttpClient进行Get方式通信 12:20
+
+本课时讲解使用HttpClient进行Get方式通信，通过HttpClient建立网络链接，使用HttpGet方法读取数据，并且通过Response获取Entity返回值。
+
+1.
+	Android开发使用AS是大势所趋的了，毕竟是谷歌的正统血脉，从刚开始的1.0到现在的1.4已经逐渐稳定，修复了很多Bug, 越来越人性化了。
+但是还是会出现或多或少的问题，今天想用HttpClient下载网络图片，却没有HttpClient以及相关的类，查询了一下发现原来-
+在API 23中，Google已经移除了移除了Apache HttpClient相关的类 。谷歌推荐使用HttpUrlConnection，如果要继续使用需要Apache HttpClient，需要在
+
+Eclipse 下libs里添加 org.apache.http.legacy.jar，
+
+Android Studio 里在相应的module下的build.gradle中加入即可。	
+
+android {
+		useLibrary 'org.apache.http.legacy'
+		}
+
+
+
+2.
+    侧边栏
+    <ScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+
+3.
+
+
+
+private EditText et;
+private TextView text;
+HttpClient httpClient;
+
+        httpClient = new DefaultHttpClient();
+        et = (EditText) findViewById(R.id.enitText);
+        text = (TextView) findViewById(R.id.HttpClienttextView);
+
+        findViewById(R.id.btnHttpClient).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//a                readNet("http://fanyi.youdao.com/openapi.do?keyfrom=zhanghuanli&key=70964195&type=data&doctype=xml&version=1.1&q=good");
+//b                readNet("http://10.0.2.2:8080/MyWebTest/Do?name="+et.getText());
+            }
+        });
+
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+
+
+
+
+    //读取网络的函数
+    public void readNet(String url) {
+//a        new AsyncTask<String, Void, Void>() {
+//b        new AsyncTask<String, Void, String>() {
+            @Override
+//a            protected Void doInBackground(String... params) {
+//b            protected String doInBackground(String... params) {
+                String urlString = params[0];
+                HttpGet get = new HttpGet(urlString);
+                HttpResponse response = null;
+                try {
+                    response = httpClient.execute(get);
+                    String value = EntityUtils.toString(response.getEntity());
+
+//a                    System.out.println(value);
+//b                    return value;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+//			 对UI的操作
+
+//b            @Override
+//            protected void onPostExecute(String s) {
+//                text.setText(s);
+//            }
+        }.execute(url);
+    }
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+使用HttpClient进行Post方式通信 08:07
+
+本课时讲解使用HttpClient进行Post方式通信，通过HttpClient建立网络链接，使用HttpPost方法传出数据与读取数据，传出和传入的数据都是Entity的子类。
+
+
+    private EditText et,et2;
+    private TextView text,text2;
+    HttpClient httpClient,httpClient2;
+
+        httpClient2 = new DefaultHttpClient();
+        et2 = (EditText) findViewById(R.id.enitText2);
+        text2 = (TextView) findViewById(R.id.HttpClienttextView2);
+
+
+
+        findViewById(R.id.btnHttpClient2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readNet2("http://fanyi.youdao.com/openapi.do", et.getText().toString());
+            }
+        });
+
+
+
+ //读取网络的函数
+    public void readNet2(String s, String url) {
+        new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                String urlString = params[0];
+
+                HttpPost post = new HttpPost(urlString);
+                StringEntity entity;
+                try {
+//                    entity = new StringEntity(params[1]);
+//                    post.setEntity(entity);
+                    List<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>();
+                    list.add(new BasicNameValuePair("name",params[1]));
+                    post.setEntity(new UrlEncodedFormEntity(list));
+
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    HttpResponse response = httpClient.execute(post);
+
+                    String value = EntityUtils.toString(response.getEntity());
+
+                    return value;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                text.setText(s);
+            }
+        }.execute(url,s);
+    }
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Socket介绍 01:49
+
+本课时对 Socket 进行介绍，Socket 又称"套接字"，应用程序通常通过"套接字"向网络发出请求或者应答网络请求。
+ServerSocket 用于服务器端，Socket 是建立网络连接时使用的。
+
+在Java中，Socket he ServerSocket 类库位于java.net包中，ServerSocket 用于服务器端，Socket 是建立网络网络连接时使用的
+在连接成功时，应用程序两端都会产生一个 Socket 实例，操作这个实例，完成所需的会话。
+对于一个网络连接来说，套接字是平等的，并没有差别，不因为在服务器端或在客户端而产生不同级别。不管 Socket 还是 ServerSocket 它们的工作
+都是通过 Socket 类及其子类完成
+
+Socket 链接的建立过程
+
+1.服务器监听
+2.客户端发出请求
+3.建立链接
+3.通信
+
+特点
+1.Socket 基于 TCP 链接，数据传输有保证
+2.Socket 适用于建立长时间链接
+3.Socket 编程通常应用于即时通信
 
 
 
