@@ -3581,7 +3581,7 @@ public class MainActivity extends AppCompatActivity {
 Android 通用下拉刷新控件的使用
 
 
-https://github.com/chrisbanes/Android-PullToRefresh
+			https://github.com/chrisbanes/Android-PullToRefresh
 
 
 导入包 Android-PullToRefresh
@@ -9545,35 +9545,176 @@ Socket 链接的建立过程
 3.Socket 编程通常应用于即时通信
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ServerSocket的建立与使用 04:21
+
+本课时讲解ServerSocket的建立与使用，使用ServerSocket监听某一端口的请求，当有访问时弹出提示。
 
 
 
+1.
+
+	Eclipse 环境
+
+	！！！一下代码 实际生产中绝对不可取
+
+
+	package com.codex.testmyserversocket.main;
+
+	import java.io.IOException;
+	import java.net.ServerSocket;
+	import java.net.Socket;
+
+	import javax.swing.JOptionPane;
+
+	public class MyServerSocket {
+
+		public static void main(String[] args) {
+			//1-65535
+			try {
+				ServerSocket serverSocket = new ServerSocket(26658);//12345端口
+				//block,阻塞main线程方法
+				Socket socket = serverSocket.accept();
+				//建立链接
+				JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+
+	}
+
+
+2.
+	在浏览器中输入
+		127.0.0.1:12345 来访问这个端口
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+使用ServerSocket建立聊天服务器-1 10:44
+
+本课时讲解使用 accept() 方法获取与客户端的Socket链接对象，将该对象指派给一个新的线程，在线程中执行网络数据的交换。实现一对一的数据传输。
+
+
+在 Eclipse 环境下 Ctrl+I 是自动对齐
 
 
 
+1.对于有阻塞的代码，需要把他们放到独立的线程当中
+
+		//1-65535
+		try {
+			ServerSocket serverSocket = new ServerSocket(26658);//12345端口
+			//block,阻塞main线程方法
+			Socket socket = serverSocket.accept();
+			//建立链接
+			JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+	把这段代码剪切以后  ，
+
+	新建的  ServerListener 类，并且继承 Thread 类，并且复写run方法
 
 
+		package com.codex.testmyserversocket.main;
+
+		import java.io.IOException;
+		import java.net.ServerSocket;
+		import java.net.Socket;
+
+		import javax.swing.JOptionPane;
+
+		public class ServerListtener extends Thread {
+			@Override
+			public void run() {
+				//1-65535
+				try {
+					ServerSocket serverSocket = new ServerSocket(65534);
+					//有多个需要访问serverSocket时，就会有多个accept()，需要一个while循环监听来自客户端的链接
+					while (true) {
+						//block,阻塞main线程方法
+						Socket socket = serverSocket.accept();
+						//建立链接
+						JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
+						//将socket传递给新的线程
+						new ChatSocket(socket).start();
+					}
+				} catch (IOException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
+			}
+		}
+
+2.
+
+	写 ChatSocket 类
+
+package com.codex.testmyserversocket.main;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.Socket;
+
+public class ChatSocket extends Thread {
+	
+	Socket socket;
+	
+	public ChatSocket(Socket s) {
+		this.socket = s;
+	}
+	
+	//数据流的写出
+	public void out(String out) {
+		try {
+			socket.getOutputStream().write(out.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	@Override
+	public void run() {
+		int count = 0;
+		while (true) {
+			count ++;
+			out("loop+" + count);
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+}
 
 
+3.
+	测试 
 
+	可以在多个 CMD 下输入
 
+	telnet localhost 12345
 
+	表示有多个终端访问
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+http://wenda.jikexueyuan.com/question/3605/
 
 
 
