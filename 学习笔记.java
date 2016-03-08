@@ -9574,9 +9574,10 @@ ServerSocket的建立与使用 04:21
 			//1-65535
 			try {
 				ServerSocket serverSocket = new ServerSocket(26658);//12345端口
-				//block,阻塞main线程方法
-				Socket socket = serverSocket.accept();
-				//建立链接
+			//block，，，侦听客户端的链接,accept()阻塞的方法，阻塞main线程方法
+			Socket socket = serverSocket.accept();
+			//建立链接
+			//JOptionPane弹出提示框
 				JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -9591,6 +9592,8 @@ ServerSocket的建立与使用 04:21
 	在浏览器中输入
 		127.0.0.1:12345 来访问这个端口
 
+	弹出提示框"有客户端连接到了本机的12345端口"
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -9601,6 +9604,7 @@ ServerSocket的建立与使用 04:21
 
 
 在 Eclipse 环境下 Ctrl+I 是自动对齐
+				  Ctrl+O 自动清除无用类
 
 
 
@@ -9609,9 +9613,10 @@ ServerSocket的建立与使用 04:21
 		//1-65535
 		try {
 			ServerSocket serverSocket = new ServerSocket(26658);//12345端口
-			//block,阻塞main线程方法
+			//block，，，侦听客户端的链接,accept()阻塞的方法，阻塞main线程方法
 			Socket socket = serverSocket.accept();
 			//建立链接
+			//JOptionPane弹出提示框
 			JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -9620,6 +9625,8 @@ ServerSocket的建立与使用 04:21
 
 	把这段代码剪切以后  ，
 
+
+2.
 	新建的  ServerListener 类，并且继承 Thread 类，并且复写run方法
 
 
@@ -9639,11 +9646,10 @@ ServerSocket的建立与使用 04:21
 					ServerSocket serverSocket = new ServerSocket(65534);
 					//有多个需要访问serverSocket时，就会有多个accept()，需要一个while循环监听来自客户端的链接
 					while (true) {
-						//block,阻塞main线程方法
+						//block，，，侦听客户端的链接,accept()阻塞的方法，阻塞main线程方法
 						Socket socket = serverSocket.accept();
 						//建立链接
-						JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
-						//将socket传递给新的线程
+						//JOptionPane弹出提示框
 						new ChatSocket(socket).start();
 					}
 				} catch (IOException e) {
@@ -9653,7 +9659,7 @@ ServerSocket的建立与使用 04:21
 			}
 		}
 
-2.
+3.
 
 	写 ChatSocket 类
 
@@ -9661,6 +9667,134 @@ package com.codex.testmyserversocket.main;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.Socket;
+
+public class ChatSocket extends Thread {
+	
+	Socket socket;
+	
+	public ChatSocket(Socket s) {
+		this.socket = s;
+	}
+	
+
+
+	public void out(String out) {
+		try {
+			socket.getOutputStream().write(out.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+	
+	
+	//执行后台的功能
+	//数据的输出等相关功能操作
+	@Override
+	public void run() {
+		int count = 0;
+		while (true) {
+			count ++;
+			out("loop+" + count);//out方法
+			try {
+				sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			}
+		}
+	}
+}
+
+
+3.
+	测试 
+
+	可以在多个 CMD 下输入
+
+	telnet localhost 12345
+
+	表示有多个终端访问
+
+http://wenda.jikexueyuan.com/question/3605/
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+使用ServerSocket建立聊天服务器-2 11:29
+
+本课时讲解使用ServerSocket建立聊天服务器。将服务器端所有的通讯线程保存到一个集合当中，当有用户发来数据，则转发给所有用户，实现聊天室效果。
+
+1. 
+	
+	新的类 ChatManager.class
+
+由于 一个聊天服务器只有一个 ChatManager，所以要把这个类做 ：单例化处理
+	
+	private ChatManager() {}
+	
+	private static final ChatManager cm = new ChatManager();
+	public static ChatManager getChatManager() {
+		return cm;
+	}
+
+在下面 就也可以对 ChatSocket 的线程的管理了
+
+package com.codex.testmyserversocket.main;
+
+import java.util.Vector;
+
+public class ChatManager {
+	
+	//单例化
+	private ChatManager() {}
+	
+	private static final ChatManager cm = new ChatManager();
+	public static ChatManager getChatManager() {
+		return cm;
+	}
+	
+	Vector<ChatSocket> vector = new Vector<ChatSocket>();
+	
+	//为当前的集合添加新的ChatSocket线程
+	//下面方法是因为传入的ChatSocket类型，所以我们应该在创建ChatSocket时候
+	public void add(ChatSocket cs) {
+		vector.add(cs);
+	}
+	
+	//其中一个线程，可以通过下面的方法，发给他所有客户端发送信息 
+	public void publish(ChatSocket cs, String out) {
+		
+		for (int i = 0; i < vector.size(); i++) {
+			ChatSocket csChatSocket = vector.get(i);
+			//当前发送信息的线程，不用在接收这条信息
+			//如果当前的对象不是发送消息的对象，就可以发送消息给他
+			if (!cs.equals(csChatSocket)) {
+				csChatSocket.out(out);
+			}
+		}
+	}
+}
+
+
+
+
+2.
+
+package com.codex.testmyserversocket.main;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
@@ -9690,50 +9824,152 @@ public class ChatSocket extends Thread {
 	
 	@Override
 	public void run() {
-		int count = 0;
-		while (true) {
-			count ++;
-			out("loop+" + count);
-			try {
-				sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+		try {
+			BufferedReader bReader = new BufferedReader(
+					new InputStreamReader(
+							socket.getInputStream(), "UTF-8"));
+			
+			String line = null;
+			while ((line = bReader.readLine()) != null ) {
+				ChatManager.getChatManager().publish(this, line);
 			}
+			
+			bReader.close();
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
 		}
 	}
 }
 
 
 3.
-	测试 
 
-	可以在多个 CMD 下输入
+package com.codex.testmyserversocket.main;
 
-	telnet localhost 12345
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-	表示有多个终端访问
+import javax.swing.JOptionPane;
 
-http://wenda.jikexueyuan.com/question/3605/
+public class ServerListtener extends Thread {
+	@Override
+	public void run() {
+		//1-65535
+		try {
+			ServerSocket serverSocket = new ServerSocket(65533);
+			//有多个需要访问serverSocket时，就会有多个accept()，需要一个while循环监听来自客户端的链接
+			while (true) {
+				//block,阻塞main线程方法
+				Socket socket = serverSocket.accept();
+				//建立链接
+				JOptionPane.showMessageDialog(null, "有客户端连接到了本机的12345端口");
+				//将socket传递给新的线程
+				//命名的方式创建ChatSocket
+				ChatSocket cs = new ChatSocket(socket);
+				cs.start();
+				ChatManager.getChatManager().add(cs);
+			}
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+	}
+}
 
-z
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+在Android中创建Socket客户端 20:24
+
+本课时讲解在Android中创建Socket客户端。使用Socket建立客户端链接，并且在AsyncTask中执行网络读写的任务，将用户输入的内容发送到服务器，并接收服务器发来的数据，显示到界面上。
+开启多个虚拟机模拟多人聊天效果。
 
 
 
 
+1.
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.fangyi.mysocketclient.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editIP"
+        android:hint="输入聊天室IP地址"
+        android:layout_alignBottom="@+id/connect"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/connect"
+        android:layout_toStartOf="@+id/connect" />
+
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="连接"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="在这里输入内容"
+        android:layout_above="@+id/send"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/send"
+        android:text="发送"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+         />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/editIP"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/edittext">
+
+        <TextView
+            android:id="@+id/showText"
+            android:hint="Ready..."
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/editIP"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </ScrollView>
 
 
-
-
-
-
-
-
-
-
-
+</RelativeLayout>
 
 
 
