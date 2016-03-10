@@ -9604,8 +9604,8 @@ ServerSocket的建立与使用 04:21
 
 
 在 Eclipse 环境下 Ctrl+I 是自动对齐
-				  Ctrl+O 自动清除无用类
-
+				  Ctrl+O 快速outline
+				  Ctrl+Shift+O作用是缺少的Import语句被加入，多余的Import语句被删除。
 
 
 1.对于有阻塞的代码，需要把他们放到独立的线程当中
@@ -9650,6 +9650,8 @@ ServerSocket的建立与使用 04:21
 						Socket socket = serverSocket.accept();
 						//建立链接
 						//JOptionPane弹出提示框
+						JOptionPane.showMessageDialog(null, "有客户端链接到了本机的12345端口");
+
 						new ChatSocket(socket).start();
 					}
 				} catch (IOException e) {
@@ -9718,7 +9720,7 @@ public class ChatSocket extends Thread {
 
 	可以在多个 CMD 下输入
 
-	telnet localhost 12345
+	telnet localhost 12346
 
 	表示有多个终端访问
 
@@ -9881,6 +9883,16 @@ public class ServerListtener extends Thread {
 	}
 }
 
+3.
+	测试 
+
+	可以在多个 CMD 下输入
+
+	telnet localhost 12346
+
+	表示有多个终端访问
+
+http://wenda.jikexueyuan.com/question/3605/
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9895,81 +9907,268 @@ public class ServerListtener extends Thread {
 
 
 1.
-
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.fangyi.mysocketclient.MainActivity"
-    tools:showIn="@layout/activity_main">
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/ip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:hint="输入服务器的IP地址"
+            android:text="10.0.2.2" >
+
+        </EditText>
+
+        <Button
+            android:id="@+id/connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="连接" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.86" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="Ready..." />
+    </ScrollView>
 
     <EditText
-        android:layout_width="wrap_content"
+        android:id="@+id/edit"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editIP"
-        android:hint="输入聊天室IP地址"
-        android:layout_alignBottom="@+id/connect"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/connect"
-        android:layout_toStartOf="@+id/connect" />
-
-    <Button
-        android:id="@+id/connect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="连接"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-
-    <EditText
-        android:id="@+id/edittext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="在这里输入内容"
-        android:layout_above="@+id/send"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:hint="在这里输入内容" />
 
     <Button
         android:id="@+id/send"
-        android:text="发送"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-         />
+        android:text="发送" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/editIP"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_above="@+id/edittext">
-
-        <TextView
-            android:id="@+id/showText"
-            android:hint="Ready..."
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/editIP"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-    </ScrollView>
+</LinearLayout>
 
 
-</RelativeLayout>
+
+2.
+package com.jikexueyuan.mysocketclient;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import android.app.Activity;
+import android.app.ActionBar;
+import android.app.Fragment;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.os.Build;
+
+public class MainActivity extends Activity {
+
+	EditText ip;
+	EditText editText;
+	TextView text;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		ip = (EditText) findViewById(R.id.ip);
+		editText = (EditText) findViewById(R.id.edit);
+		text = (TextView) findViewById(R.id.text);
+
+		findViewById(R.id.connect).setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				connect();
+			}
+		});
+
+		findViewById(R.id.send).setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				send();
+			}
+		});
+	}
+
+	//-------------------------------------
+
+	Socket socket = null;
+	BufferedWriter writer = null;
+	BufferedReader reader = null;
+
+	public void connect() {
+
+		
+		AsyncTask<Void, String, Void> read = new AsyncTask<Void, String, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... arg0) {
+				try {
+					socket = new Socket(ip.getText().toString(), 12345);
+					writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+					reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+					publishProgress("@success");
+				} catch (UnknownHostException e1) {
+					Toast.makeText(MainActivity.this, "无法建立链接", Toast.LENGTH_SHORT).show();
+				} catch (IOException e1) {
+					Toast.makeText(MainActivity.this, "无法建立链接", Toast.LENGTH_SHORT).show();
+				}
+				try {
+					String line;
+					while ((line = reader.readLine())!= null) {
+						publishProgress(line);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void onProgressUpdate(String... values) {
+				if (values[0].equals("@success")) {
+					Toast.makeText(MainActivity.this, "链接成功！", Toast.LENGTH_SHORT).show();
+					
+				}
+				text.append("别人说："+values[0]+"\n");
+				super.onProgressUpdate(values);
+			}
+		};
+		read.execute();
+
+	}
+
+	public void send() {
+		try {
+			text.append("我说："+editText.getText().toString()+"\n");
+			writer.write(editText.getText().toString()+"\n");
+			writer.flush();
+			editText.setText("");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+}
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Android 常用 OAuth 登录与分享详解：百度登录
+
+
+课程背景：
+第三方应用为了完善自身系统的帐户信息或者是功能，需要获取用户在百度的个人信息或者是其它资料，而不必让用户重新生成。
+那么我们就需要集成百度的授权 SDK 来完成令牌信息的获取及个人资料的获取 。
+
+
+
+申请百度开发者帐号及百度 OAuth 简介 19:02
+
+本课主要演示如何申请百度帐号，并且简单介绍百度 OAuth 认证的内容及流程介绍 。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
