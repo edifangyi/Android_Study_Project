@@ -10120,6 +10120,26 @@ Android 常用 OAuth 登录与分享详解：百度登录
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
+快捷键 Alt+Insert.(快速生成构造函数，getter/setter方法，toString(), equals()和hashCode() 等)【相当于Eclipse中的Alt+Shift+S】
+
+
+4.另一个比较重要的快捷键就是跳到上一步的位置（Ctrl+Alt+方向左键），跳到下一步的位置（Ctrl+Alt+方向右键）
+这个快捷键，在你跟踪代码的时候，非常的好用，有的时候你一直按着(Ctrl+鼠标点击类)，一直往源码里面跳，之后不记得自己是从哪里跳进来的了。这两个快捷键就是帮你更好地退回和前进的。
+
+
+8.智能格式化代码（帮助排版代码的格式，看起来更舒服一些！）: Alt+Ctrl+L
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 Google开源库-Volley的应用
 
 
@@ -10136,20 +10156,181 @@ Volley 简介 05:13
 
 
 
+    /**
+     *
+     * Volley 是 Android 平台网络通信库：更快，更简单，更健壮
+     *
+     * volley提供的功能
+     * 1.JSON、图片（异步）
+     * 2.网络请求
+     * 3.网络请求的优先级处理
+     * 4.缓存
+     * 5.多级别的取消请求
+     * 6.与Activit生命周期联动
+     *
+     *
+     */
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+         />
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv"
+        android:layout_toRightOf="@+id/iv"
+        />
 
 
 
+package com.jikexueyuan.myvolley;
+
+import org.json.JSONObject;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.ImageLoader.ImageCache;
+import com.android.volley.toolbox.ImageLoader.ImageListener;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.support.v4.util.LruCache;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ImageView;
+
+/**
+ * 
+ * Volley是Android平台网络通信库：更快。更简单。更健壮 volley提供的功能： 1.JSON、图片（异步） 2.网络请求的排序
+ * 3.网络请求的优先级处理 4.缓存 5.多级别的取消请求 6.与Activity生命周期联动
+ * 
+ * 
+ * 获取Volley git clone
+ * https://android.googlesource.com/platform/frameworks/volley
+ * 
+ */
+
+public class MainActivity extends Activity {
+
+	private ImageView iv1;
+	private NetworkImageView iv2;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		init();
+		getJSONVolley();
+	}
 
 
+	/**
+	 * 使用 Volley 实现 JSON 字符串请求
+	 *本课时讲解通过使用 Volley 实现 JSON 字符串请求，
+	 *通过极少的代码以及更方便理解的参数完成通信。
+	 */
+	// 获取json字符串
+	public void getJSONVolley() {
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		String JSONDateUrl = "http://www.wwtliu.com/jsondata.html";
+		JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+				Request.Method.GET, JSONDateUrl, null,
+				new Response.Listener<JSONObject>() {
+					public void onResponse(JSONObject response) {
+						System.out.println("response=" + response);
+					}
+				}, new Response.ErrorListener() {
+					public void onErrorResponse(
+							com.android.volley.VolleyError arg0) {
+						System.out.println("对不起，有问题");
+					}
+				});
+		requestQueue.add(jsonObjectRequest);
+	}
 
 
+	/**
+	*使用 Volley 实现异步加载图片
+	*本课时讲解通过使用 Volley 实现图片的异步加载，要比使用传统的通信方式方便很多。
+	*/
 
+	public void init() {
+		iv1 = (ImageView) findViewById(R.id.iv);
+		iv2 = (NetworkImageView) findViewById(R.id.imageView1);
+		loadImageVolley();
+		NetWorkImageViewVolley();
+	}
 
+	//一部加载图片
+	//服务器搭建
+	// http://localhost/lesson-img.png
+	public void loadImageVolley() {
+		String imageurl = "http://10.0.0.52/lesson-img.png";
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+				//缓存的操作
+		final LruCache<String, Bitmap> lurcache = new LruCache<String, Bitmap>(
+				20);
+		ImageCache imageCache = new ImageCache() {
 
+			@Override
+			public void putBitmap(String key, Bitmap value) {
+				lurcache.put(key, value);
+			}
 
+			@Override
+			public Bitmap getBitmap(String key) {
+
+				return lurcache.get(key);
+			}
+		};
+		ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
+		ImageListener listener = imageLoader.getImageListener(iv1,
+				R.drawable.ic_launcher, R.drawable.ic_launcher);
+		imageLoader.get(imageurl, listener);
+	}
+
+	/**
+	 * 使用 NetWorkImageView 完成图片加载
+	 * 本课时讲解通过使用 Volley 提供的 NetWorkImageView 完成图片的加载，对比异步加载图片的优点。
+	 */
+		
+	public void NetWorkImageViewVolley(){
+		String imageUrl = "http://10.0.0.52/lesson-img.png";
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		final LruCache<String, Bitmap> lruCache = new LruCache<String, Bitmap>(20);
+		ImageCache imageCache = new ImageCache() {
+			
+			@Override
+			public void putBitmap(String key, Bitmap value) {
+				lruCache.put(key, value);
+			}
+			
+			@Override
+			public Bitmap getBitmap(String key) {
+				return lruCache.get(key);
+			}
+		};
+		ImageLoader imageLoader = new ImageLoader(requestQueue, imageCache);
+		iv2.setTag("url");
+		iv2.setImageUrl(imageUrl, imageLoader);
+	}
+}
 
 
 
