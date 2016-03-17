@@ -10381,9 +10381,35 @@ PHP 网页端生成简单二维码 05:20
 
 本课时讲解联图网在线生成二维码 API 的使用，并使用 PHP 语言编写网页生成指定二维码。
 
+1.ORLogin/index.php
+
+<html>
+	<head>
+		<title>FANGYIQRLogin</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<?php 
+			require 'mysql_connect.php';
+			$randnumber = "";
+			for	($i=0; $i<8; $i++)
+				$randnumber .= rand(0, 9);
+			mysql_query("insert into login_record (randnumber) values ('$randnumber')");
+			echo $randnumber;
+		?>
+		<img src="http://qr.topscan.com/api.php?text= <?php echo $randnumber; ?>" width="300px"/>
+	</body>
+</html>
 
 
 
+2.ORLogin/mysql_connect.php
+
+
+<?php
+$con = mysql_connect("127.0.0.1:3366", "root", "root") or die(mysql_error());
+mysql_select_db("qrlogin");
+?>
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
