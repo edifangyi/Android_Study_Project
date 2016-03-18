@@ -10420,24 +10420,186 @@ PHP轮询数据库 10:18
 
 本课时讲解使用 AJAX 进行异步加载轮询操作。
 
+1.ORLogin/index.php
+<html>
+	<head>
+		<title>FANGYIQRLogin</title>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<?php 
+			require 'mysql_connect.php';
+			$randnumber = "";
+			for	($i=0; $i<8; $i++)
+				$randnumber .= rand(0, 9);
+			mysql_query("insert into login_record (randnumber) values ('$randnumber')");
+			echo $randnumber;
+		?>
+		<img src="http://qr.topscan.com/api.php?text= <?php echo $randnumber; ?>" width="300px"/>
+		
+		<input hidden="hidden" type="text" name="randnumber" id="randnumber" value="<?php echo $randnumber;?>"/>
+	</body>
+	
+	<script>
+		function polling() {
+			//执行轮询操作
+			/*
+			 * 根据当前二维码的随机数信息，去数据库查询是否有用户执行了扫码登陆操作
+			 * 有因为执行轮询操作的过程中，页面不能有任何的刷新操作，让用户感觉不到页面刷新
+			 * 使用：异步加载
+			 */
+			var xmlHttp;
+			//判断浏览器的类型，生成不同XMLhttp的对象
+			if (window.XMLHttpRequest) {
+				xmlHttp = new XMLHttpRequest();
+			} else {
+				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			
+			xmlHttp.onreadystatechange = function() {
+				if (xmlHttp.status == 200 && xmlHttp.readyState == 4) {
+					result = xmlHttp.responseText;
+					if (result == 'true') {
+						window.location.href = 'welcome.php';
+					} 
+				}
+			}
+
+			//javascript获取input标签中的随机数值
+			randnumber = document.getElementById('randnumber').value;
+			xmlHttp.open("GET", "polling.php?randnumber=" + randnumber, true);
+			xmlHttp.send();	
+		}
+		//第一个参数：间隔多久时间执行哪个函数，第二个参数：间隔多久0
+		setInterval("polling()", 1000);
+
+	</script>
+</html>
+
+
+
+
+2.ORLogin/polling.php
+
+<?php
+	require 'mysql_connect.php';
+	$randnumber = $_GET['randnumber'];
+	//查询数据库中的usemame是否为空
+	$result = mysql_query("select * from login_record where randnumber='$randnumber'");
+	$row = mysql_fetch_array($result);
+	if ($row['username'] != "")
+	//不为空，说明用户执行了扫码操作
+		echo "true";
+	else
+		echo "false";
+?>
+
+
+2.ORLogin/welcome.php
+
+Hello FANGYI!
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PHP 自定 API 接口 05:26
 
 本课时讲解如何在 PHP 中自定 API 接口，实现将信息写入数据库的功能。
 
+//在正常的开发当中，需要对数据进行加密
+//测试 http://127.0.0.1:8080/ORLogin/saveUsername.php?randnumber=15668595&username=FANGYI
+
+1.ORLogin/saveUsername.php
+
+<?php
+/*
+ * 自定义API用于Android客户端扫码后访问，将指定的username保存至相应的位置
+ * 接收参数 randnumber、username
+ * 无返回值
+ */
+ $randnumber = $_GET['randnumber'];
+ $username = $_GET['username'];
+ 
+ require 'mysql_connect.php';
+ mysql_query("update login_record set username = '$username' where randnumber = '$randnumber'");
+?>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+Android 客户端扫描二维码 07:55
+
+本课时简要介绍 ZXing 开源库，并依赖于该开源库完成扫描二维码的功能。
+
+
+
+package com.example.fangyi.qrlogin;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.zxing.activity.CaptureActivity;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private Button btnScan;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        btnScan = (Button) findViewById(R.id.btnScan);
+        btnScan.setOnClickListener(this);
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        //扫码操作
+        Intent intent = new Intent(this, CaptureActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            String result = data.getExtras().getString("result");
+            Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+        }
+    }
+}
 
 
 
 
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.example.fangyi.qrlogin.MainActivity">
 
-
-
-
-
-
-
-
+    <Button
+        android:id="@+id/btnScan"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="扫码登录"/>
+</LinearLayout>
 
 
 
