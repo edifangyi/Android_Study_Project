@@ -10530,8 +10530,51 @@ PHP 自定 API 接口 05:26
 Android 客户端扫描二维码 07:55
 
 本课时简要介绍 ZXing 开源库，并依赖于该开源库完成扫描二维码的功能。
+    
+1.
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+        
+
+        <activity
+            android:name="com.zxing.activity.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
 
 
+
+
+
+2.
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.example.fangyi.qrlogin.MainActivity">
+
+    <Button
+        android:id="@+id/btnScan"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="扫码登录"/>
+</LinearLayout>
+
+
+
+
+3.
 
 package com.example.fangyi.qrlogin;
 
@@ -10582,32 +10625,105 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    tools:context="com.example.fangyi.qrlogin.MainActivity">
 
-    <Button
-        android:id="@+id/btnScan"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="扫码登录"/>
-</LinearLayout>
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+Android 客户端访问自定 API 实现网页登录 08:43
+
+本课时介绍 Android 客户端网络编程知识，以及如何使用网络编程结合 API 实现登录功能。
 
 
 
+1.
+
+    <EditText
+        android:id="@+id/etUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+2.
+//链接互联网，访问特定的url
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
+public class HttpUtils{
+	public static void login(final String url){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				HttpURLConnection connection;
+				try {
+					connection = (HttpURLConnection) new URL(url).openConnection();
+					connection.setRequestMethod("GET");
+					connection.getInputStream();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+}
 
 
 
+3.
 
+import com.zxing.activity.CaptureActivity;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Paint.Cap;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends Activity implements OnClickListener {
+
+	private Button btnScan;
+	private EditText etUsername;
+
+	//改成PC端相应地址
+	private static final String WEB_URL = "http://XX.XXX.XXX.XXX:8080/QRLogin/";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+
+		btnScan = (Button) findViewById(R.id.btnScan);
+		btnScan.setOnClickListener(this);
+		etUsername = (EditText) findViewById(R.id.etUsername);
+	}
+
+	@Override
+	public void onClick(View v) {
+		// 扫码操作
+		Intent intent = new Intent(this, CaptureActivity.class);
+		startActivityForResult(intent, 0);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			String randnumber = data.getExtras().getString("result");
+			String username = etUsername.getText().toString();
+			String url = WEB_URL + "saveUsername.php?randnumber=" + randnumber
+					+ "&username=" + username;
+			//访问url
+			HttpUtils.login(url);
+		}
+	}
+
+}
 
 
 
