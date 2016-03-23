@@ -23,6 +23,35 @@ UP:根据显示菜单的宽度，决定将其隐藏或者显示
 2.在布局文件中进行使用，特别注意xmlns
 3.在构造方法中（3个参数的构造方法）中火的我们设置的值
 
+-------------------------------------------------------------
+抽屉式侧滑
+1.菜单是在下面不动，没有被拖出来的效果。在内容区域底下
+
+mMenuWidth
+100px mMenuWidth-100
+200px mMenuWidth-200
+
+属性动画(Android 3.0 以上):TraslationX
+
+getScrollX :mMenuWidth ~ 0
+
+设置调用动画时机
+ACTION MOVE
+
+-------------------------------------------------------------
+QQ5.0
+区别1：内容区域 1.0 ~0.7 缩放效果
+	scale:1.0 ~ 0.0
+	0.7 + 0.3*scale
+
+区别2：菜单的便宜量需要修改
+
+区别3：菜单的显示时有缩放以及透明度变化
+	
+	缩放效果： 0.7 ~ 1.0
+	1.0 - scale*0.3
+	透明度：0.6 ~ 1.0
+	0.6 + 0.4*scale
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -685,16 +714,122 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    抽屉式侧滑
+1.菜单是在下面不动，没有被拖出来的效果。在内容区域底下
+
+mMenuWidth
+100px mMenuWidth-100
+200px mMenuWidth-200
+
+属性动画(Android 3.0 以上):TraslationX
+
+getScrollX :mMenuWidth ~ 0
+
+设置调用动画时机
+ACTION MOVE
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+1.在 SlidingMenu 文件中添加
+    /**
+     * 抽屉式侧滑
+     * @param l
+     * @param t
+     * @param oldl
+     * @param oldt
+     */
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+
+        float  scale = l*1.0f/mMenuWidth;   //1~0
+
+        //调用属性动画，设置TranslationX
+        ViewHelper.setTranslationX(mMenu, mMenuWidth*scale);
+    }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QQ5.0
+区别1：内容区域 1.0 ~0.7 缩放效果
+	scale:1.0 ~ 0.0
+	0.7 + 0.3*scale
+
+区别2：菜单的便宜量需要修改
+
+区别3：菜单的显示时有缩放以及透明度变化
+	
+	缩放效果： 0.7 ~ 1.0
+	1.0 - scale*0.3
+	透明度：0.6 ~ 1.0
+	0.6 + 0.4*scale
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+1.把背景图片放到 activity_main.xmln中
 
 
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fang="http://schemas.android.com/apk/res/com.example.fangyi.myqq50"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_frame_background"> // <---------- 这里
+        
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+2.在 SlidingMenu 中添加
+    /**
+     * 抽屉式侧滑
+     * @param l
+     * @param t
+     * @param oldl
+     * @param oldt
+     */
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt)
+    {
+        super.onScrollChanged(l, t, oldl, oldt);
+        float scale = l * 1.0f / mMenuWidth; // 1 ~ 0
 
+        /**
+         * 区别1：内容区域1.0~0.7 缩放的效果 scale : 1.0~0.0 0.7 + 0.3 * scale
+         *
+         * 区别2：菜单的偏移量需要修改
+         *
+         * 区别3：菜单的显示时有缩放以及透明度变化 缩放：0.7 ~1.0 1.0 - scale * 0.3 透明度 0.6 ~ 1.0
+         * 0.6+ 0.4 * (1- scale) ;
+         *
+         */
+        float rightScale = 0.7f + 0.3f * scale;
+        float leftScale = 1.0f - scale * 0.3f;
+        float leftAlpha = 0.6f + 0.4f * (1 - scale);
+        // 调用属性动画，设置TranslationX
+        ViewHelper.setTranslationX(mMenu, mMenuWidth * scale * 0.8f);
 
+        ViewHelper.setScaleX(mMenu, leftScale);
+        ViewHelper.setScaleY(mMenu, leftScale);
+        ViewHelper.setAlpha(mMenu, leftAlpha);
 
-
-
+        // 设置content的缩放的中心点
+        ViewHelper.setPivotX(mContent, 0);
+        ViewHelper.setPivotY(mContent, mContent.getHeight() / 2);
+        ViewHelper.setScaleX(mContent, rightScale);
+        ViewHelper.setScaleY(mContent, rightScale);
+    }
 
 
 
