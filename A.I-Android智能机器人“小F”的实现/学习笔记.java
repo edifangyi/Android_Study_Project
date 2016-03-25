@@ -19,10 +19,7 @@ A.I-Android智能机器人“小慕”的实现
 1-1 编写消息发送与接收的工具类 HttpUtils.class
 
 
-package com.example.fangyi.ai_smallf;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+package com.example.fangyi.ai_cat.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,91 +29,74 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Date;
 
 /**
- * Created by FANGYI on 2016/3/24.
+ * Created by FANGYI on 2016/3/25.
  */
 public class HttpUtils {
     private static final String URL = "http://www.tuling123.com/openapi/api";
     private static final String API_KEY = "c12dae806af96440cb2967cdb9d0933d";
+    private static String params;
 
     /**
-     *发送一个消息，得到返回的消息
+     * 由用户传入一个消息
      * @param msg
      * @return
      */
-    private static ChatMessage sendMessage(String msg) {
-        ChatMessage chatMessage = new ChatMessage();
-        String jsonRes = doGet(msg);
-        Gson gson = new Gson();
-        Result result = null;
-        try {
-            result = gson.fromJson(jsonRes, Result.class);
-            chatMessage.setMsg(result.getText());//转换成功，输出转换后的消息
-        } catch (JsonSyntaxException e) {
-            chatMessage.setMsg("服务器繁忙，请稍候再试");
-        }
-        chatMessage.setDate(new Date());
-        chatMessage.setType(ChatMessage.Type.INCOMING);
-        return chatMessage;
-    }
-
-    /**
-     *
-     * @param msg
-     * @return
-     */
-    public static String doGet(String msg) {
+    private static String doGet(String msg) {
         String result = "";
         String url = setParams(msg);
-        ByteArrayOutputStream baos = null;
-        InputStream is = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        InputStream inputStream = null;
+
         try {
             java.net.URL urlNet = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) urlNet.openConnection();
-            conn.setReadTimeout(5*1000);//5秒
-            conn.setConnectTimeout(5*1000);
-            conn.setRequestMethod("GET");//请求方式
+            HttpURLConnection connection = (HttpURLConnection) urlNet.openConnection();
+            connection.setReadTimeout(5*1000);//5秒
+            connection.setConnectTimeout(5*1000);
+            connection.setRequestMethod("GET");//请求方式
 
-            is = conn.getInputStream();//拿到服务器返回的流
+            inputStream = connection.getInputStream();//拿到服务器返回的流
             int len = -1;
             byte[] buf = new byte[128];//缓冲区，128个字节
-            baos = new ByteArrayOutputStream();//把byte转换为String
-            while ((len = is.read(buf)) != -1) {
-                baos.write(buf, 0, len);
+
+            byteArrayOutputStream = new ByteArrayOutputStream();//把byte转换为String
+            while ((len = inputStream.read(buf)) != -1) {
+                byteArrayOutputStream.write(buf, 0, len);
             }
-            baos.flush();//清除缓冲区
-            result = new String(baos.toByteArray());
+            byteArrayOutputStream.flush();//清除缓冲区
+            result = new String(byteArrayOutputStream.toByteArray());
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (baos != null) {
+        } finally { //释放所有的资源
+            if (byteArrayOutputStream != null ) {
                 try {
-                    baos.close();
+                    byteArrayOutputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if (is != null) {
+
+            if (inputStream != null) {
                 try {
-                    is.close();
+                    inputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+
         return result;
     }
 
     /**
-     *
-     * @param msg
-     * @return
+     * 为URL设置参数
+     * @param params
      */
-    private static String setParams(String msg) {
+    public static String setParams(String params) {
         String url = "";
         try {
             url = URL + "?key=" + API_KEY +"&info=" + URLEncoder.encode(msg,"UTF-8");
@@ -126,6 +106,7 @@ public class HttpUtils {
         return url;
     }
 }
+
 
 
 --------------------------------------------------------------------------------------------
