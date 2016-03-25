@@ -61,11 +61,12 @@ public class HttpUtils {
             byte[] buf = new byte[128];//缓冲区，128个字节
 
             byteArrayOutputStream = new ByteArrayOutputStream();//把byte转换为String
+            //对流进行读操作
             while ((len = inputStream.read(buf)) != -1) {
                 byteArrayOutputStream.write(buf, 0, len);
             }
             byteArrayOutputStream.flush();//清除缓冲区
-            result = new String(byteArrayOutputStream.toByteArray());
+            result = new String(byteArrayOutputStream.toByteArray());//将本地流转换为字符串
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -106,6 +107,7 @@ public class HttpUtils {
         return url;
     }
 }
+
 
 
 
