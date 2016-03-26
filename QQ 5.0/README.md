@@ -94,3 +94,11 @@ Android 3.0 之前添加的
 	nineoldanimation.jar
 
 Android 3.0之后不用添加，API都一样
+
+=====================
+## 普通菜单切换
+![Aaron Swartz](https://raw.githubusercontent.com/edifangyi/Android_Study_Project/master/QQ%205.0/%E7%B4%A0%E6%9D%90%E5%8F%8A%E7%AC%AC%E4%B8%89%E6%96%B9jar/%E6%99%AE%E9%80%9A%E8%8F%9C%E5%8D%95%E5%88%87%E6%8D%A2.png)
+
+## 抽屉式缩放透明度菜单
+![Aaron Swartz](https://raw.githubusercontent.com/edifangyi/Android_Study_Project/master/QQ%205.0/%E7%B4%A0%E6%9D%90%E5%8F%8A%E7%AC%AC%E4%B8%89%E6%96%B9jar/%E6%8A%BD%E5%B1%89%E5%BC%8F%E7%BC%A9%E6%94%BE%E9%80%8F%E6%98%8E%E5%BA%A6%E8%8F%9C%E5%8D%95.png)
+
