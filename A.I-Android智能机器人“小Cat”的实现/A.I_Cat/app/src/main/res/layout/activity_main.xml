@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/bg_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/chat_bg_default"/>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/id_ly_top"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="#393A3F"
+            android:layout_alignParentTop="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                android:text="   A.I Cat"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:id="@+id/id_ly_bottom"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="50dp"
+        android:background="#FFFFFF">
+
+        <Button
+            android:id="@+id/id_send_msg"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/send_btn_bg"
+            android:textSize="18dp"
+            android:textColor="#ffffff"
+            android:text="送信" />
+
+        <EditText
+            android:id="@+id/id_input_msg"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/id_send_msg"
+            android:layout_alignTop="@+id/id_send_msg"
+            android:layout_alignParentBottom="true"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            android:hint="请输入..." />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/id_listview_msgs"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/id_ly_top"
+        android:layout_above="@id/id_ly_bottom"
+        android:divider="@null"
+        android:dividerHeight="5dp">
+    </ListView>
+
+</RelativeLayout>
