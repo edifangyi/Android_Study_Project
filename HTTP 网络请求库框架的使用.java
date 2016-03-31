@@ -398,9 +398,51 @@ public abstract class NetCallBack extends AsyncHttpResponseHandler {
  
 
  */
+/**
+ 
+
+ */
+/**
+ 
+
+ */
 
 
 
+//全部代码
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.fangyi.volleydemo">
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/phone_grey"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+>
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+
+ 
+
+/**
+ 
+ */
 
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -546,7 +588,6 @@ public abstract class NetCallBack extends AsyncHttpResponseHandler {
 
 /**
  
-
  */
 
 
@@ -754,4 +795,82 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+}
+
+
+/**
+ 
+ */
+
+
+package com.example.fangyi.volleydemo;
+
+import android.app.Application;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
+/**
+ * Created by FANGYI on 2016/3/28.
+ */
+public class MyApplication extends Application {
+
+    //Volley请求队列
+    public static RequestQueue queue;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //实例化，这里使用全局的上下文
+        queue = Volley.newRequestQueue(getApplicationContext());
+    }
+
+    /**
+     * 暴露一个方法，来返回全局的请求队列
+     * 方便再添加请求的时候进行调用
+     * @return
+     */
+    public static RequestQueue getHttpQueue() {
+    return queue;
+    }
+}
+
+
+
+/**
+ 
+ */
+package com.example.fangyi.volleydemo;
+
+import android.util.Log;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+/**
+ * Created by FANGYI on 2016/3/31.
+ */
+public abstract class NetCallBack extends AsyncHttpResponseHandler {
+
+    @Override
+    public void onStart() {
+        Log.i("info", "请求开始，弹出进度条框");
+        super.onStart();
+    }
+
+    @Override
+    public void onSuccess(String s) {
+        Log.i("info", "请求成功，隐藏进度条框" + s);
+        onMySuccess(s);
+        super.onSuccess(s);
+    }
+
+    @Override
+    public void onFailure(Throwable throwable) {
+        Log.i("info", "请求失败，隐藏进度条框" + throwable);
+        onMyFailure(throwable);
+        super.onFailure(throwable);
+    }
+
+    public abstract void onMySuccess(String s);
+    public abstract void onMyFailure(Throwable throwable);
 }
