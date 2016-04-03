@@ -341,7 +341,7 @@ public class Category extends Model {
     </application>
 
 </manifest>
- 
+
 
  /**
   
@@ -390,6 +390,8 @@ public class MainActivity extends AppCompatActivity {
 //        lists.addAll(new Select().from(Student.class).<Student>execute());
         //查询数据库
         List<Student> stus = new Select().from(Student.class).execute();
+
+        //上面那个查询数据库，效果是每次退出APK，再点开APK后，又会增加下面产生的8条数据
 
         //修改学生信息
         for (int i = 0; i< stus.size(); i++) {
