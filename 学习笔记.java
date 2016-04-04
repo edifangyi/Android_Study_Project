@@ -207,6 +207,13 @@ public class AnotherAty extends AppCompatActivity {
         textView2 = (TextView) findViewById(R.id.textView2);
 
         textView2.setText(i.getStringExtra("data"));
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+        tvTitle = (TextView) findViewById(R.id.tv_Title);
+        tvTitle.setText(book.getTitle().toString());
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 本课讲解在 Activity 跳转时如何传递复杂的数据。
