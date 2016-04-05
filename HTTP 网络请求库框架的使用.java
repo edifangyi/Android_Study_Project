@@ -17,6 +17,8 @@ Http 网络数据交互请求是极其重要并且使用很频繁的一个模块
 
 Volley 特别适合数据量不大但是通信频繁的场景
 
+    Volley.jar
+
 Volley 特点:
 	·能使网络通信更快，更简单，更健壮
 	·Get、Post 网络请求及网络图像的高效率异步处理请求
@@ -31,6 +33,8 @@ Volley 可以简化一些网络通信的开发，当然 Volley 不适合大数�
 
 
 Android-async-http 是一款国外的开源框架。搞笑的网络数据请求，文件下载和上传。
+
+    android-async-http-1.4.3.jar
 
 Async 特点:
 	·清晰的网络请求回调
@@ -59,7 +63,6 @@ Get 和 Post 用于与服务器间请求和发送数据
 
 
 	使用聚合API接口进行
-
 
 	https://www.juhe.cn
 

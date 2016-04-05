@@ -40,8 +40,8 @@ Picasso 框架
     ·在 Adapter 中需要取消已经不在视野范围的 ImageView 图片资源的加载，否则会导致图片错位，Picasso 已经解决了
 
 
-
-
+picasso-2.4.0.jar
+universal-image-loader-1.9.3.jar
 
 /**
  

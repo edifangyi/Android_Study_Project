@@ -41,6 +41,8 @@ ORM 数据库框架 ActiveAndroid 的特点和优势
 
 官方的Demo
 
+activeandroid-3.1-beta.jar
+
 
 1. AndroidManifest 添加 <eta-data />
 
