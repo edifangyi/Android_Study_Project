@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_mode_selected"
+            android:icon="@drawable/ic_menu_camera"
+            android:checkable="true"
+            android:title="模式选择" />
+        <item
+            android:id="@+id/nav_timer_selected"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="预约用水" />
+        <item
+            android:id="@+id/nav_data_analysis"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="数据分析" />
+        <item
+            android:id="@+id/nav_fault_analysis"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="故障分析" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_menu_share"
+                android:title="帮助" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_send"
+                android:title="关于" />
+        </menu>
+    </item>
+
+</menu>

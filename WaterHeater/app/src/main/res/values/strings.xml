@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">WaterHeater</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="pattern_intelligence">智能模式</string>
+    <string name="pattern_energy">节能模式</string>
+    <string name="power_fullpower">速热模式</string>
+    <string name="pattern_heating">加热模式</string>
+    <string name="pattern_temperature">保温模式</string>
+    <string name="pattern_safe">安全模式</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
