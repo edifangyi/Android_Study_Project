@@ -112,10 +112,16 @@ public class NewsAdapter extends BaseAdapter{
 						ViewGroup parent){}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-2.JSON解析
+1、JSON数组格式
+[
+     {“title”:“xxx”,“desc”:“xxx”,“time”:“xxx”,“content_url”:“xxx”,“pic_url”:“xxx.jpg”},
+     {“title”:“yyy”,“desc”:“yyy”,“time”:“yyy”,“content_url”:“yyy”,“pic_url”:“yyy.jpg”}
+]
 
-解析JSON数据
+
+2、解析JSON数据
 	JSONArray jsonArray = new JSONArray(jsonData);
 	for (int i=0;i<jsonArray.length();i++){
  		JSONObject object = jsonArray.getJSONObject(i);		
@@ -123,6 +129,7 @@ public class NewsAdapter extends BaseAdapter{
 		String desc = object.getString("desc"); 
 		……
 	}
+
 
 
 /**
@@ -201,9 +208,9 @@ public class NewsAdapter extends BaseAdapter{
 
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/**
+ 
+ */
 
 3. adapter/NewsAdapter.class  //adapter 文件
 package com.example.fangyi.news.adapter;
@@ -217,81 +224,54 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.fangyi.news.R;
+import com.example.fangyi.news.model.News;
+import com.example.fangyi.news.utils.HttpUtils;
 
-/**
- * Created by FANGYI on 2016/4/12.
- */
+import java.util.List;
+
+
 public class NewsAdapter extends BaseAdapter {
 
     private Context context;
-    public NewsAdapter(Context context) {
+    private List<News> newsList;
+
+    public NewsAdapter(Context context, List<News> newsList){
         this.context = context;
+        this.newsList = newsList;
     }
 
-
-    /**
-     * How many items are in the data set represented by this Adapter.
-     *
-     * @return Count of items.
-     */
     @Override
     public int getCount() {
-        return 0;
+        return newsList.size();
     }
 
-    /**
-     * Get the data item associated with the specified position in the data set.
-     *
-     * @param position Position of the item whose data we want within the adapter's
-     *                 data set.
-     * @return The data at the specified position.
-     */
     @Override
-    public Object getItem(int position) {
-        return null;
+    public News getItem(int position) {
+        return newsList.get(position);
     }
 
-    /**
-     * Get the row id associated with the specified position in the list.
-     *
-     * @param position The position of the item within the adapter's data set whose row id we want.
-     * @return The id of the item at the specified position.
-     */
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
-    /**
-     * Get a View that displays the data at the specified position in the data set. You can either
-     * create a View manually or inflate it from an XML layout file. When the View is inflated, the
-     * parent View (GridView, ListView...) will apply default layout parameters unless you use
-     * {@link LayoutInflater#inflate(int, ViewGroup, boolean)}
-     * to specify a root view and to prevent attachment to the root.
-     *
-     * @param position    The position of the item within the adapter's data set of the item whose view
-     *                    we want.
-     * @param convertView The old view to reuse, if possible. Note: You should check that this view
-     *                    is non-null and of an appropriate type before using. If it is not possible to convert
-     *                    this view to display the correct data, this method can create a new view.
-     *                    Heterogeneous lists can specify their number of view types, so that this View is
-     *                    always of the right type (see {@link #getViewTypeCount()} and
-     *                    {@link #getItemViewType(int)}).
-     * @param parent      The parent that this view will eventually be attached to
-     * @return A View corresponding to the data at the specified position.
-     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (convertView == null) {
+        if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.news_item, null);
-
         }
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        TextView tbDesc = (TextView) convertView.findViewById(R.id.tvDesc);
+        TextView tvDesc = (TextView) convertView.findViewById(R.id.tvDesc);
         TextView tvTime = (TextView) convertView.findViewById(R.id.tvTime);
         ImageView ivPic = (ImageView) convertView.findViewById(R.id.ivPic);
 
+        News news = newsList.get(position);
+        tvTitle.setText(news.getTitle());
+        tvDesc.setText(news.getDesc());
+        tvTime.setText(news.getTime());
+
+        String pic_url = news.getPic_url();
+        HttpUtils.setPicBitmap(ivPic, pic_url);
 
         return convertView;
     }
@@ -329,8 +309,11 @@ public class NewsAdapter extends BaseAdapter {
 
 package com.example.fangyi.news.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.ImageView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -388,11 +371,145 @@ public class HttpUtils {
             }
         }).start();
     }
+
+    /**
+     * 获取图片
+     *
+     * @param ivPic
+     * @param pic_url
+     */
+    public static void setPicBitmap(final ImageView ivPic, final String pic_url ) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    HttpURLConnection connection = (HttpURLConnection) new URL(pic_url).openConnection();
+                    connection.connect();
+                    InputStream is = connection.getInputStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    ivPic.setImageBitmap(bitmap);
+                    is.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+3. model/News.class //方便数据管理
 
+package com.example.fangyi.news.model;
+
+/**
+ * Created by FANGYI on 2016/4/12.
+ * 组织数据，每条新闻 对应 五个元素
+ *          另一条新闻 也 对应 五个元素
+ */
+public class News {
+    private String title;
+    private String desc;
+    private String time;
+    private String content_url;
+    private String pic_url;
+
+    public News(String title, String desc, String time, String content_url, String pic_url) {
+
+        setTitle(title);
+        setDesc(desc);
+        setTime(time);
+        setContent_url(content_url);
+        setPic_url(pic_url);
+
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getContent_url() {
+        return content_url;
+    }
+
+    public void setContent_url(String content_url) {
+        this.content_url = content_url;
+    }
+
+    public String getPic_url() {
+        return pic_url;
+    }
+
+    public void setPic_url(String pic_url) {
+        this.pic_url = pic_url;
+    }
+}
+
+
+
+/**
+ 
+
+ */
+
+实现新闻列表界面的跳转并展示详情 06:35
+
+本课时讲解为 ListView 添加点击事件，实现点击某条新闻后跳转到新闻详情浏览页的功能。
+
+
+
+
+package com.example.fangyi.news;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+
+/**
+ * Created by FANGYI on 2016/4/12.
+ */
+public class BrowseNewsActivity extends Activity {
+    private WebView webView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.acitivy_browse_news);
+
+        webView = (WebView) findViewById(R.id.webView);
+        String pic_url = getIntent().getStringExtra("content_url");
+        webView.loadUrl(pic_url);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//缓存
+    }
+}
 
 
 
@@ -403,31 +520,115 @@ public class HttpUtils {
  */
 
 
+主函数
 
 
 
+package com.example.fangyi.news;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.example.fangyi.news.adapter.NewsAdapter;
+import com.example.fangyi.news.model.News;
+import com.example.fangyi.news.utils.HttpUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+
+    private ListView lvNews;
+    private NewsAdapter adapter;    //NewsAdapter.class
+    private List<News> newsList;    //News.class
+
+    public static final String GET_NEWS_URL = "http://127.0.0.1:8080/NewsDemo/getNewsJSON.php";
 
 
+    /**
+     * 当获取到 News JSON数据之后处理数据
+     */
+    private Handler getNewsHandler = new Handler() {
+        // 即当在 HttpUtils.class 中的 handler 调用 .sendMessage(msg);
+        // 时就会调用 getNewsHandler 中下面这个回调方法
+        @Override
+        public void handleMessage(Message msg) {
+            String jsonData = (String) msg.obj;
+
+            System.out.println(jsonData);
+
+            //解析JSON数据
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                for (int i = 0; i<jsonArray.length(); i++) {
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    String title = object.getString("title");
+                    String desc = object.getString("desc");
+                    String time = object.getString("time");
+                    String content_url = object.getString("content_url");
+                    String pic_url = object.getString("pic_url");
+
+                    newsList.add(new News(title, desc, time, content_url, pic_url));
+                }
+                //通知Adapter更新
+                adapter.notifyDataSetChanged();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        lvNews = (ListView) findViewById(R.id.lvNews);
+        newsList = new ArrayList<News>();
+        adapter = new NewsAdapter(this, newsList);
 
+        lvNews.setAdapter(adapter);
+        lvNews.setOnItemClickListener(this);//点击事件
 
+        HttpUtils.getNewsJSON(GET_NEWS_URL, getNewsHandler);
+    }
 
-
-
-
-
-/**
- 
-
- */
-
-
-
-
-
-
+    /**
+     * 添加点击事件
+     *
+     * Callback method to be invoked when an item in this AdapterView has
+     * been clicked.
+     * <p/>
+     * Implementers can call getItemAtPosition(position) if they need
+     * to access the data associated with the selected item.
+     *
+     * @param parent   The AdapterView where the click happened.
+     * @param view     The view within the AdapterView that was clicked (this
+     *                 will be a view provided by the adapter)
+     * @param position The position of the view in the adapter.
+     * @param id       The row id of the item that was clicked.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        News news = newsList.get(position);
+        Intent intent = new Intent(this, BrowseNewsActivity.class);
+        intent.putExtra("content_url", news.getContent_url());
+        startActivity(intent);
+    }
+}
 
 
 
