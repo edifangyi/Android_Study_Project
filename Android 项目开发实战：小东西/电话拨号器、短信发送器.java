@@ -1,14 +1,3 @@
-Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
-
- android:inputType="phone" //限制输入
- android:hint="请输入电话好吗..." //提示输入
- android:lines="5" //展示5行内容
- android:gravity="top" //内容文字对齐方式
- android:onClick="send"//如果指定了 值为 send ，必须定义一个 public void send(View view) {}  (在上下文当中 通常在 Activity)
-
-
-
-*#*#4636#*#* //手机电话情报
 
 
  /**
