@@ -495,6 +495,158 @@ TableLayout (表格布局)
 
  */
 
+短信备份功能
+
+ * 短信内容
+ * 短信发送或接收的时间
+ * 对方号码
+ * 类型 type 1:为接收，2:为发送
+
+短信备份.java
+
+
+1.文本生成XML文件,类似格式
+/*
+    <?xml version="1.0" encoding="utf-8"?>
+    <messages>
+        <message>
+            <address>110</address>
+            <date>201605051206</date>
+            <type>1</type>
+            <body>你好，同学</body>
+        <message>
+    <messages>
+
+    上述方法不太合理，比如哪个哥们 发了带<body>标签的短信，直接卡崩了
+ */
+
+
+
+
+
+2.使用 xml 序列化器生成xml
+
+
+
+//拿到序列化器对象
+        XmlSerializer xs = Xml.newSerializer();
+
+        //对序列化器进行初始化
+        File file = new File("sdcard/sms2.xml");
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            //OutputStream:指定文件的保存路径
+            //encoding:指定生成的xml文件的编码
+            xs.setOutput(fos, "utf-8");
+
+            //开始生产文件
+            //生成头结点
+            xs.startDocument("utf-8", true);//utf-8决定头文件的encoding，和上面的utf-8意义不一样
+            //生成开始标签
+            xs.startTag(null, "messages");
+            for (Sms sms : smsList) {
+                xs.startTag(null, "message");
+
+                xs.startTag(null, "address");
+                //生成文本节点
+                xs.text(sms.getAddress());
+                xs.endTag(null, "address");
+
+                xs.startTag(null, "date");
+                xs.text(sms.getDate());
+                xs.endTag(null, "date");
+
+                xs.startTag(null, "type");
+                xs.text(sms.getType());
+                xs.endTag(null, "type");
+
+                xs.startTag(null, "body");
+                xs.text(sms.getBody());
+                xs.endTag(null, "body");
+
+                xs.endTag(null, "message");
+            }
+
+            xs.endTag(null, "messages");
+            xs.endDocument();//告诉序列化器生成完毕
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+3.pull 解析XML文件
+
+
+// <?xml version="1.0" encoding="utf-8"?>
+
+// <weather>
+
+//     <city>
+//         <name>深圳</name>
+//         <temp>18°</temp>
+//         <pm25>30</pm25>
+//     </city>
+
+//     <city>
+//         <name>上海</name>
+//         <temp>13°</temp>
+//         <pm25>56</pm25>
+//     </city>
+
+//     <city>
+//         <name>北京</name>
+//         <temp>8°</temp>
+//         <pm25>130</pm25>
+//     </city>
+
+//     <city>
+//         <name>长春</name>
+//         <temp>-5°</temp>
+//         <pm25>80</pm25>
+//     </city>
+
+// </weather>
+
+
+/**
+
+ */
+
+测试
+
+黑盒测试:不需要懂技术，测试逻辑业务
+白盒测试:需要懂技术，懂自动化测试，测试逻辑方法
+
+API:AndroidTestCase
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.example.fangyi.myapp"/>//测试哪个包写 包名
+
+        <uses-library android:name="">//跟Activity一个等级
+
+
+    //类执行之前先执行这里
+    protected setup() throws Exception {
+        super.setUp();
+
+    }
+    //类结束以后把这个方法下的都结束
+    protected tearDown() throws Exception {
+        super.tearDown();
+    }
+
+/**
+ 
+ */
+SQLite 
+
+
+
+
+
 
 
 

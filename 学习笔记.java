@@ -8135,15 +8135,12 @@ SharedPreference 是纯操作，如果需要配合界面的话，则需要额外
 	}
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ 
 
 
 
+ */
 
 SQLite是一种关系型数据库，并且SQLite是轻量级的数据库解决方案。SQLite支持多数的SQL92标准，在一些场合下其性能优于MySql等数据库引擎。本课程介绍了SQLite存储的使用方法。
 
@@ -8168,20 +8165,41 @@ SQLite数据库的数据读取和写入 22:47
 		public class Db extends SQLiteOpenHelper {
 
 			//name是存储的数据库的名字。CursorFactory数据库查询的结果，相当于一个指针，指向第一行。
-			//version 存储数据库的版本，他与onUpgrade有关，他是数据库升级的脚本
+			//version 存储数据库的版本，最低是1，他与onUpgrade有关，他是数据库升级的脚本
 		    public Db(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		        super(context, "db", null, version);
 		    }
 
+            // 为了方便，可以把一些参数去掉，把数据写死
+            // public Db(Context context) {
+            //     super(context, "people.db", null, 1);
+            // }
+
+            /**
+             * 数据库创建时，此方法调用
+             * @param db [description]
+             */
 		    @Override
 		    public void onCreate(SQLiteDatabase db) {
 		        //创建表 在SQLlist官网，语法部分有详细介绍
-        db.execSQL("CREATE TABLE user(" +
-                "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT DEFAULT \"\"," +
-                "sex TEXT DEFAULT \"\")");
+
+                //表 user
+                db.execSQL("CREATE TABLE user(" +
+                        "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "name TEXT DEFAULT \"\"," +
+                        "sex TEXT DEFAULT \"\")");
+                //表 person
+                db.execSQL("CREATE TABLE person(
+                        _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name char(10), phone char(20), money integer(10))");
 		    }
 
+            /**
+             * 数据库升级，调用此方法
+             * @param db         [description]
+             * @param oldVersion [description]
+             * @param newVersion [description]
+             */
 		    @Override
 		    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -8194,8 +8212,14 @@ SQLite数据库的数据读取和写入 22:47
 在 MainActivity 中添加
 
 
-
+        //创建OpneHelper对象
+        //A.在AndroidTestCase中运行A类数据库
+        //                    获取一个虚拟上下文
+        //A. Db oh = new Db(getContext(), "people.db", null, 1);
         Db db = new Db(this);
+
+
+
 //写入
 //        SQLiteDatabase dbWrite = db.getWritableDatabase();
 //        ContentValues cv = new ContentValues();
@@ -8208,9 +8232,81 @@ SQLite数据库的数据读取和写入 22:47
 //        dbWrite.insert("user", null, cv);
 //        dbWrite.close();//需要在用getWritableDatabase()获取
 
-		
-        SQLiteDatabase dbRead = db.getReadableDatabase();
 
+
+		//创建数据库
+        // A. 如果数据库不存在，那么先创建，再打开，如果数据库已经存在，则直接打开，（可读写数据库）
+        // A. SQLiteDatabase dbWrite = oh.getWritableDatabase()
+        
+        // 测试 表person 的数据库
+        // SQL: insert into person(name, phone, money) values('小明','13884388888',10000); 加不加'' 都无所谓，反正都会按字段插入
+        // SQL: delete form person; 删除整个表
+        // SQL：delete form person where name = '张三';删除这个表
+        // SQL：selest name, money from person; 列出只有 name 和 money 两列的表        
+
+        // //全局变量
+        // Db oh;
+        // SQLiteDatabase dbWrite
+        
+        // protected setup() throws Exception {
+        //     super.setUp();
+        //     oh = new Db(getContext(), "people.db", null, 1);
+        //     dbWrite = oh.getWritableDatabase()
+        // }
+        
+        // protected tearDown() throws Exception {
+        //     super.tearDown();
+        //     dbWrite.close();
+        // }
+
+        /**
+         * 增添表
+         */
+        // public void insertdb() {
+        //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"张三", "13888", 1000});
+        //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"李四", "15999", 2000});
+        //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"赵四", "12345", 3000});
+        //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"刘能", "17777", 4000});
+        // }
+        
+        /**
+         * 删减表
+         */
+        // public void delete() {
+        //     db.execSQL("delete form person where name = ?;", new Object[] {"张三"});
+        // }
+
+        // /**
+        //  * 改
+        //  */
+        // public void update() {
+        //     db.execSQL("update person set money = ? where name = ?", new object[] {13000, "刘能"});
+        // }
+
+        // /**
+        //  * 查
+        //  */
+        // public void select() {
+        //     Cursor cursor = db.rawQuery("selest name, money from person", null);
+        //      //往下一行(第零行什么都没有，表从第一行开始数的)
+        //      //索引
+        //      //现在查出来的表的顺序是 ：RecNo(不用管他) name(0) money(1); 这时候name顺序是0
+        //      //假如加一个：selest _id, name, money from person 顺序是 ：RecNo(不用管他) _id(0) name(1) money(2); 这时候name顺序是1
+        //      
+        //      /*指定列的索引*/ 查看 下面uesr表的 修改
+        //      //
+        //     while (cursor.moveToNext()) {
+        //         String name = c.getString(0);
+        //         String sex = c.getString(1);
+        //         System.out.println(name + ";" + money);
+        //     }
+        // }
+
+
+        SQLiteDatabase dbRead = db.getReadableDatabase();//磁盘不足，Readable只能读，没满功能跟上面的一样可读写
+
+        
+        //第一个参数 表名 uesr表
         //第二个参数new String[]{"name"}，返回name的
         //第三个参数，查询的条件"name =\"小张\"，这样只查询小张
         //第四个参数，查询的条件的参数，有时候我们防止SQL注入攻击，第三个参数位置我们写上"name=？",第四个参数写上new String[]{"小张"}，多个人名继续往下写
@@ -8430,14 +8526,12 @@ jintianduanwang
 </LinearLayout>
 
 
+/**
+ 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+ 
+ */
 
 使用 ContentProvider 在应用间传递数据 19:58
 
