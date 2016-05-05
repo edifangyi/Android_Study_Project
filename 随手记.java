@@ -521,6 +521,51 @@ TableLayout (表格布局)
  */
 
 
+    /**
+     * 文本生成xml文件
+     * @param v
+     */
+    private void write_1(View v) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"utf-\"?1>");
+
+        sb.append("<messages>");
+        for (Sms sms : smsList) {
+            sb.append("<message>");
+
+            sb.append("<address>");
+            sb.append(sms.getAddress());
+            sb.append("</address>");
+
+            sb.append("<date>");
+            sb.append(sms.getDate());
+            sb.append("</date>");
+
+            sb.append("<type>");
+            sb.append(sms.getType());
+            sb.append("</type>");
+
+            sb.append("<body>");
+            sb.append(sms.getBody());
+            sb.append("</body>");
+
+            sb.append("</message>");
+        }
+        sb.append("</messages>");
+
+
+        File file = new File("sdcard/sms.xml");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            fos.write(sb.toString().getBytes());
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -528,7 +573,12 @@ TableLayout (表格布局)
 
 
 
-//拿到序列化器对象
+    /**
+     * xml序列化生成器生成xml文件
+     * @param v
+     */
+    private void write_2(View v) {
+        //拿到序列化器对象
         XmlSerializer xs = Xml.newSerializer();
 
         //对序列化器进行初始化
@@ -572,7 +622,6 @@ TableLayout (表格布局)
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
 
 
@@ -641,7 +690,11 @@ API:AndroidTestCase
 /**
  
  */
+
+
 SQLite 
+
+具体参考 学习笔记 SQLite是一种关系型数据库 记录
 
 
 

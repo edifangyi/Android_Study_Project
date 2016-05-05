@@ -8220,7 +8220,7 @@ SQLite数据库的数据读取和写入 22:47
 
 
 
-//写入
+//API 写入
 //        SQLiteDatabase dbWrite = db.getWritableDatabase();
 //        ContentValues cv = new ContentValues();
 //        cv.put("name", "小张");
@@ -8262,11 +8262,20 @@ SQLite数据库的数据读取和写入 22:47
         /**
          * 增添表
          */
-        // public void insertdb() {
+        // public void insert() {
         //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"张三", "13888", 1000});
         //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"李四", "15999", 2000});
         //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"赵四", "12345", 3000});
         //     dbWrite.execSQL("insert into person(name, phone, money) values(?, ? , ?);", new Object[] {"刘能", "17777", 4000});
+        // }
+        // 
+        // public void insertAPI() {
+        //     ContentValues cv = new ContentValues();
+        //     cv.put("name", "小张");
+        //     cv.put("phone", "16777");
+        //     cv.put("money", 8500);
+        //     long id =  db.insert("person", null, cv);//第二个参数是在第三个参数不传东西时候调用的，但是这种情况基本不可能出现
+        //     System.out.println(id); //输出为_id = 第几个输进去 输出几
         // }
         
         /**
@@ -8275,12 +8284,21 @@ SQLite数据库的数据读取和写入 22:47
         // public void delete() {
         //     db.execSQL("delete form person where name = ?;", new Object[] {"张三"});
         // }
+        // 
+        // public void deleteAPI() {
+        //     long id = db.delete("person", "name = ?", new String[] {"张三"});//删一行返回1
+        // }
 
         // /**
         //  * 改
         //  */
         // public void update() {
         //     db.execSQL("update person set money = ? where name = ?", new object[] {13000, "刘能"});
+        // }
+        // public void updateAPI() {
+        //     ContentValues cv = new ContentValues();
+        //     cv.put("money", 8500);
+        //     db.update("person", cv, "name = ?", new object[] {"刘能"});//改一行返回1，改两行返回2
         // }
 
         // /**
@@ -8301,6 +8319,40 @@ SQLite数据库的数据读取和写入 22:47
         //         System.out.println(name + ";" + money);
         //     }
         // }
+        // public void selectAPI() {
+        //    Cursor cursor = db.query("person", new String[]{"name", "money"}, "name = ?", new String[]{"小张"},null, null, null, null);
+        //    while (cursor.moveToNext()) {
+        //         String name = c.getString(0);
+        //         String sex = c.getString(1);
+        //         System.out.println(name + ";" + money);
+        //    }
+        // }
+        
+
+        // /**
+        //  * 事务
+        //  * 形象点就是李四想给张三转200块钱之类的操作
+        //  */
+        // public void transaction() {
+        //     try{
+        //         //开启事务
+        //         db.beginTransaction();
+
+        //         ContentValues cv = new ContentValues();
+        //         cv.put("money", 12005);
+        //         db.update("person", cv, "name = ?", new String[]{"刘超"});
+                
+        //         cv.close();
+        //         cv.put("money", 14000);
+        //         db.update("person", cv, "name = ?", new String[]{"子豪"});
+
+        //         db.setTransactionSuccessful();//设置事务成功
+        //     } finally {
+        //         db.endTransaction();//关闭事务，如果事务已经设置了执行成功，那么所有语句生效，如果没有设置，则回滚
+        //     }
+
+
+        }
 
 
         SQLiteDatabase dbRead = db.getReadableDatabase();//磁盘不足，Readable只能读，没满功能跟上面的一样可读写
