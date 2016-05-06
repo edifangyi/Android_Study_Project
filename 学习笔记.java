@@ -8189,8 +8189,7 @@ SQLite数据库的数据读取和写入 22:47
                         "name TEXT DEFAULT \"\"," +
                         "sex TEXT DEFAULT \"\")");
                 //表 person
-                db.execSQL("CREATE TABLE person(
-                        _id INTEGER PRIMARY KEY AUTOINCREMENT,
+                db.execSQL("CREATE TABLE person(_id INTEGER PRIMARY KEY AUTOINCREMENT,
                         name char(10), phone char(20), money integer(10))");
 		    }
 
@@ -8209,8 +8208,7 @@ SQLite数据库的数据读取和写入 22:47
 
 2.
 
-在 MainActivity 中添加
-
+在 MainActivity 中添加  对数据库 进行操作的代码
 
         //创建OpneHelper对象
         //A.在AndroidTestCase中运行A类数据库
@@ -8251,7 +8249,7 @@ SQLite数据库的数据读取和写入 22:47
         // protected setup() throws Exception {
         //     super.setUp();
         //     oh = new Db(getContext(), "people.db", null, 1);
-        //     dbWrite = oh.getWritableDatabase()
+        //     dbWrite = oh.getWritableDatabase();
         // }
         
         // protected tearDown() throws Exception {
@@ -8315,7 +8313,7 @@ SQLite数据库的数据读取和写入 22:47
         //      //
         //     while (cursor.moveToNext()) {
         //         String name = c.getString(0);
-        //         String sex = c.getString(1);
+        //         String money = c.getString(1);
         //         System.out.println(name + ";" + money);
         //     }
         // }
@@ -8323,11 +8321,19 @@ SQLite数据库的数据读取和写入 22:47
         //    Cursor cursor = db.query("person", new String[]{"name", "money"}, "name = ?", new String[]{"小张"},null, null, null, null);
         //    while (cursor.moveToNext()) {
         //         String name = c.getString(0);
-        //         String sex = c.getString(1);
+        //         String money = c.getString(1);
         //         System.out.println(name + ";" + money);
         //    }
         // }
+        // 
+        // query 支持 分页查询  limit 0,10 (从0开始插10页，想查10到15的数据，，是"10,5") 
+        // 
+        // db.query("person", null, null,null, null, null, null, "0,10");
+        // 
         
+
+
+
 
         // /**
         //  * 事务
@@ -8350,9 +8356,12 @@ SQLite数据库的数据读取和写入 22:47
         //     } finally {
         //         db.endTransaction();//关闭事务，如果事务已经设置了执行成功，那么所有语句生效，如果没有设置，则回滚
         //     }
-
-
-        }
+        // }
+        // 
+        // 
+        // 
+        // 
+        // 
 
 
         SQLiteDatabase dbRead = db.getReadableDatabase();//磁盘不足，Readable只能读，没满功能跟上面的一样可读写
@@ -8374,7 +8383,78 @@ SQLite数据库的数据读取和写入 22:47
         }
 
 
+/**
+ 
+ */
 
+
+MVC 结构
+JavaWeb:
+    M : 模型层     各种 javaBean : 就是要显示给用户看的数据
+    V : 视图层     jsp : 就是用户能直接看到的界面
+    C : 控制层     servlet : 把 javaBean 的数据显示至 jsp
+Android:
+    M : 模型层     personlist， 保存着要让用户看到的数据集合
+    V : 视图层     ListView， 就是用户能直接看到的界面
+    C : 控制层     Adapter，把 personlist 的数据显示至 ListView
+
+    ListView中，每一个条目，都是一个View对象
+    ListView的条目，一旦被划出屏幕，并不会被立刻销毁，而是缓存在内存中，如果系统内存不足，才会销毁
+
+    /**
+     * 返回一个View对象，被返回的View对象，会作为ListView的一个条目显示至屏幕
+     * position：返回的View对象，在整个ListView当中，属于第几个条目
+     * convertView：当条目被划出屏幕时，该条目会被缓存起来，当getView方法再次调用时，缓存条目就会作为convertView传入getView方法中
+     */
+    
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        View v = null;
+        //优化ListView
+        if (convertView == null) {
+            //通过资源id，把自定的布局文件填充成View对象
+            View v = View.inflate(context, R.layout.listview_item, null);
+        } else {
+            v = convertView;
+        }
+    }
+
+    String[] s = new String[] {
+        "大波q",
+        "吹波q",
+        "跨抓q",
+        "喷他q",
+    };
+
+
+SimpleAdapter & ArrayAdapter
+
+
+    ListView lv = (ListView) findViewById(R.id.lv);
+    
+    //resource:布局文件的资源ID,同时只能操作一种数据
+    lv.setAdapter(new ArrayAdapter<String>(this, R.layout.arrayadapter_item, R.id.tv, s));
+    
+    //集合中的每一个元素，都包含了listView一个条目所需要的所有数据
+    List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+
+    Map<String, Object> map1 = new HashMap<String, Object>();
+        map1.put("name", "小明");
+        map1.put("image", R.drawable.photo1);
+        data.add(map1);
+
+        Map<String, Object> map2= new HashMap<String, Object>();
+        map2.put("name", "小花");
+        map2.put("image", R.drawable.photo2);
+        data.add(map3);
+
+        Map<String, Object> map3 = new HashMap<String, Object>();
+        map3.put("name", "小红");
+        map3.put("image", R.drawable.photo3);
+        data.add(map3);
+ 
+    //                                             传入的数据                     组件的资源ID，资源的位置都要对应好
+    lv.SimpleAdapter(new SimpleAdapter(this, data, new String[]{"name", "image"}, new int[]{R.id.tv, R.id.iv}))
 
 3.
 	如何把数据库和 Lsitview 结合起来

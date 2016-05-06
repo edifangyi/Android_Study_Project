@@ -25,7 +25,7 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
  android:background="#000000"//RGB
  android:background="#ffff4444"//ARGB，A表示透明度
 
-
+<ScrollView></ScrollView> //可以添加滑动效果
 
 *#*#4636#*#* //手机电话情报
 
