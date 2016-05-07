@@ -417,7 +417,6 @@ TableLayout (表格布局)
 
         tvSdSum.setText(formatSize(totalBlocaks * blockSize));//总容量
         tvSd.setText(formatSize(availableBlocks * blockSize));//剩余容量
-    }
 
 
     private String formatSize(long size) {
@@ -697,6 +696,36 @@ SQLite
 具体参考 学习笔记 SQLite是一种关系型数据库 记录
 
 
+/**
+ 
+ */
+
+查询 本地 IP 语句：ipconfig
+
+每个应用只有一个 ApplicationContext
+每个 Activity 都是一个 ActivityContext
+
+主线程堵塞
+    界面会停止刷新，并且应用会停止响应用户的任何操作 (只有 Home键有效)
+
+    当主线程阻塞时间过长，系统就会报出 ANR 异常， application not responding ，应用无响应异常
+
+    4.0 以后就不准许 在主线程中添加影响响应的代码
+
+    只有主线程才可以刷新UI，主线程又叫ui线程
+    刷新UI不能执行在子线程中
+
+    在主线程中 有一个
+        1.消息队列 Message Queue  (主线程创建时，消息队列和消息轮询器就会被创建)
+            里面还有一个 消息轮询器 Looper ，(Looper 一旦发现 Message Queue 中有消息，就把消息取出，把消息给 Handler对象)
+        2.主线程中创一个 Handler对象 (主线程不会自动创建消息处理器，使用时候自行创建)
+            handleMessage 方法 用来处理 Looper 发来的消息
+            handleMessage 运行在主线程
+            只要消息队列中有消息，就会触发主线程去执行 handleMessage方法
+
+        3.子线程 往消息队列发消息，就会触发主线程去执行 handleMessage 方法
+
+            调用 Handler对象 的 sendMessage 方法，就会往消息队列中发消息
 
 
 
@@ -704,7 +733,555 @@ SQLite
 
 
 
+1.带网络功能的图片查看器
+
+package com.example.fangyi.requestserverdata;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity {
+
+    Handler handler = new Handler() {
+        /**
+         * 只要消息队列中有消息，此方法调用
+         *
+         * Subclasses must implement this to receive messages.
+         *
+         * @param msg
+         */
+        @Override
+        public void handleMessage(Message msg) {
+            //8.把图片设置进imageView中
+            ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+            imageView.setImageBitmap((Bitmap) msg.obj);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+    }
+
+
+    public void requsetimg(View v) {
+        //子线程
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                //请求网址获取图片
+                //1.确定网址
+                String path = "http://ww1.sinaimg.cn/large/6d4fa8d9gw1f3mj1tzoxbj20go0tnjwb.jpg";
+
+                try {
+                    //2.获取url对象
+                    URL url = new URL(path);
+
+                    //3.获取链接对象,此时还没有建立连接
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                    //4.初始化连接对象
+                    // 设置请求的方法，注意大写
+                    conn.setRequestMethod("GET");
+                    //读取超时
+                    conn.setReadTimeout(5000);
+                    //连接超时
+                    conn.setConnectTimeout(5000);
+
+                    //5.和服务器建立链接
+                    conn.connect();
+                    //  200是链接成功的代码
+                    if (conn.getResponseCode() == 200) {
+                        //6.拿到服务器返回的流，客户端请求的数据，就保存在流中
+                        InputStream is = conn.getInputStream();
+                        //7.从流里读取数据，构造成一个图片对象，通过位图工厂API
+                        Bitmap bm = BitmapFactory.decodeStream(is);
+
+                        //创建消息对象
+                        Message msg = new Message();
+                        //把bm存放入消息
+                        msg.obj = bm;
+                        //子线程往消息队列发送消息
+                        handler.sendMessage(msg);
+
+
+                    } else {
+                        //弹吐司也是刷新UI
+                        Toast.makeText(MainActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        t.start();
+    }
+}
 
 
 
 
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.fangyi.requestserverdata.MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_requset_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请求图片"
+        android:onClick="requsetimg"/>
+
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+/**
+
+ */
+
+
+
+2.带缓存功能 网络查看器
+
+
+
+
+package com.example.fangyi.requestserverdata;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity {
+
+    Handler handler = new Handler() {
+        /**
+         * 只要消息队列中有消息，此方法调用
+         *
+         * Subclasses must implement this to receive messages.
+         *
+         * @param msg
+         */
+        @Override
+        public void handleMessage(Message msg) {
+            //8.把图片设置进imageView中
+            ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+            imageView.setImageBitmap((Bitmap) msg.obj);
+            TextView tv = (TextView) findViewById(R.id.tv);
+            tv.setText("服务器端获取的图片");
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+    }
+
+    /**
+     * 获取图片
+     * @param v
+     */
+    public void requsetimg(View v) {
+        //请求网址获取图片
+        //1.确定网址
+        final String path = "http://ww1.sinaimg.cn/large/6d4fa8d9gw1f3mj1tzoxbj20go0tnjwb.jpg";
+
+        //首先判断缓存是否存在
+        final File file = new File(getCacheDir(), getFileName(path));
+
+        if (file.exists()) {
+
+            //通过图片的绝对路径构造一个bitmap对象
+            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+            ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+            imageView.setImageBitmap(bm);
+
+            TextView tv = (TextView) findViewById(R.id.tv);
+            tv.setText("从缓存获取的图片");
+
+        } else {
+            //子线程
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+
+
+                    try {
+                        //2.获取url对象
+                        URL url = new URL(path);
+
+                        //3.获取链接对象,此时还没有建立连接
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                        //4.初始化连接对象
+                        // 设置请求的方法，注意大写
+                        conn.setRequestMethod("GET");
+                        //读取超时
+                        conn.setReadTimeout(5000);
+                        //连接超时
+                        conn.setConnectTimeout(5000);
+
+                        //5.和服务器建立链接
+                        conn.connect();
+                        //  200是链接成功的代码
+                        if (conn.getResponseCode() == 200) {
+
+                            //6.拿到服务器返回的流，客户端请求的数据，就保存在流中
+                            InputStream is = conn.getInputStream();
+
+                            /****编写缓存代码****************************************************/
+
+                            //7.开启文件输出流，把读取到的字节写到本地文件
+
+                            FileOutputStream fos = new FileOutputStream(file);
+
+                            int len = 0;
+                            byte[] b = new byte[1024];
+                            while ((len = is.read(b)) != -1) {
+                                fos.write(b, 0, len);
+                            }
+                            fos.close();
+
+                            //通过图片的绝对路径构造一个bitmap对象
+                            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                            /******************************************************************/
+
+                            //创建消息对象
+                            Message msg = new Message();
+                            //把bm存放入消息
+                            msg.obj = bm;
+                            //子线程往消息队列发送消息
+                            handler.sendMessage(msg);
+
+
+                        } else {
+                            Toast.makeText(MainActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            t.start();
+        }
+
+
+    }
+
+    /**
+     * 删除缓存图片
+     */
+    public void deleteimg(View v) {
+        deleteFilesByDirectory(getCacheDir());
+    }
+
+    /**
+     * 截取文件名
+     * @param path
+     * @return
+     */
+    public String getFileName(String path) {
+        int index = path.lastIndexOf("/");
+        return path.substring(index + 1);
+    }
+
+    /**
+     * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理
+     * @param directory
+     */
+    private static void deleteFilesByDirectory(File directory) {
+        if (directory != null && directory.exists() && directory.isDirectory()) {
+            for (File item : directory.listFiles()) {
+                item.delete();
+            }
+        }
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.fangyi.requestserverdata.MainActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/btn_requset_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请求图片"
+        android:onClick="requsetimg"/>
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="删除缓存图片"
+        android:onClick="deleteimg"/>
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="图片获取方式"/>
+
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
+
+
+
+
+
+/**
+
+ */
+
+package com.example.fangyi.requestserverdata;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class MainActivity extends AppCompatActivity {
+
+    Handler handler = new Handler() {
+        /**
+         * 只要消息队列中有消息，此方法调用
+         *
+         * Subclasses must implement this to receive messages.
+         *
+         * @param msg
+         */
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    //8.把图片设置进imageView中
+                    ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+                    imageView.setImageBitmap((Bitmap) msg.obj);
+                    TextView tv = (TextView) findViewById(R.id.tv);
+                    tv.setText("服务器端获取的图片");
+                    break;
+
+                case 2:
+                    Toast.makeText(MainActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+
+
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+    }
+
+    /**
+     * 获取图片
+     * @param v
+     */
+    public void requsetimg(View v) {
+        //请求网址获取图片
+        //1.确定网址
+        final String path = "http://ww1.123.cn/large/6d4fa8d9gw1f3mj1tzoxbj20go0tnjwb2.jpg";
+
+        //首先判断缓存是否存在
+        final File file = new File(getCacheDir(), getFileName(path));
+
+        if (file.exists()) {
+
+            //通过图片的绝对路径构造一个bitmap对象
+            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+            ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+            imageView.setImageBitmap(bm);
+
+            TextView tv = (TextView) findViewById(R.id.tv);
+            tv.setText("从缓存获取的图片");
+
+        } else {
+            //子线程
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+
+
+                    try {
+                        //2.获取url对象
+                        URL url = new URL(path);
+
+                        //3.获取链接对象,此时还没有建立连接
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                        //4.初始化连接对象
+                        // 设置请求的方法，注意大写
+                        conn.setRequestMethod("GET");
+                        //读取超时
+                        conn.setReadTimeout(5000);
+                        //连接超时
+                        conn.setConnectTimeout(5000);
+
+                        //5.和服务器建立链接
+                        conn.connect();
+                        //  200是链接成功的代码
+                        if (conn.getResponseCode() == 200) {
+
+                            //6.拿到服务器返回的流，客户端请求的数据，就保存在流中
+                            InputStream is = conn.getInputStream();
+
+                            /****编写缓存代码****************************************************/
+
+                            //7.开启文件输出流，把读取到的字节写到本地文件
+
+                            FileOutputStream fos = new FileOutputStream(file);
+
+                            int len = 0;
+                            byte[] b = new byte[1024];
+                            while ((len = is.read(b)) != -1) {
+                                fos.write(b, 0, len);
+                            }
+                            fos.close();
+
+                            //通过图片的绝对路径构造一个bitmap对象
+                            Bitmap bm = BitmapFactory.decodeFile(file.getAbsolutePath());
+
+                            /******************************************************************/
+
+                            //创建消息对象
+                            Message msg = new Message();
+                            //把bm存放入消息
+                            msg.obj = bm;
+                            msg.what = 1;
+                            //子线程往消息队列发送消息
+                            handler.sendMessage(msg);
+
+
+                        } else {
+                            //弹吐司也是刷新UI
+//                            Toast.makeText(MainActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
+                            Message msg = handler.obtainMessage();
+                            msg.obj = 2;
+                            handler.sendMessage(msg);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            t.start();
+        }
+
+
+    }
+
+    /**
+     * 删除缓存图片
+     */
+    public void deleteimg(View v) {
+        deleteFilesByDirectory(getCacheDir());
+    }
+
+    /**
+     * 截取文件名
+     * @param path
+     * @return
+     */
+    public String getFileName(String path) {
+        int index = path.lastIndexOf("/");
+        return path.substring(index + 1);
+    }
+
+    /**
+     * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理
+     * @param directory
+     */
+    private static void deleteFilesByDirectory(File directory) {
+        if (directory != null && directory.exists() && directory.isDirectory()) {
+            for (File item : directory.listFiles()) {
+                item.delete();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+/**
+ 
+ */
