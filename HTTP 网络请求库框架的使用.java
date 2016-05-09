@@ -118,7 +118,9 @@ public class MyApplication extends Application {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 2.
 	MyApplication.class
 
@@ -270,11 +272,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 /**
- 
 
  */
+/**
 
-
+ */
 Android-async-http 的用法
 
 
@@ -328,18 +330,21 @@ Async-http 有自己的默认的回调逻辑封装，例如请求成功，请求
 
         //使用定制回调
         RequestUtils.ClientPost(url, params, new NetCallBack() {
+            
+            //请求成功时，此方法调用
             @Override
             public void onMySuccess(String s) {
                 Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
             }
-
+            //请求失败时，此方法调用
             @Override
             public void onMyFailure(Throwable throwable) {
                 Toast.makeText(MainActivity.this, "网络请求失败", Toast.LENGTH_SHORT).show();
             }
         });
 
-
+        //post方式
+        //
 //        client.post(url, params, new AsyncHttpResponseHandler() {
 //            @Override
 //            public void onSuccess(String s) {

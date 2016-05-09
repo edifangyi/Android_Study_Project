@@ -9577,11 +9577,11 @@ I/System.out: </youdao-fanyi>
             }
         });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
-///
-///
+/**
+ 
+ */
 
-使用HttpClient进行Get方式通信 12:20
+使用 HttpClient 进行Get方式通信 12:20
 
 本课时讲解使用HttpClient进行Get方式通信，通过HttpClient建立网络链接，使用HttpGet方法读取数据，并且通过Response获取Entity返回值。
 
@@ -9615,8 +9615,11 @@ android {
 private EditText et;
 private TextView text;
 HttpClient httpClient;
-
+        
+        //1.创建client对象
         httpClient = new DefaultHttpClient();
+
+
         et = (EditText) findViewById(R.id.enitText);
         text = (TextView) findViewById(R.id.HttpClienttextView);
 
@@ -9652,11 +9655,30 @@ HttpClient httpClient;
 //a            protected Void doInBackground(String... params) {
 //b            protected String doInBackground(String... params) {
                 String urlString = params[0];
+
+                //2.创建httpGet请求对象
                 HttpGet get = new HttpGet(urlString);
+
+                //返回服务器给客户端的的响应
                 HttpResponse response = null;
                 try {
+                    //使用client对象发送get请求，返回服务器给客户端的的响应
                     response = httpClient.execute(get);
-                    String value = EntityUtils.toString(response.getEntity());
+
+                    //获取状态行对象
+                    StatusLine sl = response.getStatusLine();
+
+                    //获取状态码 如果200，说明请求成功
+                    if (sl.getStatusCode() = 200) {
+                        // String value = EntityUtils.toString(response.getEntity());
+                        HttpEntity he = response.getEntity();
+                        inputStream is = he.getContext();
+                        String text = Util.getTextFromStream();
+
+                        Message msg = handler.obtainMessage();
+                        msg.obj = text;
+                        handler.sendMessage(msg);
+                    }
 
 //a                    System.out.println(value);
 //b                    return value;
@@ -9720,8 +9742,17 @@ HttpClient httpClient;
 //                    entity = new StringEntity(params[1]);
 //                    post.setEntity(entity);
                     List<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>();
-                    list.add(new BasicNameValuePair("name",params[1]));
-                    post.setEntity(new UrlEncodedFormEntity(list));
+                    BasicNameValuePair ban = new BasicNameValuePair("name",params[1]);
+                    
+                    UrlEncodedFormEntity entity;
+                    entity = new UrlEncodedFormEntity(list, "utf-8");
+
+
+                    list.add(ban);
+                    
+                    //把要提交的数据存入post请求头中
+                    //表单对象
+                    post.setEntity(entity);
 
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();

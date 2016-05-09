@@ -658,6 +658,86 @@ TableLayout (表格布局)
 // </weather>
 
 
+
+
+    /**
+     * 解析XML文件
+     * @param v
+     */
+    public void resolvexml(View v) {
+        //拿到资源文件
+        InputStream is = getClassLoader().getResourceAsStream("weather.xml");
+        //拿到解析器对象
+        XmlPullParser xp = Xml.newPullParser();
+
+        try {
+            //初始化xp对象
+            xp.setInput(is, "utf-8");
+
+            City city = null;
+
+            //开始解析
+            // 获取当前节点的事件类型
+            // START_DOCUMENT = 0;
+            // END_DOCUMENT= 1; 文档解析结束
+            // START_TAG = 2;
+            // END_TAG = 3;
+            int type = xp.getEventType();
+            while (type != XmlPullParser.END_DOCUMENT) {
+                //判断当前解析到哪一个节点，从而确定什么操作
+                switch (type) {
+                    case XmlPullParser.START_TAG:
+                        //获取当前节点的名字
+                        if ("weather".equals(xp.getName())) {
+
+                            cityList = new ArrayList<>();
+
+                        } else if ("city".equals(xp.getName())) {
+
+                            city = new City();
+
+                        } else if ("name".equals(xp.getName())) {
+
+                            //获取当前节点下一个节点的文本
+                            String name = xp.nextText();
+                            city.setName(name);
+
+                        } else if ("temp".equals(xp.getName())) {
+
+                            String temp = xp.nextText();
+                            city.setName(temp);
+
+                        } else if ("pm25".equals(xp.getName())) {
+
+                            String pm25 = xp.nextText();
+                            city.setName(pm25);
+                        }
+                        break;
+
+                    case XmlPullParser.END_TAG:
+                        if ("city".equals(xp.getName())) {
+                            cityList.add(city);
+                        }
+                        break;
+                }
+                // 把指针移动到下一个节点
+                type = xp.next();
+            }
+
+            for (City c : cityList) {
+                tvXMLShow.setText((CharSequence) c);
+                System.out.println(c);
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
 /**
 
  */
@@ -1279,9 +1359,140 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+/**
+ 
+ */
+
+    Handler handler = new Handler() {
+        /**
+         * 只要消息队列中有消息，此方法调用
+         *
+         * Subclasses must implement this to receive messages.
+         *
+         * @param msg
+         */
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    //8.把图片设置进imageView中
+                    ImageView imageView = (ImageView) findViewById(R.id.iv_img);
+                    imageView.setImageBitmap((Bitmap) msg.obj);
+                    TextView tv = (TextView) findViewById(R.id.tv);
+                    tv.setText("服务器端获取的图片");
+                    break;
+
+                case 2:
+                    Toast.makeText(MainActivity.this, "请求失败", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    TextView tv_html = (TextView) findViewById(R.id.tv_html);
+                    tv_html.setText((CharSequence) msg.obj);
+                    break;
+            }
+
+
+    /**
+     * html 源文件查看器
+     */
+    public void seehtml(View v) {
+        Thread thread= new Thread() {
+            @Override
+            public void run() {
+                //确定网址
+                String path = "http://www.cnblogs.com/tianguook/archive/2013/07/23/3209302.html";
+                try {
+                    //构造url对象
+                    URL url = new URL(path);
+                    //得到连接对象
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //初始化连接对象
+                    conn.setRequestMethod("GET");
+                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(5000);
+                    //先建立连接，然后获取响应码
+                    if (conn.getResponseCode() == 200) {
+                        InputStream is = conn.getInputStream();
+                        //从服务器返回的流中把文本读取出来
+                        String string = getTextFromStream(is);
+                        //发送消息，刷新ui显示
+                        Message msg = handler.obtainMessage();
+                        msg.obj = string;
+                        msg.what = 3;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        thread.start();
+
+    }
+
+    /**
+     * 从流中读取文本
+     * @param is
+     */
+    public String getTextFromStream(InputStream is) {
+        int len = 0;
+        byte[] b = new byte[1024];
+        //定义一个字节数组输出流，保存每次读取到的字节
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            while ((len = is.read(b)) != -1 ) {
+                bos.write(b, 0, len);
+            }
+            //使用哪个码表来构造这个字符串
+            String text = new String(bos.toByteArray(), "utf-8");
+            return text;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 
 /**
  
  */
+/**
+ 
+ */
+/**
+ 
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
