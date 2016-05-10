@@ -1466,10 +1466,22 @@ public class MainActivity extends AppCompatActivity {
  */
 
 
+多线程下载
 
+每个线程要下载的数量 = 总长度 / 线程数量
 
+    size = 10 / 3
 
+给每个线程一个ID =  0、1、 2
 
+线程的开始位置
+    startIndex:id*size
+
+线程的结束位置
+    endIndex:(id+1)*size-1
+
+最后一个线程的结束位置
+    endIndex:length-1
 
 
 
