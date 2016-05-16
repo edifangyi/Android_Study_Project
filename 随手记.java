@@ -27,6 +27,8 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
 
 <ScrollView></ScrollView> //可以添加滑动效果
 
+android:theme="@android:style/Theme.Translucent"//透明主题色
+
 *#*#4636#*#* //手机电话情报
 
 /**
@@ -1485,26 +1487,343 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+XUtils
+
+
+/**
+ 
+ */
+/**
+ 
+ */
+/**
+ 
+ */
+
+创建第二个Activity
+
+    * 应用可以有多个快捷图标
+    *每个快捷图标的图标和标签都是独立生成的
+    *如果Activity的子节点intent-filter有以下两个属性，则会为此Activity生成快捷图标
+
+        <activity android:name=".MyActivity"
+            android:icon="我是图标"
+            android:label="我是应用名">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
+
+
+/**
+ 
+ */
+
+Activity 隐式启动和显式启动
+
+    startActivity(new Intent(MainActivity.this, MyActivity.class);
+
+
+    1.
+
+    /**
+     * 隐式启动打电话
+     */
+    
+    private void click1(View v) {
+        //隐式启动Activity：通过指定Action动作，指定启动的Activity
+        //隐式意图
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:110"));
+        startActivity(intent);
+    }
+
+
+    2.
+
+    /**
+     * 显式启动目标Activity
+     */
+    
+    private void click2(View v) {
+        //显式启动Activity：通过指定目标Activity的类名，实现启动
+        //显式意图
+        //只要启动Activity，就必须要定义意图对象
+        Intent intent = new Intent();
+        //直接指定目标Activity的类名
+        intent.setClassName(this, MyActivity.class);
+        startActivity(intent);
+    }
+
+    3.
+
+    /**
+     * 显示启动拨号器
+     */
+    
+    private void click3(View v) {
+        Intent intent = new Intent();
+        //显式启动拨号器的包名和类名
+        intent.setClassName("com.android.dialer", "com.android.dialer.DialtactsActivity");
+        startActivity(intent);
+    }
+
+    4.
+
+    /**
+     * 隐式启动拨号器
+     */
+
+    private void click4(View v) {
+        Intent intent = new Intent();
+        //隐式指定拨号器的动作
+        intent.setAction(Intent.ACTION_DIAL);
+        startActivity(intent);
+    }
+
+    5.
+
+    /**
+     * 隐式启动目标Activity
+     */
+    
+        <activity android:name=".MyActivity" >
+       
+        //可以定义多个
+            <intent-filter>
+                <action android:name="asd.asd.asd"/>
+                <data android:scheme="haha" android:minmeType="aa/bb"/>
+                <data android:scheme="papa" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="sb.sb.sb"/>
+                <data android:scheme="xixi" />
+                <category android:name="android.intent.category.DEFAULT"/>//必须要有
+            </intent-filter>
+
+        </activity>
+
+
+    private void click5(View v) {
+        Intent intent = new Intent();
+        //此Action的值必须与该Activity在清单文件中配置的action标签的name属性值匹配
+        intent.setAction("asd.asd.asd");
+
+        /**
+         * 下面两个方法不能同时出现
+         */
+        //此传入的值必须与该Activity在清单文件中配置的data的标签中的scheme属性值匹配
+        intent.setData(Uri.parse("haha:我很帅"));
+        //设置与data的mimetype属性匹配
+        intent.setType("aa/bb");
+
+        intent.addsetDataAndType(Uri.parse("haha:我很帅"), "aa/bb");
+
+        intent.setData(Uri.parse("papa:我真帅"));
+        //不写，系统自动添加
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        startActivity(intent);
+    }
+
+    目标Activity
+
+    //获取启动此Activity的intent对象
+    Intent intent = getIntent();
+    Uri uri = intent.getData();
+
+    //输出 haha:我很帅
+
+/**
+ 
+ */
+
+隐式意图和显式意图的应用场景
+    
+    显式启动：启动同一项目下的Activity
+    隐式启动：不同项目下的Activity
+
+    如果隐式意图与不止一个Activity的intent—filter匹配，那么所有Activity所在的应用都会以对应的对话框形式显示供用户选择
+
+    private void click6(View v) {
+        Intent intent = new Intent();
+        //隐式指定浏览器的动作
+        //启动其他应用的Activity必须用隐式
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://www.baidu.com"));
+        startActivity(intent);
+    }
+
+    private void click7(View v) {
+        Intent intent = new Intent();
+        intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+        startActivity(intent);
+    }
+
+    用隐式方式点开一个网址，系统中有一个以上浏览器的话，会出现选择框
+
+/**
+ 
+ */
+
+Activity 跳转时的数据传递
 
 
 
 
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void click(View v) {
+        EditText et_male = (EditText) findViewById(R.id.et_male);
+        EditText et_female = (EditText) findViewById(R.id.et_female);
+
+        String maleName = et_male.getText().toString();
+        String femaleName = et_female.getText().toString();
+
+        //跳转至第二个Activity，把男女姓名传递过去，让第二个Activity计算显示姻缘值
+
+        Intent intent = new Intent(this, MyActivity.class);
+        intent.putExtra("maleName", maleName);
+        intent.putExtra("femaleName", femaleName);
+        startActivity(intent);
+    }
+
+}
+
+public class MyActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my);
+
+        Intent intent = getIntent();
+        String maleName = intent.getStringExtra("maleName");
+        String femaleName = intent.getStringExtra("femaleName");
+
+        TextView male = (TextView) findViewById(R.id.tv_male);
+        TextView female = (TextView) findViewById(R.id.tv_female);
+        TextView tv = (TextView) findViewById(R.id.tv);
+
+        Random rd = new Random();
+        int i = rd.nextInt(100);
 
 
 
+        tv.setText(maleName + " 与" + femaleName + "姻缘值为：" + i);
+        male.setText(maleName);
+        female.setText(femaleName);
+    }
+}
+
+/**
+ 
+ */
+
+Activity 生命周期方法
+
+    
+    /**
+     * Activity被创建时，此方法调用
+     */
+    @Override
+    protected void onCreate() {
+    }
+
+    /**
+     * Activity进入可见状态，但是Activity还未获得焦点
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    /**
+     * Activity获得焦点，可以与用户互动
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * onPause 调用时候，失去焦点，无法与用户交互，但是用户还能看见
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    /**
+     * onStop 调用时候，Activity已经不可见 ，进入后台，依然在内存中
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    /**
+     * Activity被销毁，不存在
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    /**
+     * Activity已经不可见的状态，此时若要重新进入可见状态 在调用onStart之前，需要先调用 onRestart
+     */
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+/**
+ 
+ */
+Activity 任务栈(task stack)
 
 
+在 清单文件中 activity 标签 里有一个 android:launchMode 属性（启动模式）
 
 
+android:launchMode="standard" (标准)
+android:launchMode="singleTop" (单独的顶部)
+android:launchMode="singleTask" (单独的任务)
+android:launchMode="singleInstance" (单例的任务)
+
+singltTop:如果Activity已经在栈顶，就不会再创建了，如果不在栈顶，就可以再次创建
+
+singltTask:栈中永远只有一个该Activity实例，一旦被创建，就不会再次创建，当再次执行启动该Activity的代码是，该Activity会出现
+            栈顶，但不是跳转，而是返回，系统会杀死Activity顶上的所有Activity
+
+singleInstance:保证手机中永远只有一个该Activity的实例
+    
+    如果用10个应用同时启动一个非单例模式的Activity，那么10个应用的栈中，个子会有一个该Activity
+    
+    如果10个应用同时启动一个单例Activity，那么内存中也只有一个，10个应用启动的都是同一个Activity实例，
+    并且该Activity实例不会进入应用的任务栈，而是保存在自己独立的任务栈中
 
 
+/**
+ 
+ */
 
 
+横竖屏切换的生命周期
 
+	在 清单文件中 activity 标签 里有一个 android:configChanges=(orientation|keyboardHidden|screenSize) 属性(方向改变|软键盘的隐藏|)（设置改变，只针对单个Activity）
 
-
-
-
-
-
+	横竖屏切换的时候 Activity生命周期 中的方法不会在调用
 
