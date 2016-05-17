@@ -1822,8 +1822,499 @@ singleInstance:保证手机中永远只有一个该Activity的实例
 
 
 横竖屏切换的生命周期
+	
+	默认情况下，横竖屏切换会导致当前Activity销毁然后重建，其实是为了更好的屏幕适配
 
-	在 清单文件中 activity 标签 里有一个 android:configChanges=(orientation|keyboardHidden|screenSize) 属性(方向改变|软键盘的隐藏|)（设置改变，只针对单个Activity）
+	当发生横竖屏切换时候，是 销毁重建 这个顺序
+
+1.	在 清单文件中 activity 标签 里有一个 android:configChanges=(orientation|keyboardHidden|screenSize) 属性(方向改变|软键盘的隐藏|屏幕宽高的改变)（设置改变，只针对单个Activity）
 
 	横竖屏切换的时候 Activity生命周期 中的方法不会在调用
+
+2.  android:screenOrientation="landscape"	//（风景）永远的横屏
+	android:screenOrientation="portrait"	//（肖像）永远的竖屏
+
+3.	代码控制
+	
+	// 设置屏幕方向
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+/**
+ 
+ */
+
+onActivityForResultt 返回数据
+
+
+public void click2(View v) {
+        //跳转至选择联系人界面
+//        startActivity(new Intent(this, MyActivity.class));
+        //启用这个api启动Activity，当目标Activity销毁时，会调用此Activity的onActivityResult
+        startActivityForResult(new Intent(this, MyActivity.class), 1 );
+    }
+
+    //此方法用于通过setResult所返回的数据
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //通过请求码，判断返回的数据来自哪里
+        //requestCode判断来自哪里
+        //resultCode判断是哪种类型
+        if (requestCode == 1) {
+            String name = data.getStringExtra("name");
+            EditText editText = (EditText) findViewById(R.id.et_name);
+            editText.setText(name);
+        } else if (requestCode == 2) {
+            String sms = data.getStringExtra("Sms");
+            EditText editText = (EditText) findViewById(R.id.et_body);
+            editText.setText(sms);
+        }
+
+    }
+
+    public void click3(View v) {
+        //跳转至选择快捷短信界面
+//        startActivity(new Intent(this, MyActivity.class));
+        //启用这个api启动Activity，当目标Activity销毁时，会调用此Activity的onActivityResult
+        startActivityForResult(new Intent(this, SmsActivity.class), 2 );
+    }
+
+
+
+    /***********************************************/
+
+        final String[] s = new String[] {
+                "小胖", "黑色的小胖", "三哈哈哈哈"
+        };
+
+        ListView lv = (ListView) findViewById(R.id.lv);
+
+        lv.setAdapter(new ArrayAdapter<String>(this, R.layout.item_listview, R.id.tv_lv, s));
+
+        //给listView的条目设置监听
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //position:用户点击哪一个条目
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent data = new Intent();
+                data.putExtra("name", s[position]);
+                //把数据传给它的调用者（启动当前Activity的那个Activity）
+                setResult(0, data);
+                //直接销毁当前Activity
+                finish();
+            }
+        });
+/**
+ 
+ */
+/**
+ 
+ */
+/**
+ 
+ */
+
+#Android 四大组件
+	 Activity
+	 BroadcastReceiver (广播提供者)
+	 Service
+	 ContentProvider
+
+广播：
+	Android
+	*系统在运行过程中，会产生很多事件：开机、拨打电话、收发短信、电量改变、屏幕解锁
+	*一旦发生这种事件，系统就会发送一个广播，为了接收到这个广播，知道系统发生了什么事件
+	就需要广播接受者，功能类似收音机
+
+
+
+/**
+ 
+ */
+	IP 拨号器
+
+	功能：拨打电话时，自动添加ip线路的号码前缀
+
+	原理：系统打电话时，会发送一个打电话广播，ip拨号器只要定义广播接受者接受这个广播，
+	那么就可以知道用户什么时候打电话，打电话广播中还会包含用户拨打的号码，ip拨号器可
+	以从广播中获取此号码，并且做出修改，添加前缀
+
+	系统发送广播的时候会在清单文件中搜索 能 接收此条广播的应用，所以进程被杀死，
+	当有广播发出时，系统自动启动相关应用进程接收此广播
+
+	指定哪条广播
+
+	//权限
+	    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+
+
+        <receiver android:name=".CallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>
+
+
+    /********************************************************************/
+
+        public void click4(View v) {
+        String ipNumber="654654";
+        SharedPreferences sp = getSharedPreferences("number", MODE_PRIVATE);
+        sp.edit().putString("ipNumber", ipNumber).commit();
+    }
+
+    /********************************************************************/
+
+
+    public class CallReceiver extends BroadcastReceiver {
+
+    //广播接受者接收到广播时，此方法调用
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        //获取打电话广播中携带的号码
+        String number = getResultData();
+        SharedPreferences sp = context.getSharedPreferences("number", context.MODE_PRIVATE);
+        String  ipNumber = sp.getString("ipNumber", "");
+
+        //把新的号码放入广播中
+        setResultData(ipNumber + number);
+    }
+}
+
+/**
+ 
+ */
+
+短信拦截器
+
+	*功能：类似短信防火墙
+	*系统在收到短信时，会产生一条短信广播，短信广播里，包含了短信的发信人号码和短信的内容，短信应用之所以能收到短信
+	其实是收到了短信广播，那我们的短信拦截器，只要在短信应用拿到广播钱，把短信广播拦截，那么短信应用就不会收到广播
+
+
+/***************************************************************************************/
+	
+	<uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
+        <receiver android:name=".SmsReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+
+        //优先级 -1000~1000
+	android:priority="1000"
+
+/****************************************************************************/
+
+	public class SmsReceiver extends BroadcastReceiver {
+	    //intent:广播发送时使用的intent
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //Bundle 对象也是通过键值对的形式封装数据
+	        Bundle bundle = intent.getExtras();
+	        //数组中的每个元素都是一条短信
+	        Object[] objects = (Object[]) bundle.get("pdus");
+	        for (Object object : objects) {
+	            //通过pdu创建短信对象
+	            SmsMessage message = SmsMessage.createFromPdu((byte[]) object);
+	            //获取发信人的号码
+	            String address =  message.getOriginatingAddress();
+	            //获取短信的内容
+	            String body = message.getMessageBody();
+
+	            //需要给优先级    android:priority="1000"
+	            if ("138438".equals(address)) {
+	                //阻止其他广播接收者接收到这条广播，类似于拦截
+	                abortBroadcast();
+	            }
+	        }
+	    }
+	}
+
+/**
+
+ */
+
+监听SD卡状态
+
+	*sd卡状态改变时，系统会发送广播
+
+        <receiver android:name=".SDReceiver">
+            <intent-filter >
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_UNMOUNTABLE"/>
+                <data android:scheme="file"/>
+            </intent-filter>
+        </receiver>
+
+/*************************************************************************************/
+
+	public class SDReceiver extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        String action = intent.getAction();
+	        if ("android.intent.action.MEDIA_MOUNTED".equals(action)) {
+	            Toast.makeText(context, "sd卡就绪", Toast.LENGTH_SHORT).show();
+	        } else if ("android.intent.action.MEDIA_UNMOUNTED".equals(action)) {
+	            Toast.makeText(context, "sd卡被卸载", Toast.LENGTH_SHORT).show();
+	        } else if ("android.intent.action.MEDIA_UNMOUNTABLE".equals(action)) {
+	            Toast.makeText(context, "sd卡被拔出", Toast.LENGTH_SHORT).show();
+	        }
+	    }
+	}
+
+/**
+ 
+ */
+
+勒索软件
+	
+	super.onBackPressed() 实际调用的是 finish();
+
+	屏蔽掉以后 返回键 是用不了的 ，但是home键可以用
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+/*******************************************************************************************/
+    
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+        <receiver android:name=".BootRecevier">
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+/*******************************************************************************************/
+
+public class BootRecevier extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        //开机启动勒索界面
+        Intent intent1 = new Intent(context, MainActivity.class);
+        //设置新的任务栈
+        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //在上下文之外调用startActivity需要上面的标记，没有任务栈下面无法调用
+        context.startActivity(intent1);
+    }
+}
+
+/**
+ 
+ */
+
+应用状态的监听
+
+应用安装、更新、卸载的监听
+
+原理：系统的安装更新卸载时，系统都会产生广播，广播中带有应用的包名
+
+
+	/***************************************************************************************/
+
+        <receiver android:name=".AppReceiver">
+            <intent-filter >
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+
+	/***************************************************************************************/
+
+	public class AppReceiver extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //获取收到的广播室那一条
+	        String action = intent.getAction();
+	        //获取广播中携带的data数据
+	        Uri uri = intent.getData();
+	        if ("android.intent.action.PACKAGE_ADDED".equals(action)) {
+	            Toast.makeText(context, uri.toString() + "被安装了", Toast.LENGTH_SHORT).show();
+	        } else if ("android.intent.action.PACKAGE_REPLACED".equals(action)) {
+	            Toast.makeText(context, uri.toString() + "被更新了", Toast.LENGTH_SHORT).show();
+	        } else if ("android.intent.action.PACKAGE_REMOVED".equals(action)) {
+	            Toast.makeText(context, uri.toString() + "被卸载了", Toast.LENGTH_SHORT).show();
+	        }
+	    }
+
+	}
+
+/**
+ 
+ */
+
+发送自定义广播
+
+	APP 1
+	/**
+	 * 发送广播
+	 */
+    public void click5(View v) {
+        Intent intent = new Intent();
+        intent.setAction("haha.xixi");
+        //发送广播
+        sendBroadcast(intent);
+    }
+
+
+/************************************************************************************/
+	
+	APP 2
+
+	/**
+	 * 接收广播
+	 */
+
+        <receiver android:name=".XXXReceiver">
+            <intent-filter >
+                <action android:name="haha.xixi"/>
+            </intent-filter>
+        </receiver>
+
+		/*************************************/
+
+
+public class XXXReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+    	Toast.makeText(context, "接收到自定义的广播", Toast.LENGTH_SHORT).show();
+    }
+}
+
+/**
+
+ */
+
+两种广播
+
+无序广播：所有intent-filter与无序广播匹配的广播接收者都可以接收到这条广播，并且没有先后顺序（可以理解为同时）
+
+有序广播：所有intent-filter与有序广播匹配的广播接收者都可以接收到这条广播，但是有先后顺序，按照intent-filter中定义的优先级来决定(-1000~1000)
+
+        	//优先级 -1000~1000
+			android:priority="1000"
+
+			//因为打电话应用是从最终广播接收者中启动的，所以一定可以接收到广播并启动
+
+
+APP 1
+	
+	/**
+	 * 发送有序广播
+	 */
+    public void click6(View v) {
+        Intent intent = new Intent();
+        intent.setAction("wo.shi.zhong.yang");
+        //1
+        sendOrderedBroadcast(intent, null, null, null, 0, "每人发一百斤大米", null);
+        //参数三：resultReceiver:这个广播接收者会在所有广播接收者都收到广播了，它才会接收到广播，并且一定能接受到
+        sendOrderedBroadcast(intent, null, new CenterReceiver, null, 0, "每人发一百斤大米", null);
+    }
+
+
+    class CenterReceiver extends BroadcastReceiver {
+	    	public void onReceive(Context context, Intent intent) {
+	        Toast.makeText(context, "中央反贪组接收到文件，内容是：" + getResultData(), Toast.LENGTH_SHORT).show();
+	    }
+    }
+
+
+    /*************************************************************/
+
+APP 2
+        <receiver android:name=".sheng">
+            <intent-filter android:priority="1000">
+                <action android:name="wo.shi.zhong.yang"/>
+            </intent-filter>
+        </receiver>
+
+
+	public class SDReceiver extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //拿到红头文件内容
+	        String content = getResultData();
+	        Toast.makeText(context, "省政府收到文件，内容是：" + content, Toast.LENGTH_SHORT).show();
+	        
+	        //修改广播内容，按优先级，县、乡接收到的广播为修改后的
+	        setResultData("每人发80斤大米");
+
+	        //阻止其他广播接收者接收广播，无序广播这种方法是没有意义的
+	        abortBroadcast();
+	    }
+	}
+
+APP 3
+        <receiver android:name=".xian">
+            <intent-filter android:priority="800">
+                <action android:name="wo.shi.zhong.yang"/>
+            </intent-filter>
+        </receiver>
+
+    public class SDReceiver extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //拿到红头文件内容
+	        String content = getResultData();
+	        Toast.makeText(context, "县政府收到文件，内容是：" + content, Toast.LENGTH_SHORT).show();
+	    }
+	}
+
+APP 4
+        <receiver android:name=".xiang">
+            <intent-filter android:priority="600">
+                <action android:name="wo.shi.zhong.yang"/>
+            </intent-filter>
+        </receiver>
+
+	public class SDReceiver extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //拿到红头文件内容
+	        String content = getResultData();
+	        Toast.makeText(context, "乡政府收到文件，内容是：" + content, Toast.LENGTH_SHORT).show();
+	    }
+	}
+
+/**
+ 
+ */
+
+服务
+	*默默运行在后台的组件，可以理解为没有前台的Activity，服务的作用就是用来运行需要在后台默默运行的代码
+
+进程优先级
+
+http://www.android-doc.com/guide/components/processes-and-threads.html
+
+	由难到简系统回收服务 4. 5. 在系统内存不足时候自动杀死，系统内存恢复时候也不会被启动
+
+	1.Foreground process(前台进程):
+
+		拥有一个可以与用户交互的Activity(Activity的onResume方法调用)的进程
+
+	2.Visible process(可见进程):
+
+		拥有一个可见但无焦点的Activity(Activity的onPause方法被调用)的进程
+
+	3.Service process(服务进程):
+
+		拥有一个通过 startService() 方法启动的服务的进程
+
+	4.Background process(后台进程):
+
+		拥有一个不可见Activity(Activity的onStop方法被调用) 的进程
+
+	5.Empty process(空进程):
+
+		拥有任何活动的组件(Activity/Service)的进程
+
 

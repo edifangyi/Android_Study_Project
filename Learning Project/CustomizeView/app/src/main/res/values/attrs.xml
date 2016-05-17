@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="MyView">
-        <attr name="rect_color" format="color"/>//格式
-    </declare-styleable>
-</resources>

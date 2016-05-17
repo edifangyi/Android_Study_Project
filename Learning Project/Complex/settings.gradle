@@ -1,3 +1,0 @@
-include ':app', ':SlidingMenu'
-include ':pull'
-project(':SlidingMenu').projectDir = new File('libraries/SlidingMenu')
