@@ -2287,6 +2287,9 @@ APP 4
 /**
  
  */
+/**
+ 
+ */
 
 服务
 	*默默运行在后台的组件，可以理解为没有前台的Activity，服务的作用就是用来运行需要在后台默默运行的代码
@@ -2301,9 +2304,20 @@ http://www.android-doc.com/guide/components/processes-and-threads.html
 
 		拥有一个可以与用户交互的Activity(Activity的onResume方法调用)的进程
 
+		拥有一个和用户正在交互的Activity绑定的服务的进程
+
+		拥有一个调用startForeground方法的服务
+
+		拥有一个正在执行生命周期( onCreate()/onStart()/onDestroy() )方法的服务的进程
+
+		拥有一个正在执行onReceiver方法的广播接收者
+
+
 	2.Visible process(可见进程):
 
 		拥有一个可见但无焦点的Activity(Activity的onPause方法被调用)的进程
+
+		拥有一个可见和Activity绑定的Service的进程
 
 	3.Service process(服务进程):
 
@@ -2493,15 +2507,575 @@ http://www.android-doc.com/guide/components/processes-and-threads.html
 	    }
 	}
 
+
 /**
  
  */
+
+服务的两种启动方式
+	*startService
+
+	*bindService (绑定服务)
+
+		此方法启动的服务，不会使进程称为服务进程，在服务运行列表根本找不到
+		绑定服务启动的服务会和启动它的Activity同生共死
+
+绑定服务生命周期：
+	create → bind
+解绑服务声明周期：
+	unBind → destroy
+
+/***************************************************************************************/
+
+	@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mConnection = new MyServiceConnection();
+    }
+
+	public void click9(View v) {
+        Intent intent = new Intent(this, MyService.class);
+        //绑定服务，其实就是跟服务建立连接
+        bindService(intent, mConnection, BIND_AUTO_CREATE);
+
+    }
+
+
+    private MyServiceConnection mConnection;
+
+    class MyServiceConnection implements ServiceConnection {
+
+        //服务建立连接
+        //当连接到服务的连接被简历，此方法调用
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+        }
+        //失去连接时，此方法调用
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+
+    public void click10(View v) {
+        //解绑
+        unbindService(mConnection);
+
+    }
+
+/*******************************************************************************************/
+
+public class MyService extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+}
+
 /**
  
  */
+
+访问服务中的方法
+
+
+/*********************************************************************************/
+
+private MyService.ZhongJianRen zjr;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        //提前创建，否则怕点击按钮来不及
+        Intent intent = new Intent(this, MyService.class);
+        bindService(intent, new MyServiceConnection(), BIND_AUTO_CREATE);
+    }
+
+    //调用服务中的方法
+	public void click9(View v) {
+		zjr.qianXian();
+    }
+
+    class MyServiceConnection implements ServiceConnection {
+
+        //service:中间人对象
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+			zjr = (MyService.ZhongJianRen) service;
+        }
+    }
+
+/*******************************************************************************************/
+
+public class MyService extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+    	//把中间人对象return给Activity
+        return new ZhongJianRen();
+    }
+
+    class ZhongJianRen extends Binder {
+        public void qianXian() {
+            banZheng();
+        }
+    }
+
+    public void banZheng() {
+    	//小秘给你办证
+    }
+}
+
+/*******************************************************************************************/
+/*******************************************************************************************/
+/*******************************************************************************************/
+/*******************************************************************************************/
+
+当不希望 一些方法被调用，我们可以通过接口的形式来调用 这个类中的能调用的方法，不能调用的不可以显示
+
+public class MyService extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new ZhongJianRen();
+    }
+
+    class ZhongJianRen extends Binder implements PublicBussiness {
+
+        @Override
+        public void qianXian() {
+            banZheng();
+        }
+
+        public void daMaJiang() {
+            //只有领导可以调用，小秘陪打麻将
+        }
+    }
+
+    public void banZheng() {
+
+    }
+}
+
+/****************************************************************************************/
+
+public interface PublicBussiness {
+    void  qianXian();
+}
+
+
+/****************************************************************************************/
+    
+    public void click9(View v) {
+
+        zjr.qianXian();
+        // zjr.daMaJiang(); 不可能被调用，不会提示的
+
+    }
+
+
+private PublicBussiness zjr;
+
+    class MyServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            zjr = (PublicBussiness) service;
+        }
+    }
+
+
 /**
  
  */
+
+服务的混合开启
+
+	start - bind - unBind - stop
+
+
+/************************************************************************************/
+
+服务运行音乐播放器
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        mConnection = new MyServiceConnection();
+
+        Intent intent = new Intent(this, MusicService.class);
+        //混合调用
+        //先start再bind，保证此进程成为服务进程，并且可以拿到binder对象
+        startService(intent);
+        bindService(intent, new MyServiceConnection(), BIND_AUTO_CREATE);
+    }
+
+    private MusicController mc;
+
+    class MyServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mc = (MusicController) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+
+    public void play(View v) {
+        mc.play();
+    }
+
+    public void pause(View v) {
+        mc.pause();
+    }
+
+    public void continuePlay(View v) {
+        mc.continuePlay();
+    }
+}
+
+/*********************************************************************/
+
+public class MusicService extends Service {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new MusicBinder();
+    }
+
+    class MusicBinder extends Binder implements MusicController {
+
+        @Override
+        public void play() {
+            MusicService.this.play();
+        }
+        @Override
+        public void pause() {
+            MusicService.this.pause();
+        }
+        @Override
+        public void continuePlay() {
+            MusicService.this.continuePlay();
+        }
+    }
+
+    public void play() {
+        System.out.println("开始播放");
+    }
+
+    public void pause() {
+        System.out.println("暂停不放");
+    }
+
+    public void continuePlay() {
+        System.out.println("继续播放");
+    }
+}
+
+/*****************************************************************************/
+
+public interface MusicController {
+    void  play();
+    void pause();
+    void continuePlay();
+}
+
+
+/**
+ 
+ */
+
+使用服务中用代码注册广播接收者
+
+	*广播接受者的使用必须在清单文件中注册
+	*其实也可以用代码注册
+	*但是基本用清单文件注册	(用户不关，永远在运行)
+	*代码注册的好处就是，可以解除注册
+	*有些特殊广播接收者，只能代码注册
+		*电量改变
+		*屏幕解锁和锁屏
+
+		解锁：Intent.ACTION_SCREEN_ON
+		锁屏：Intent.ACTION_SCREEN_OFF
+		电量改变：Intent.ACTION_BATTERY_CHANGED
+		进入低电状态的一瞬间：Intent.ACTION_BATTERY_LOW
+		充电过了最低电量提示：Intent.ACTION_BATTERY_OKAY
+/********************************************************************************************/
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private Intent intent;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+		intent = new Intent(this, RegisterService.class);
+
+    }
+
+    public void start(View v) {
+        startService(intent);
+    }
+
+    public void stop(View v) {
+        startService(intent);
+    }
+}
+
+
+/*****************************************************************************/
+
+public class RegisterService extends Service {
+    private ScreenOnOffReceiver soorr;
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //注册广播接收者
+        //1.创建广播接收者对象
+        soorr = new ScreenOnOffReceiver();
+
+        //2.创建 intent-filter 来指定广播接收者接收什么广播
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+
+        //3.注册
+        registerReceiver(soorr, filter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //解除注册
+        unregisterReceiver(soorr);
+    }
+}
+
+/***************************************************************************************/
+
+public class ScreenOnOffReceiver extends BroadcastReceiver {
+
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String action  = intent.getAction();
+        if (Intent.ACTION_SCREEN_ON.equals(action)) {
+            System.out.println("屏幕亮起来，就算解锁");
+            Toast.makeText(context, "屏幕解锁", Toast.LENGTH_SHORT).show();
+        } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+            System.out.println("锁屏");
+            Toast.makeText(context, "锁屏", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+/**
+ 
+ */
+
+服务的种类
+
+	*本地服务
+		启动的服务跟Activity在同一个进程
+	*远程服务
+		启动的服务跟Activity在不同的进程
+
+AIDL 
+	*Android Interface Definition Language
+	*安卓接口定义语言
+	*作用：进程间通信
+
+Linux: PIPE:管道
+
+/************************************************************************************/
+
+使用 AIDL (Android Studio)	
+
+	https://www.zhihu.com/question/21581761
+
+	1. 首先，在实现Parcelable接口的类所在的包上右键New -> AIDL
+	1. 直接把	PublicBussiness.java 后缀改成 .aidl
+
+	2. AS 会自动生成aidl文件夹以及对应的包名。接着声明所需要类。
+	提示interface name must be unique时，可以随意命名，新建完成后再重命名。
+	
+	3. Build -> Make Project后可生成Java文件。
+	
+	app\build\generated\source\aidl\debug\com\example\fangyi\XXXXXXX
+
+/************************************************************************************/
+
+隐式启动远程服务
+
+APP2 访问 APP1 中的方法
+
+APP 1 //远程办证服务
+
+        <service android:name=".BanZhengService">
+            <intent-filter>
+                <action android:name="aaa.bbb.ccc"/>
+            </intent-filter>
+        </service>
+
+        /************************************************************************/
+
+		public class MyService extends Service {
+		    @Nullable
+		    @Override
+		    public IBinder onBind(Intent intent) {
+		        return new ZhongJianRen();
+		    }
+
+		    class ZhongJianRen extends Binder implements PublicBussiness {
+
+		        @Override
+		        public void qianXian() {
+		            banZheng();
+		        }
+
+		        public void daMaJiang() {
+		            //只有领导可以调用，小秘陪打麻将
+		        }
+		    }
+
+		    public void banZheng() {
+		        //小莉莉帮你办外地的证
+		    }
+		}
+
+		/******************************************************************************/
+		
+		public interface PublicBussiness {
+		    void  qianXian();
+		}
+
+
+		/************************以上代码经过AIDL修改以后******************************/
+
+		public class MyService extends Service {
+		    @Nullable
+		    @Override
+		    public IBinder onBind(Intent intent) {
+		        return new ZhongJianRen();
+		    }
+		    //直接继承Stub，stub已经继承了binder对象，可以被onBind return出去，
+		    //并且stub也实现了PublicBussiness接口 
+		    //是 PublicBussiness.AIDL 自动生成的
+		    class ZhongJianRen extends PublicBussiness.Stub {
+
+		        @Override
+		        public void qianXian() {
+		        	//PublicBussiness.this.banZheng();
+		            banZheng();
+		        }
+
+		        public void daMaJiang() {
+		            //只有领导可以调用，小秘陪打麻将
+		        }
+		    }
+
+		    public void banZheng() {
+		        //小莉莉帮你办外地的证
+		    }
+		}
+
+		/********************************************************/
+
+		interface PublicBussiness {
+		    void  qianXian();
+		}
+
+
+/********************************************************************************/
+/********************************************************************************/
+/********************************************************************************/
+/********************************************************************************/
+
+要想让 APP2 访问 APP1 的服务，需要把 APP1 中的 PublicBussiness.AIDL 直接粘贴到 APP2 中
+必须要保证包名相同，就会有相同的过程，，，也会在 APP2 中生成相同的 PublicBussiness.java，内容一模一样
+这样就实现了两个应用进程间的通信
+
+APP 2 //我要远程办证
+
+    //启动远程办证服务
+    public void click12(View v) {
+        Intent intent = new Intent();
+        intent.setAction("aaa.bbb.ccc");
+        bindService(intent, new MyServiceConnection(), BIND_AUTO_CREATE);
+    }
+
+    PublicBussiness pb;
+    class MyServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            pb = Stub.asInterface(service);
+        }
+    }
+
+    //远程办证
+	public void click14(View v) {
+	        try {
+	            pb.qianXian();
+	        } catch (RemoteException e) {
+	            e.printStackTrace();
+	        }
+	    }
+/**
+ 
+ */
+
+
+
+
+
+
+
 
 
 
