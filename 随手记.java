@@ -31,6 +31,18 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
 
 *#*#4636#*#* //手机电话情报
 
+
+快速录入
+
+ 快速打出类似于eclipse 的sysout(针对android studio 1.2.1.1)
+
+    settings->搜索Live Templates->如图指定位置改为sysout,原来默认的是sout
+
+    iter:
+    for (Sms  : mSmsList) {
+        
+    }
+
 /**
  
  */
@@ -3519,6 +3531,7 @@ public class MainActivity extends AppCompatActivity {
         mSmsList = new ArrayList<>();
     }
 
+    //读取系统短信
     public void click(View v) {
         ContentResolver cr = getContentResolver();
         Cursor cursor = cr.query(Uri.parse("content://sms"), new String[] {"address", "date", "type", "body"}, null, null, null);
@@ -3532,6 +3545,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //备份系统短信
     public void click2(View v) {
         XmlSerializer xs = Xml.newSerializer();
         File file = new File("sdcard/sms.xml");
@@ -3574,57 +3588,272 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+/**
+ 
+ */
+插入系统短信
 
 
+	//把短信插入短信数据库
+    public void click3(View v) {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(8000);//延迟8秒
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //把短信插入短信数据库
+                ContentResolver cr = getContentResolver();
+                ContentValues values = new ContentValues();
+                values.put("address", 95555);
+                values.put("body", "您尾号XXX的招行储蓄卡收到转账");
+                values.put("date", System.currentTimeMillis());
+                values.put("type", 1);
+                cr.insert(Uri.parse("content://sms"), values);
+            }
+        };
+        t.start();
+    }
+
+/**
+ 
+ */
+
+联系人数据库
+
+	*raw_contacts表
+		*contact_id:联系人id 
+		*拿着这个id去data表中查询属于该联系人的信息
 
 
+	*data表：保存了所有联系人的信息，每条信息占一行
+		*data1:保存联系人信息的相信内容
+		*raw_contact_id:联系人id，表明此行信息属于哪个联系人
+		*mimetype_id:表明信息的类型(是属于电话还是邮箱，或者姓名)
+
+	*mimetypes表：通过mimetype_id在此表中找到对应的类型的名字
 
 
+ContactsProvider2.java
+
+/***************************************************************************************/
+
+<uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+
+/***************************************************************************************/
+
+public class MainActivity extends AppCompatActivity {
+    List<Person> mPersons;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mSmsList = new ArrayList<>();
+        mPersons = new ArrayList<>();
+    }
 
 
+    public void click4() {
+        //访问内容提供者获取联系人数据
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(Uri.parse("content://com.android.contacts/rwa_contacts"), new String[]{"contact_id"}, null, null, null);
+        while (cursor.moveToNext()) {
+            //拿到联系人id
+            String contact_id = cursor.getString(0);
+            //拿到联系人id再去查询data表，去除属于该联系人的信息
+            Cursor cursor1 = cr.query(Uri.parse("content://com.android.contacts/data"), new String[]{"data1", "mimetype"},
+                    "rwa_contact_id = ?", new String[]{contact_id}, null);
+
+            Person p = new Person();
+
+            while (cursor1.moveToNext()) {
+                String data1 = cursor1.getString(0);
+                String mimetype = cursor1.getString(2);
+                System.out.println(contact_id + ";" + data1 + ";" + mimetype);
+                if ("vnd.android.cursor.item/email_v2".equals(mimetype)) {
+                    p.setEmail(data1);
+                } else if ("vnd.android.cursor.item/phone_v2".equals(mimetype)) {
+                    p.setPhone(data1);
+                } else if ("vnd.android.cursor.item/name".equals(mimetype)){
+                    p.setName(data1);
+                }
+            }
+            mPersons.add(p);
+
+        }
+        for (Person p : mPersons) {
+            System.out.println(p.toString());
+        }
+
+    }
+}
+
+/***************************************************************************************/
+
+public class Person {
+    private String name;
+    private String phone;
+    private String email;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}
+
+/**
+ 
+ */
+
+插入联系人信息
+
+	*先插raw_contact表
+		*把联系人id先插进去
+
+	*再查data表:
+		*data1
+		*mimetype
+		*raw_contact_id
+
+/*************************************************************************************************/
+
+    <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_CALENDAR"></uses-permission>
+
+/*************************************************************************************************/
+    
+    public void click5() {
+        //插入联系人信息至联系人数据库
+        ContentResolver cr = getContentResolver();
+        //先查询raw_contacts表，去除最后一条联系人的主键，然后主键+1，得到新的联系人的id
+        Cursor cursor = cr.query(Uri.parse("content://com.android.contacts/rwa_contacts"), new String[]{"id"}, null, null, null);
+        int contactId = 0;
+        if (cursor.moveToLast()) {
+            int _id = cursor.getInt(cursor.getColumnIndex("_id"));
+            //+1得到最新的联系人id
+            contactId = ++_id;
+        } else {
+            contactId = 1;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("contact_id", contactId);
+        cr.insert(Uri.parse("content://com.android.contacts/rwa_contacts"), values);
+
+        values.clear();
+        values.put("data1", 123456);
+        values.put("mimetype", "vnd.android.cursor.item/phone_v2");
+        values.put("raw_contact_id", contactId);
+        cr.insert(Uri.parse("content://com.android.contacts/data"), values);
+
+        values.clear();
+        values.put("data1", "二胖");
+        values.put("mimetype", "vnd.android.cursor.item/name");
+        values.put("raw_contact_id", contactId);
+        cr.insert(Uri.parse("content://com.android.contacts/data"), values);
+
+        values.clear();
+        values.put("data1", "fangyi@gmail.com");
+        values.put("mimetype", "vnd.android.cursor.item/email_v2");
+        values.put("raw_contact_id", contactId);
+        cr.insert(Uri.parse("content://com.android.contacts/data"), values);
+
+    }
+/**
+ 
+ */
 
 
+内容观察者
+	
+	contentObserver
 
+使用内容观察者聆听短信内容提供者的叫唤
 
+/******************************************************************************************/
 
+自定义
+一般很少去自己定义，都是使用别的人的
 
+            //发通知给内容观察者：数据库内容改变啦
+            //url：所有注册这个uri上的内容观察者都可以收到这条通知
+            getContext().getContentResolver().notifyChange(uri,null);
 
+/******************************************************************************************/
 
+public class MainActivity extends AppCompatActivity {
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        //注册内容观察者
+        ContentResolver cr = getContentResolver();
+        //假设content://sms/inbox的数据改变，第二参数设置false,精确匹配，那么"content://sms"的内容观察者不会提示的
+        //第二参数设置true,那么"content://sms"路径下的任何数据改变，都会被匹配
+        cr.registerContentObserver(Uri.parse("content://sms"), true, new MyObserver(new Handler()));
+    }
 
+    class MyObserver extends ContentObserver {
 
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public MyObserver(Handler handler) {
+            super(handler);
+        }
 
+        //收到内容改变时，此方法调用
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            Toast.makeText(MainActivity.this, "短信数据库改变了", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ 
+ */
+/**
+ 
+ */
+/**
+ 
+ */
 
 
 
