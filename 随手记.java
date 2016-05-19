@@ -1918,7 +1918,7 @@ public void click2(View v) {
 	 Activity
 	 BroadcastReceiver (广播提供者)
 	 Service
-	 ContentProvider
+	 ContentProvider(内容提供者)
 
 广播：
 	Android
@@ -3069,6 +3069,563 @@ APP 2 //我要远程办证
 /**
  
  */
+/**
+ 
+ */
+
+内容提供者
+
+	ContentProvider
+
+APP 1
+/**************************************************************************************/
+内容提供者在清单文件中注册
+
+        <provider
+            android:name=".sqlite.PersonProvider"
+            android:authorities="aaa.bbb.ccc" //主机名
+            android:exported="true">
+            
+        </provider>
+
+/**************************************************************************************/
+
+public class MyOpenHelper extends SQLiteOpenHelper {
+    public MyOpenHelper(Context context) {
+        super(context, "people.db", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table person(_id integer primary key autoincrement, name char(10), salary integer(10))");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+}
+
+/****************************************************************************************************************/
+
+public class PersonProvider extends ContentProvider {
+
+    private MyOpenHelper oh;
+    private SQLiteDatabase db;
+
+    @Override
+    public boolean onCreate() {
+                            //获取内容提供者所运行在的上下文
+        oh = new MyOpenHelper(getContext());
+        db = oh.getWritableDatabase();
+
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        //返回查询结果
+        Cursor cursor = db.query("person", projection, selection, selectionArgs, null, null, sortOrder, null);
+        return cursor;
+    }
+
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        return null;
+    }
+
+
+    @Nullable
+    @Override
+    //url：这是其他应用在访问内容提供者时传入的主机名，告诉系统要访问哪个内容提供者
+    //values：这是其他用户传入的数据
+    public Uri insert(Uri uri, ContentValues values) {
+        db.insert("person", null , values);
+        return null;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    	//返回删除的条数
+        int i = db.delete("person", selection, selectionArgs);
+        return i;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        //修改多少行
+        int i = db.update("person", values, selection, selectionArgs);
+        return i;
+    }
+}
+
+/**************************************************************************************************************/
+/**************************************************************************************************************/
+/**************************************************************************************************************/
+APP 2
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    //插入数据按钮
+    public void insert(View v) {
+        //通过内容提供者把数据插入数据库
+        //拿到一个内容解析器对象
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put("name", "小莉莉");
+        values.put("salary", 12000);
+        //传入内容提供者的主机名
+        cr.insert(Uri.parse("content://aaa.bbb.ccc"), values);
+
+        values = new ContentValues();
+        values.put("name", "小胖");
+        values.put("salary", 13000);
+        cr.insert(Uri.parse("content://aaa.bbb.ccc"), values);
+
+        values.clear();
+        values.put("name", "笑哈哈");
+        values.put("salary", 14000);
+        cr.insert(Uri.parse("content://aaa.bbb.ccc"), values);
+    }
+
+    //删除按钮
+    public void delete(View v) {
+        ContentResolver cr = getContentResolver();
+        int i = cr.delete(Uri.parse("content://aaa.bbb.ccc"), "name = ?", new String[] {"小莉莉"});
+        Toast.makeText(this, "删除了" + i +  "条数据", Toast.LENGTH_SHORT).show();
+    }
+
+    //修改按钮
+    public void update(View v) {
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put("name", "嘻嘻嘻");
+        int i = cr.update(Uri.parse("content://aaa.bbb.ccc"), values,"name = ?", new String[] {"笑哈哈"});
+        
+        //修改一条数据后要clear()
+        // values.clear();
+
+        Toast.makeText(this, "修改了" + i +  "条数据", Toast.LENGTH_SHORT).show();
+    }
+
+    //查询数据
+    public void query(View v) {
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(Uri.parse("content://aaa.bbb.ccc"), null, null, null, null);
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String salary = cursor.getString(cursor.getColumnIndex("salary"));
+            Toast.makeText(this, name +";"+ salary, Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+/**
+ 
+ */
+
+Uri匹配器
+
+APP 1 
+/*****************************************************************************/
+
+/**
+ * 添加一张新的表
+ */
+
+public class MyOpenHelper extends SQLiteOpenHelper {
+    public MyOpenHelper(Context context) {
+        super(context, "people.db", null, 2);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table person(_id integer primary key autoincrement, name char(10), salary integer(10))");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("create table teacher(_id integer primary key autoincrement, name char(10)");
+    }
+}
+
+/******************************************************************************************************/
+
+
+public class PersonProvider extends ContentProvider {
+
+    private MyOpenHelper oh;
+    private SQLiteDatabase db;
+    //检测其他用户传入的uri跟预先定义好的匹配规则中哪一条uri匹配
+    //跟任何都不匹配返回-1
+    UriMatcher um = new UriMatcher(UriMatcher.NO_MATCH);
+    {
+        //添加uri汽配起的匹配规则，通过对返回码的判断，就知道其他用户传进来的uri是什么
+        um.addURI("aaa.bbb.ccc", "person", 1); //content://aaa.bbb.ccc/persopn
+        um.addURI("aaa.bbb.ccc", "teacher", 2);
+        um.addURI("aaa.bbb.ccc", "person/#", 3);//content://aaa.bbb.ccc/persopn/(可以带数据、文本)
+    }
+
+
+    @Override
+    public boolean onCreate() {
+                            //获取内容提供者所运行在的上下文
+        oh = new MyOpenHelper(getContext());
+        db = oh.getWritableDatabase();
+
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        //返回查询结果
+        Cursor cursor = null;
+        if (um.match(uri) == 1) {
+            cursor = db.query("person", projection, selection, selectionArgs, null, null, sortOrder, null);
+        } else if (um.match(uri) == 2) {
+
+        } else if (um.match(uri) == 3){
+            //拿到url中路径后面携带的数字
+            long id = ContentUris.parseId(uri);
+            //把拿到的数字作为主键的值来查询数据库
+            cursor = db.query("person", projection, "_id = ?", new String[]{id +""}, null, null, sortOrder, null);
+        } else {
+            throw new IllegalArgumentException("uri中没有携带路径");
+        }
+        return cursor;
+    }
+
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        if (um.match(uri) == 1) {
+            return "vnd.android.cursor.dir/";
+        } else if (um.match(uri) ==3) {
+            return "vnd.android.cursor.item/";
+        }
+        return null;
+    }
+
+
+    @Nullable
+    @Override
+    //url：这是其他应用在访问内容提供者时传入的主机名，告诉系统要访问哪个内容提供者
+    //values：这是其他用户传入的数据
+    public Uri insert(Uri uri, ContentValues values) {
+        if (um.match(uri) == 1) {
+            db.insert("person", null , values);
+        } else if (um.match(uri) == 2) {
+            db.insert("teacher", null , values);
+        } else {
+            throw new IllegalArgumentException("uri中没有携带路径");
+        }
+        return null;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        int i;
+        if (um.match(uri) == 1) {
+            i = db.delete("person", selection, selectionArgs);
+        } else if (um.match(uri) == 2) {
+            i = db.delete("teacher", selection, selectionArgs);
+        } else {
+            throw new IllegalArgumentException("别瞎删");
+        }
+        return i;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        //修改多少行
+        int i = db.update("person", values, selection, selectionArgs);
+        return i;
+    }
+}
+
+/***********************************************************************************************************/
+/***********************************************************************************************************/
+/***********************************************************************************************************/
+
+APP 2
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void insert(View v) {
+        //通过内容提供者把数据插入数据库
+        //拿到一个内容解析器对象
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put("name", "小莉莉");
+        values.put("salary", 12000);
+        //传入内容提供者的主机名
+        cr.insert(Uri.parse("content://aaa.bbb.ccc/person"), values);
+
+        values = new ContentValues();
+        values.put("name", "小胖");
+        values.put("salary", 13000);
+        cr.insert(Uri.parse("content://aaa.bbb.ccc/teacher"), values);
+
+        values.clear();
+        values.put("name", "笑哈哈");
+        values.put("salary", 14000);
+        cr.insert(Uri.parse("content://aaa.bbb.ccc"), values);
+    }
+
+    //删除按钮
+    public void delete(View v) {
+        ContentResolver cr = getContentResolver();
+        int i = cr.delete(Uri.parse("content://aaa.bbb.ccc/teacher"), "name = ?", new String[] {"小莉莉"});
+        Toast.makeText(this, "删除了" + i +  "条数据", Toast.LENGTH_SHORT).show();
+    }
+
+    //修改按钮
+    public void update(View v) {
+        ContentResolver cr = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put("name", "嘻嘻嘻");
+        int i = cr.update(Uri.parse("content://aaa.bbb.ccc"), values,"name = ?", new String[] {"笑哈哈"});
+
+        values.clear();
+
+        Toast.makeText(this, "修改了" + i +  "条数据", Toast.LENGTH_SHORT).show();
+    }
+
+    public void query(View v) {
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(Uri.parse("content://aaa.bbb.ccc/person/4"), null, null, null, null);
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String salary = cursor.getString(cursor.getColumnIndex("salary"));
+            Toast.makeText(this, name +";"+ salary, Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+/**
+ 
+ */
+获取系统短信
+
+	短信数据只看sms表即可
+
+	sms表中，只看四个字段
+		*address:对方号码
+		*body:短信内容
+		*date:发送或接收时间
+		*type:短信类型，1为接收，2为发送
+
+data/com.android.providers.teltphony/databass/mmssms.db
+
+/**************************************************************************************************************/
+	
+	//权限
+    <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+
+    //获取系统短信
+    public void click(View v) {
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(Uri.parse("content://sms"), new String[] {"address", "date", "type", "body"}, null, null, null);
+        while (cursor.moveToNext()) {
+            String address = cursor.getString(0);
+            String date = cursor.getString(1);
+            String type = cursor.getString(2);
+            String body = cursor.getString(3);
+            Toast.makeText(this, address + ";" + date + ";"+ type + ";" + body, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+/**
+ 
+ */
+
+备份系统短信
+    <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+
+/******************************************************************************************************/
+
+public class Sms {
+    private String address;
+    private String body;
+    private String type;
+    private String data;
+
+    public Sms(String address, String body, String type, String data) {
+        this.address = address;
+        this.body = body;
+        this.type = type;
+        this.data = data;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+}
+
+/******************************************************************************************************/
+
+public class MainActivity extends AppCompatActivity {
+    
+    List<Sms> mSmsList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mSmsList = new ArrayList<>();
+    }
+
+    public void click(View v) {
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(Uri.parse("content://sms"), new String[] {"address", "date", "type", "body"}, null, null, null);
+        while (cursor.moveToNext()) {
+            String address = cursor.getString(0);
+            String date = cursor.getString(1);
+            String type = cursor.getString(2);
+            String body = cursor.getString(3);
+            Sms sms = new Sms(address, body, type, date);
+            mSmsList.add(sms);
+        }
+    }
+
+    public void click2(View v) {
+        XmlSerializer xs = Xml.newSerializer();
+        File file = new File("sdcard/sms.xml");
+        FileOutputStream fos;
+
+        try {
+            //初始化xs
+            fos = new FileOutputStream(file);
+            xs.setOutput(fos, "utf-8");
+            //开始生产xml文件
+            xs.startDocument("utf-8", true);
+            xs.startTag(null, "smss");
+            for (Sms sms : mSmsList) {
+                xs.startTag(null, "sms");
+
+                xs.startTag(null, "address");
+                xs.text(sms.getAddress());
+                xs.endTag(null, "address");
+
+                xs.startTag(null, "date");
+                xs.text(sms.getData());
+                xs.endTag(null, "date");
+
+                xs.startTag(null, "body");
+                xs.text(sms.getBody());
+                xs.endTag(null, "body");
+
+                xs.startTag(null, "type");
+                xs.text(sms.getType());
+                xs.endTag(null, "type");
+
+                xs.endTag(null, "sms");
+            }
+            xs.endTag(null, "smss");
+            xs.endDocument();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
