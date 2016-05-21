@@ -32,6 +32,19 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
 *#*#4636#*#* //手机电话情报
 
 
+//进度条
+    <ProgressBar
+        android:id="@+id/pb"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+//拖动条
+    <SeekBar
+        android:id="@+id/sb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
 快速录入
 
  快速打出类似于eclipse 的sysout(针对android studio 1.2.1.1)
@@ -1959,7 +1972,7 @@ public void click2(View v) {
 	//权限
 	    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
-
+	//注册
         <receiver android:name=".CallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
@@ -1969,6 +1982,7 @@ public void click2(View v) {
 
     /********************************************************************/
 
+    //开启服务
         public void click4(View v) {
         String ipNumber="654654";
         SharedPreferences sp = getSharedPreferences("number", MODE_PRIVATE);
@@ -2002,7 +2016,7 @@ public void click2(View v) {
 
 	*功能：类似短信防火墙
 	*系统在收到短信时，会产生一条短信广播，短信广播里，包含了短信的发信人号码和短信的内容，短信应用之所以能收到短信
-	其实是收到了短信广播，那我们的短信拦截器，只要在短信应用拿到广播钱，把短信广播拦截，那么短信应用就不会收到广播
+	其实是收到了短信广播，那我们的短信拦截器，只要在短信应用拿到广播时，把短信广播拦截，那么短信应用就不会收到广播
 
 
 /***************************************************************************************/
@@ -2144,7 +2158,7 @@ public class BootRecevier extends BroadcastReceiver {
 	public class AppReceiver extends BroadcastReceiver {
 	    @Override
 	    public void onReceive(Context context, Intent intent) {
-	        //获取收到的广播室那一条
+	        //获取收到的广播时那一条
 	        String action = intent.getAction();
 	        //获取广播中携带的data数据
 	        Uri uri = intent.getData();
@@ -3854,6 +3868,856 @@ public class MainActivity extends AppCompatActivity {
 /**
  
  */
+
+# 多媒体概念
+* 文本、图片、音频、视频
+
+---
+# 图片的处理
+* 图片的大小 = 图片的在那个像素 * 每个像素的大小
+
+##BMP
+* 单色：每个像素只能表示两种颜色，只需使用一个长度为1的二进制数字即可，那么一个像素占用1/8个字节
+* 16色：每个像素只可以表示16种颜色，那么只需要16个数字，0-15， 0000-1111，长度4的二进制数字，那么每个像素占用1/2字节
+* 256色：每个像素可以表示256中颜色，那么只需要256个数字，也就是0-255， 0000 0000 -1111 11111，长度为8的二进制数字，那么每个像素占用1个字节
+* 24位：每个像素能表示的颜色，用一个24位的二进制数字表示，每个像素占用3个字节
+    * RGB
+    * R：红色，取值范围0 - 255
+    * G：绿色，取值范围0 - 255
+    * B：蓝色，取值范围0 - 255
+
+* ARGB
+
+    * A：alpha，透明度。取值范围0-255
+
+
+#加载图片
+* 图片像素过大，造成图片内存溢出
+* 解决方案：先缩放图片，然后再加载
+    * 图片总像素 7680000
+    * 屏幕像素 153600
+* 缩放比例
+    * 图片宽度：2400*3200
+    * 屏幕宽高：320*480 
+    * 宽的缩放比例：24000/320 = 7
+    * 高的缩放比例：3200/480 = 6
+    * 缩放比例使用大的那个
+
+#图片的特效处理
+* 旋转
+* 平移
+* 缩放
+* 镜面效果
+* 倒影效果
+
+#画画板
+
+* 系统每次收到SD卡就绪广播时，都会去遍历sd卡的所有文件和文件夹，把遍历到的所有多媒体文件都在MediaStore数据库保存一个索引，这个索引包含多媒体文件的文件名、路径、大小
+* 图库每次打开时，并不会去便利sd卡获取图片，而是通过内容提供者从MediaStore数据库中获取图片的信息，然后读取该图片
+
+/**
+
+ */
+
+    //显示图片
+    public void click(View v) {
+        //不能直接加载，否则内存溢出
+//        Bitmap bm = BitmapFactory.decodeFile("sdcard/dog.jpg");
+
+        //加载图片时的可选项
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        //允许调用者去查询图片的属性，但是不为图片的像素分配内存
+        opt.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile("sdcard/dog.jpg", opt);
+
+        //获取图片宽高
+        int imageWidth = opt.outWidth;
+        int imageHeight = opt.outHeight;
+
+        //获取屏幕宽高
+        Display dp = getWindowManager().getDefaultDisplay();
+        int sceenWidth = dp.getWidth();
+        int sceenHeight = dp.getHeight();
+
+        //计算缩放比例
+        int scaleWidth = imageWidth / sceenWidth;
+        int scaleHeight = imageHeight / sceenHeight;
+        int scale = 1;
+
+        //如果宽高缩放比例不一致，采用哪个
+        if (scaleWidth >= scaleHeight && scaleWidth > 0) {
+            scale = scaleWidth;
+        } else if (scaleWidth < scaleHeight && scaleHeight >0) {
+            scale = scaleHeight;
+        }
+        //设置缩放比例
+        opt.inSampleSize = scale;
+        opt.inJustDecodeBounds = false;
+        Bitmap bm = BitmapFactory.decodeFile("sdcard/dog.jpg", opt);
+        ImageView iv = (ImageView) findViewById(R.id.iv);
+        iv.setImageBitmap(bm);
+
+    }
+
+/**
+ 
+ */
+
+创建图片的副本
+
+
+    //创建图片的副本
+    public void click2(View v) {
+        //加载原图，这个对象是只读的
+        Bitmap bmSrc = BitmapFactory.decodeFile("sdcard/photo3.jpg");
+
+        //开始创建原图的拷贝
+        //1.创建一个没有任何内容的bitmap对象，宽高与原图一致，比喻为一张跟原图一样大小的白纸，下一步在纸上作画，把原图画出来
+        Bitmap bmCopy = Bitmap.createBitmap(bmSrc.getWidth(), bmSrc.getHeight(), bmSrc.getConfig());
+        //2.创建画笔
+        Paint paint = new Paint();
+        //3.创建一个画板，把白纸铺在画板上
+        Canvas canvas = new Canvas(bmCopy);
+        //4.开始作画
+        //bitmap:这是要写生的风景
+        canvas.drawBitmap(bmSrc, new Matrix(), paint);
+
+        ImageView iv_src = (ImageView) findViewById(R.id.iv_src);
+        ImageView iv_copy = (ImageView) findViewById(R.id.iv_copy);
+        iv_src.setImageBitmap(bmSrc);
+        iv_copy.setImageBitmap(bmCopy);
+    }
+
+
+/**
+ 
+ */
+
+#图片的特效处理
+* 旋转
+* 平移
+* 缩放
+* 镜面效果
+* 倒影效果
+
+        //4.开始作画
+        Matrix mt = new Matrix();
+
+        /**
+         * 旋转
+         */
+        //顺时针旋转45°，中心点在左上角0, 0
+        mt.setRotate(45);
+        //中心点在图片的右下角
+        mt.setRotate(45, bmCopy.getWidth(), bmCopy.getHeight());
+        //中心点是图片的中心点
+        mt.setRotate(45, bmCopy.getWidth()/2 , bmCopy.getHeight()/2);
+
+        /**
+         * 平移
+         */
+        //往右平移10px，往下20px
+        mt.setTranslate(10, 20);
+
+        /**
+         * 缩放
+         */
+        //X轴缩放0.5，Y轴放大2倍
+        mt.setScale(0.5f, 2);
+
+        /**
+         * 镜面效果
+         */
+        mt.setScale(-1, 1);
+        mt.postTranslate(bmCopy.getWidth(), 0);
+
+        /**
+         * 倒影效果
+         */
+        mt.setScale(1, -1);
+        mt.postTranslate(0, bmCopy.getHeight());
+
+        canvas.drawBitmap(bmSrc, mt, paint);
+
+/**
+ 
+ */
+
+ImageView 的触摸事件
+
+        //在图片上绘制直线
+        paint.setColor(Color.RED);
+        //前两个参数是起始坐标，后两个终点坐标
+        canvas.drawLine(10, 10, 100, 100, paint);
+
+
+/*********************************************************************************/
+
+    //ImageView 的触摸事件
+    private void click3(View v) {
+        ImageView iv = (ImageView) findViewById(R.id.iv_painter);
+        //设置触摸侦听
+        iv.setOnTouchListener(new View.OnTouchListener() {
+            //只要触摸事件产生，此方法调用
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //获取当前触摸事件的action
+                int action = event.getAction();
+
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        System.out.println("手指按下");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        System.out.println("手指滑动");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        System.out.println("手指抬起");
+                        break;
+                }
+
+                //如果设置为true，那么这个触摸事件由这个组件处理，如果设置为false，则此时间交给这个组件的父节点处理
+                return true;
+            }
+        });
+    }
+
+/**
+
+ */
+
+画画板
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+
+/*******************************************************************************************************/
+    Bitmap bmCopy;
+    Canvas canvas;
+    Paint paint;
+    ImageView iv;
+    int startX;
+    int startY;
+
+    //ImageView 的触摸事件
+    private void click3(View v) {
+
+        //加载资源id的拖
+        Bitmap bmSrc = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
+
+        //创建副本
+        //1.创建大小与原图一模一样的白纸
+        bmCopy = Bitmap.createBitmap(bmSrc.getWidth(), bmSrc.getHeight(), bmSrc.getConfig());
+        //2.创建画笔
+        paint = new Paint();
+        //3.创建画板
+        canvas = new Canvas(bmCopy);
+        //4.把风景绘制到纸上
+        canvas.drawBitmap(bmSrc, new Matrix(), paint);
+
+        iv = (ImageView) findViewById(R.id.iv_painter);
+        iv.setImageBitmap(bmCopy);
+        //设置触摸侦听
+        iv.setOnTouchListener(new View.OnTouchListener() {
+            //只要触摸事件产生，此方法调用
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //获取当前触摸事件的action
+                int action = event.getAction();
+
+                switch (action) {
+                    //手指按下
+                    case MotionEvent.ACTION_DOWN:
+                        startX = (int) event.getX();
+                        startY = (int) event.getY();
+                        break;
+                    //手指滑动
+                    case MotionEvent.ACTION_MOVE:
+                        int newstartX = (int) event.getX();
+                        int newstartY = (int) event.getY();
+                        canvas.drawLine(startX, startY, newstartX, newstartY, paint);
+                        startX = newstartX;
+                        startY = newstartY;
+                        //重新设置iv显示副本
+                        iv.setImageBitmap(bmCopy);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        System.out.println("手指抬起");
+                        break;
+                }
+
+                //如果设置为true，那么这个触摸事件由这个组件处理，如果设置为false，则此时间交给这个组件的父节点处理
+                return true;
+            }
+        });
+    }
+
+
+    public void red(View v) {
+        paint.setColor(Color.RED);
+    }
+
+    public void green(View v) {
+        paint.setColor(Color.GREEN);
+
+    }
+    public void brush(View v) {
+        paint.setStrokeWidth(7);
+    }
+
+    public void save(View v) {
+        File file = new File("sdcard/dazou.png");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        bmCopy.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
+        //手动发送sd卡就绪广播
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_MEDIA_MOUNTED);
+        intent.setData(Uri.fromFile(Environment.getExternalStorageDirectory()));
+        sendBroadcast(intent);
+    }
+
+/**
+
+ */
+
+撕衣服应用
+
+/**************************************************************************************************/
+
+<ImageView
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:src="@drawable/img_11"/>
+
+<ImageView
+android:id="@+id/iv"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"/>
+
+
+/**************************************************************************************************/
+
+package com.example.fangyi.syifu;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+
+public class MainActivity extends AppCompatActivity {
+    Bitmap bmSrc;
+    Bitmap bmCopy;
+    Paint paint;
+    Canvas canvas;
+    ImageView iv;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bmSrc = BitmapFactory.decodeResource(getResources(), R.drawable.img_12);
+        bmCopy = Bitmap.createBitmap(bmSrc.getWidth(), bmSrc.getHeight(), bmSrc.getConfig());
+
+        paint = new Paint();
+
+        canvas = new Canvas(bmCopy);
+
+        canvas.drawBitmap(bmSrc, new Matrix(), paint);
+
+        iv = (ImageView) findViewById(R.id.iv);
+        iv.setImageBitmap(bmCopy);
+        iv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        int x = (int) event.getX();
+                        int y = (int) event.getY();
+                        //把指定坐标的像素设置为某个颜色
+                        for (int i= -50; i<50; i++) {
+                            for (int j= -50; j<50; j++) {
+
+                                //计算某个像素是否在圆内或圆上
+                                if (Math.sqrt(j*j + i*i) <= 50) {
+                                    System.out.println("移动");
+                                    bmCopy.setPixel(x + i, y + j, Color.TRANSPARENT);
+                                }
+                            }
+                        }
+                        iv.setImageBitmap(bmCopy);
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+}
+
+/**
+ 
+ */
+/**
+ 
+ */
+
+音乐播放器的实现
+
+/****************************************************************************************************/
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.fangyi.music">
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <service android:name=".MusicService"></service>
+    </application>
+
+</manifest>
+
+/****************************************************************************************************/
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.fangyi.music.MainActivity">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始播放"
+        android:onClick="play"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="暂停播放"
+        android:onClick="pause"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="继续播放"
+        android:onClick="continuePlay"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止播放"
+        android:onClick="stop"/>
+
+    <SeekBar
+        android:id="@+id/sb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
+
+/****************************************************************************************************/
+
+package com.example.fangyi.music;
+
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.SeekBar;
+
+public class MainActivity extends AppCompatActivity {
+    private MusicInterface mi;
+    public static SeekBar sb;
+
+    public static Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            int duration = bundle.getInt("duration");
+            int currentPosition = bundle.getInt("currentPosition");
+
+            sb.setMax(duration);
+            sb.setProgress(currentPosition);
+        }
+    };
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        sb = (SeekBar) findViewById(R.id.sb);
+        sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            //当手指拖动进度条圆圈，此方法调用
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+            //当手指按下进度条圆圈，此方法调用
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            //当手指离开进度条圆圈，此方法调用
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                mi.seekTo(progress);
+            }
+        });
+
+
+        Intent intent = new Intent(this, MusicService.class);
+        startService(intent);
+        bindService(intent, new MyServiceConn(), BIND_AUTO_CREATE);
+    }
+
+    private class MyServiceConn implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mi = (MusicInterface) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    }
+
+    public void play(View v) {
+        mi.play();
+    }
+
+    public void pause(View v) {
+        mi.pause();
+    }
+
+    public void continuePlay(View v) {
+        mi.continuePlay();
+    }
+
+    public void stop(View v) {
+        mi.stop();
+    }
+
+}
+
+/****************************************************************************************************/
+
+package com.example.fangyi.music;
+
+import android.app.Service;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.support.annotation.Nullable;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
+/**
+ * Created by FANGYI on 2016/5/21.
+ */
+public class MusicService extends Service {
+
+    MediaPlayer player;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new MusicBinder();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        player = new MediaPlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //此方法调用，player就不能用了，所以卸载摧毁方法里，摧毁方法一调用就说明用户退出了播放器
+        player.release();
+        player = null;
+
+    }
+
+    class MusicBinder extends Binder implements MusicInterface{
+        public void play() {
+            MusicService.this.play();
+        }
+
+        public void pause() {
+            MusicService.this.pause();
+        }
+        public void continuePlay() {
+            MusicService.this.continuePlay();
+        }
+        public void stop() {
+            MusicService.this.stop();
+        }
+
+        public void seekTo(int progress) {
+            MusicService.this.seekTo(progress);
+        }
+    }
+
+    private void play() {
+        player.reset();
+        try {
+            player.setDataSource("http://m1.music.126.net/4Dyp0YZUPYmojzG_muvc3A==/1377688080392626.mp3");
+            //同步准备
+//            player.prepare();
+            //异步准备
+            player.prepareAsync();
+            //设置准备侦听，知道子线程何时准备完毕
+            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                //准备完毕时调用
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    player.start();
+                    addSeekBar();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        player.start();
+    }
+
+    private void pause() {
+        player.pause();
+    }
+
+    private void continuePlay() {
+        player.start();
+
+    }
+
+    private void stop() {
+        player.stop();
+    }
+
+    /**
+     * 显示进度条
+     */
+    private void addSeekBar() {
+
+        //使用计时器去不断的执行获取播放进度的代码
+        Timer timer = new Timer();
+        //设置计时任务
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //获取当前曲目的持续时间
+                //返回处理歌曲的毫秒值
+                int duration = player.getDuration();
+                //获取当前的播放进度
+                //当前播放的位置
+                int currentPosition = player.getCurrentPosition();
+                Message msg = MainActivity.mHandler.obtainMessage();
+                //搭载信息
+                Bundle bundle = new Bundle();
+                bundle.putInt("duration", duration);
+                bundle.putInt("currentPosition", currentPosition);
+                msg.setData(bundle);
+                //发送消息让进度条更新
+                MainActivity.mHandler.sendMessage(msg);
+            }
+            //参数，5毫秒开始执行任务，每500毫秒执行一次任务
+        }, 5, 500);
+    }
+
+    /**
+     * 拖拽进度条更改播放时间
+     */
+    private void seekTo(int progress) {
+        player.seekTo(progress);
+    }
+}
+
+/****************************************************************************************************/
+
+package com.example.fangyi.music;
+
+/**
+ * Created by FANGYI on 2016/5/21.
+ */
+public interface MusicInterface {
+
+    void play();
+    void pause();
+    void continuePlay();
+    void stop();
+    void seekTo(int progress);
+}
+
+/**
+ 
+ */
+/**
+ 
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
