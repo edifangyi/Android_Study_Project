@@ -4596,28 +4596,162 @@ public interface MusicInterface {
  
  */
 
+#SurfaceView
+* 双缓冲技术
+	*内存中有两个界面，一个显示在前台，一个在后台，刷新界面时，后台界面覆盖前台
+
+* 对于画面实时更新要求高的需求，就会使用这个组件
+* SurfaceView 是一个重量级组件
+* 当 SurfaceView 被用户看见时，才创建
+* SurfaceView 一旦不可见，就会被销毁，一旦可见，就会创建
 
 
+public class MainActivity extends AppCompatActivity {
+    private MediaPlayer player;
+    static int currentPosition = 0;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        SurfaceView sv = (SurfaceView) findViewById(R.id.sv);
+        //拿到surfaceview的控制器
+        final SurfaceHolder sh = sv.getHolder();
+//
+//        Thread t = new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    sleep(200);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                //在主线程中运行一个Runnable
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        MediaPlayer player = new MediaPlayer();
+//                        player.reset();
+//                        try {
+//                            player.setDataSource("http://us.sinaimg.cn/003fwLaujx071RAwwcpx05040100a1Im0k01.mp4?KID=unistore,video&ssig=6cDbuY1ETD&Expires=1463842798");
+//                            //设置把视频显示在那个sufaceView上
+//                            player.setDisplay(sh);
+//                            player.prepare();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                        player.start();
+//                    }
+//                });
+//            }
+//        };
+//        t.start();
+
+        sh.addCallback(new SurfaceHolder.Callback() {
+
+            //sufaceView创建时调用
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                if (player == null) {
+                    player = new MediaPlayer();
+                    player.reset();
+                    try {
+                        player.setDataSource("http://us.sinaimg.cn/003fwLaujx071RAwwcpx05040100a1Im0k01.mp4?KID=unistore,video&ssig=6cDbuY1ETD&Expires=1463842798");
+                        //设置把视频显示在那个sufaceView上
+                        player.setDisplay(sh);
+                        player.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    player.start();
+                    //把播放进度设置到上一次退出时的位置
+                    player.seekTo(currentPosition);
+                }
+
+            }
+            //sufaceView结构改变时调用
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+            //sufaceView销毁时调用
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                if (player != null) {
+                    //每次退出时，获取当前播放的时间
+                    currentPosition = player.getCurrentPosition();
+                    player.stop();
+                    player.release();
+                    player = null;
+                }
+            }
+        });
 
 
+    }
+}
 
+/**
+ 
+ */
 
+#Vitamio框架
 
+* VideoView
+* 检查是否兼容Vitamo引擎，和安装
+    * if（!LibsChecker.checkVitamioLibs(this)）{return;}
+* 清单文件中要配置
+	* 用来检测的
+	* <activity android:name="io.vov.vitamio.activity.InitActivity"/>
 
+/**************************************************************************/
+<io.vov.vitamio.widget.VideoView
+	android:id="@+id/vv"
+ 	android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
 
+/**************************************************************************/
+final VideoView vv = (VideoView)findViewById(R.id.vv);
+vv.setVideoPath("");
+vv.setOnPreparedListener(new OnPreparedListener() {
+	public void onPrepared(MediaPlayer mp) {
+		vv.start();
+	}
+});
+vv.setMediaVontroller(new MediaController(this));
 
+/**
+ 
+ */
+摄像头的使用
 
+http://www.android-doc.com/guide/topics/media/camera.html
 
+/***************************************************************************************/
+拍照
 
+    public void click1(View v) {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, new File(Environment.getExternalStorageDirectory(), "haha.jpg")); // set the image file name
 
+        // start the image capture Intent
+        startActivityForResult(intent, 0);
+    }
+    
+/***************************************************************************************/
+摄像
 
+	
 
-
-
-
-
-
+/**
+ 
+ */
+/**
+ 
+ */
 
 
 
