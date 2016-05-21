@@ -4730,22 +4730,67 @@ http://www.android-doc.com/guide/topics/media/camera.html
 
 /***************************************************************************************/
 拍照
+package com.example.fangyi.video;
+
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
+
+import java.io.File;
+
+public class MainActivity extends AppCompatActivity {
+    private MediaPlayer player;
+    static int currentPosition = 0;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+    }
 
     public void click1(View v) {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
+        //指定照片保存的路径和文件名
         intent.putExtra(MediaStore.EXTRA_OUTPUT, new File(Environment.getExternalStorageDirectory(), "haha.jpg")); // set the image file name
 
         // start the image capture Intent
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 1);
     }
-    
-/***************************************************************************************/
-摄像
+
+    public void click2(View v) {
+        // create Intent to take a picture and return control to the calling application
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        //指定视频保存的路径和文件名
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, new File(Environment.getExternalStorageDirectory(), "haha.3gp")); // set the image file name
+        //指定视频的质量
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1); // set the video image quality to high
+        // start the image capture Intent
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+        if (resultCode == 1) {
+            Toast.makeText(this, "拍照成功", Toast.LENGTH_SHORT).show();
+        } else if (resultCode == 2) {
+            Toast.makeText(this, "摄像成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
 
 	
 
+/**
+ 
+ */
 /**
  
  */
