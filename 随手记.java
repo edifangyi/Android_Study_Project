@@ -4798,79 +4798,795 @@ public class MainActivity extends AppCompatActivity {
  
  */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Framgent 实现过程
+
+
+/*********************************************************************************************/
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void click1(View v) {
+        //把Fragment显示至屏幕
+        //1.创建Fragment的对象
+        Framgent01 fg1 = new Framgent01();
+        //2.获取Fragment管理器
+        FragmentManager fm = getFragmentManager();
+        //3.开启事务
+        FragmentTransaction ft = fm.beginTransaction();
+        //4.把Fragment显示至界面
+        ft.replace(R.id.fl, fg1);
+        //5.提交
+        ft.commit();
+
+    }
+
+    public void click2(View v) {
+        Framgent02 fg2 = new Framgent02();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fl, fg2);
+        ft.commit();
+    }
+
+    public void click3(View v) {
+        Framgent03 fg3 = new Framgent03();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fl, fg3);
+        ft.commit();
+    }
+}
+
+/*********************************************************************************************/
+
+public class Framgent01 extends Fragment {
+    //此方法返回的View对象就是该Fragment显示的内容
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = View.inflate(getActivity(), R.layout.framgent01, null);
+        return v;
+    }
+}
+
+/*********************************************************************************************/
+activity_main
+
+    <LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面1"
+            android:onClick="click1"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面2"
+            android:onClick="click2"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面3"
+            android:onClick="click3"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+/*********************************************************************************************/
+
+fragment01
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:background="#EBCAFE"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="这是紫色"
+        android:textSize="30sp"/>
+
+</LinearLayout>
+
+/**
+ 
+ */
+
+传递数据
+
+
+
+package com.example.fangyi.fragment;
+
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.EditText;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Framgent01 fg1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        fg1 = new Framgent01();
+        //2.获取Fragment管理器
+        FragmentManager fm = getFragmentManager();
+        //3.开启事务
+        FragmentTransaction ft = fm.beginTransaction();
+        //4.把Fragment显示至界面
+        ft.replace(R.id.fl, fg1);
+        //5.提交
+        ft.commit();
+    }
+
+    public void click1(View v) {
+        //把Fragment显示至屏幕
+        //1.创建Fragment的对象
+//      Framgent01 fg1 = new Framgent01();
+        //2.获取Fragment管理器
+        FragmentManager fm = getFragmentManager();
+        //3.开启事务
+        FragmentTransaction ft = fm.beginTransaction();
+        //4.把Fragment显示至界面
+        ft.replace(R.id.fl, fg1);
+        //5.提交
+        ft.commit();
+    }
+
+    public void click2(View v) {
+        //把Fragment显示至屏幕
+        //1.创建Fragment的对象
+        Framgent02 fg2 = new Framgent02();
+        //2.获取Fragment管理器
+        FragmentManager fm = getFragmentManager();
+        //3.开启事务
+        FragmentTransaction ft = fm.beginTransaction();
+        //4.把Fragment显示至界面
+        ft.replace(R.id.fl, fg2);
+        //5.提交
+        ft.commit();
+    }
+
+    public void click3(View v) {
+        //把Fragment显示至屏幕
+        //1.创建Fragment的对象
+        Framgent03 fg3 = new Framgent03();
+        //2.获取Fragment管理器
+        FragmentManager fm = getFragmentManager();
+        //3.开启事务
+        FragmentTransaction ft = fm.beginTransaction();
+        //4.把Fragment显示至界面
+        ft.replace(R.id.fl, fg3);
+        //5.提交
+        ft.commit();
+    }
+
+    public void commit(View v) {
+        EditText et = (EditText) findViewById(R.id.et);
+        String text = et.getText().toString();
+        fg1.setText(text);
+    }
+
+    public void setText(String text) {
+        //此方法运行在02中
+        EditText et = (EditText) findViewById(R.id.et);
+        et.setText(text);
+    }
+}
+
+
+/**************************************************************************************************/
+
+public class Framgent01 extends Fragment {
+    TextView tv;
+
+    //此方法返回的View对象就是该Fragment显示的内容
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = View.inflate(getActivity(), R.layout.framgent01, null);
+        tv = (TextView) v.findViewById(R.id.tv);
+        return v;
+    }
+
+    public void setText(String text) {
+        tv.setText(text);
+    }
+}
+
+/**************************************************************************************************/
+
+public class Framgent02 extends Fragment {
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = View.inflate(getActivity(), R.layout.framgent02, null);
+        final EditText et = (EditText) v.findViewById(R.id.et);
+        Button bt = (Button) v.findViewById(R.id.bt);
+
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = et.getText().toString();
+                ((MainActivity)getActivity()).setText(text);
+            }
+        });
+        return v;
+    }
+}
+
+/**************************************************************************************************/
+
+<LinearLayout
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面1"
+            android:onClick="click1"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面2"
+            android:onClick="click2"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="界面3"
+            android:onClick="click3"/>
+        <EditText
+            android:id="@+id/et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="填写数据"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="提交"
+            android:onClick="commit"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+/**************************************************************************************************/
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="这是紫色"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"/>
+
+/**************************************************************************************************/
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="这是绿色"
+        android:textSize="30sp"/>
+
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="需要提交的数据"
+        android:textSize="20sp"/>
+    <Button
+        android:id="@+id/bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="提交"/>
+
+/**
+ 
+ */
+/**
+ 
+ */
+
+
+帧动画
+
+http://www.android-doc.com/guide/topics/graphics/drawable-animation.html
+
+/************************************************************************************************/
+1.rocket_thrust.xml
+
+android:oneshot="true" true 播放一次,false 重复播放
+
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item android:drawable="@drawable/rocket_thrust1" android:duration="200" />
+    <item android:drawable="@drawable/rocket_thrust2" android:duration="200" />
+    <item android:drawable="@drawable/rocket_thrust3" android:duration="200" />
+</animation-list>
+
+/************************************************************************************************/
+
+2.
+
+AnimationDrawable rocketAnimation;
+
+
+public void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.main);
+
+  ImageView rocketImage = (ImageView) findViewById(R.id.rocket_image);
+  //通过资源id设置要显示的背景图
+  rocketImage.setBackgroundResource(R.drawable.rocket_thrust);
+  //获取rocketImage的背景图，其实是个动画
+  rocketAnimation = (AnimationDrawable) rocketImage.getBackground();
+}
+
+public boolean onTouchEvent(MotionEvent event) {
+  if (event.getAction() == MotionEvent.ACTION_DOWN) {
+    rocketAnimation.start();
+    return true;
+  }
+  return super.onTouchEvent(event);
+}
+
+/**
+ 
+ */
+
+#补间动画
+* 旧形态向新形态变形时，为了让过程过度平滑自然而生成的动画
+
+##平移
+
+
+        TranslateAnimation ta = new TranslateAnimation(10, 50, 20 , -60);
+
+* 10：代表x的开始坐标：真实x+10
+* 50：代表x的结束坐标：真实x+50
+* 20：代表y的开始坐标：真实y+20
+* -60：代表y的开始坐标：真实y-60
+
+
+        TranslateAnimation ta = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, (float) 0, Animation.RELATIVE_TO_SELF, 2,
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 2);
+
+*  Animation.RELATIVE_TO_SELF, 0：代表x开始坐标
+    * 真实x + 0 * iv自身宽度
+*  Animation.RELATIVE_TO_SELF, 2：代表x结束坐标
+    * 真实x + 2 * iv自身宽度
+
+
+##缩放
+
+       ScaleAnimation sa = new ScaleAnimation(0.1f, 2, 3, 0.5f);
+
+* 0.1f：代表x轴的开始比例
+* 2：代表x轴的结束比例
+* 3：代表y轴的开始比例
+* 0.5f：代表x轴的结束比例
+
+
+        ScaleAnimation sa = new ScaleAnimation(0.1f, 2, 2, 0.5f, iv.getWidth() / 2, iv.getHeight() / 2);
+
+* iv.getWidth() / 2：代表缩放中心点的x坐标
+    * 真实y + iv.getWidth() / 2
+* iv.getHeight() / 2：代表缩放中心电的y坐标
+    * 真实x + iv.getHeight() / 2
+
+
+    ScaleAnimation sa = new ScaleAnimation(0.1f, 2, 2, 0.5f,Animation.RELATIVE_TO_SELF, 1, Animation.RELATIVE_TO_SELF, 0.5f);
+
+*  Animation.RELATIVE_TO_SELF, 0.5f：代表x开始坐标
+    * 真实x + iv自身宽度 * 1
+*  Animation.RELATIVE_TO_SELF, 0.5f：代表x结束坐标
+    * 真实x + iv自身高度 * 0.5
+
+##透明
+
+    AlphaAnimation aa = new AlphaAnimation(0, 1);
+    
+* 起始透明度0
+* 终点透明度 1
+
+##旋转
+    RotateAnimation ra = new RotateAnimation(20, 360);
+    RotateAnimation ra = new RotateAnimation(20, 360, iv.getWidth() / 2, iv.getHeight() / 2);
+    RotateAnimation ra = new RotateAnimation(20, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+##集合
+    public void fly(View v) {
+        //动画集合
+        AnimationSet as = new AnimationSet(false);
+        //添加动画
+        as.addAnimation(mTa);
+        as.addAnimation(mAa);
+        as.addAnimation(mRa);
+        as.addAnimation(mSa);
+        iv.startAnimation(as);
+    }
+
+
+            //动画播放两秒
+        mTa.setDuration(2000);
+
+/**
+ 
+ */
+
+属性动画
+
+package com.example.fangyi.bujian;
+
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    ImageView iv;
+    private ScaleAnimation mSa;
+    private TranslateAnimation mTa;
+    private AlphaAnimation mAa;
+    private RotateAnimation mRa;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        iv = (ImageView) findViewById(R.id.iv);
+        iv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Toast.makeText(MainActivity.this, "你点不到我", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+    }
+
+    public void translate1(View v) {
+        //创建补间动画对象
+//        TranslateAnimation ta = new TranslateAnimation(10, 50, 20 , 60);
+        //使用相对的方式来定义位移的坐标,RELATIVE_TO_SELF自身的，后面的参数是  真实x + (自身*参数)
+        mTa = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, (float) 0, Animation.RELATIVE_TO_SELF, 2,
+                Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 2);
+        //动画播放两秒
+        mTa.setDuration(2000);
+        iv.startAnimation(mTa);
+
+    }
+
+    public void scale1(View v) {
+        mSa = new ScaleAnimation(0.1f, 2, 2, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        mSa.setDuration(2000);
+        //重复播放
+        mSa.setRepeatCount(1);
+        //重复播放模式
+        mSa.setRepeatMode(Animation.REVERSE);
+        //填充结束位置，也就是结束位置把组件绘制上去
+        mSa.setFillAfter(true);
+        //
+//        sa.setFillBefore(true);
+        iv.startAnimation(mSa);
+    }
+
+    public void alpha1(View v) {
+        mAa = new AlphaAnimation(0, 1);
+        mAa.setDuration(2000);
+
+        mAa.setRepeatCount(1);
+        //重复播放模式
+        mAa.setRepeatMode(Animation.REVERSE);
+        //填充结束位置，也就是结束位置把组件绘制上去
+        mAa.setFillAfter(true);
+
+        iv.startAnimation(mAa);
+
+    }
+
+    public void rotato1(View v) {
+        //起始20°，旋转360°
+//        RotateAnimation ra = new RotateAnimation(20, 360);
+//        RotateAnimation ra = new RotateAnimation(20, 360, iv.getWidth() / 2, iv.getHeight() / 2);
+        mRa = new RotateAnimation(20, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        mRa.setDuration(2000);
+        iv.startAnimation(mRa);
+
+    }
+
+    public void fly1(View v) {
+        //动画集合
+        AnimationSet as = new AnimationSet(false);
+        //添加动画
+        as.addAnimation(mTa);
+        as.addAnimation(mAa);
+        as.addAnimation(mRa);
+        as.addAnimation(mSa);
+        iv.startAnimation(as);
+    }
+
+    public void translate2(View v) {
+        //创建属性动画
+        //改变的是真实值的坐标
+        ObjectAnimator oa = ObjectAnimator.ofFloat(iv, "translationX", 10, -50, 20, 200);
+        oa.setDuration(2000);
+        oa.start();
+
+    }
+
+    public void scale2(View v) {
+        ObjectAnimator oa = ObjectAnimator.ofFloat(iv, "scaleY", 0.1f, 2, 1, 2);
+        oa.setDuration(2000);
+        oa.start();
+    }
+
+    public void alpha2(View v) {
+        ObjectAnimator oa = ObjectAnimator.ofFloat(iv, "alpha", 0, 0.5f, 0 , 1);
+        oa.setDuration(2000);
+        oa.start();
+
+    }
+
+    public void rotato2(View v) {
+        ObjectAnimator oa = ObjectAnimator.ofFloat(iv, "rotation", 0, 180, 90, 360);
+        ObjectAnimator oax = ObjectAnimator.ofFloat(iv, "rotationX", 0, 180, 90, 360);
+        ObjectAnimator oay = ObjectAnimator.ofFloat(iv, "rotationY", 0, 180, 90, 360);
+        oa.setDuration(2000);
+        oa.start();
+        oax.setDuration(2000);
+        oax.start();
+        oay.setDuration(2000);
+        oay.start();
+    }
+
+    public void fly2(View v) {
+        AnimatorSet as = new AnimatorSet();
+
+        ObjectAnimator oa = ObjectAnimator.ofFloat(iv, "translationX", 10, -50, 20, 200);
+        ObjectAnimator oa2 = ObjectAnimator.ofFloat(iv, "scaleY", 0.1f, 2, 1, 2);
+        ObjectAnimator oa3 = ObjectAnimator.ofFloat(iv, "alpha", 0, 0.5f, 0 , 1);
+        ObjectAnimator oa4 = ObjectAnimator.ofFloat(iv, "rotation", 0, 180, 90, 360);
+
+
+        as.setDuration(2000);
+        as.setTarget(iv);
+        //往集合中添加动画
+        //挨个飞
+//        as.playSequentially(oa, oa2, oa3, oa4);
+        //一起飞
+        as.playTogether(oa, oa2, oa3, oa4);
+        as.start();
+    }
+}
+
+/**
+ 
+ */
+
+
+
+用xml文件定义属性动画
+
+
+/**
+ 
+ */
+
+对话框
+
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+    //确定取消对话框
+    public void click1(View v) {
+        //创建对话框创建者对象
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //用创建者对象初始化对话框的各种属性
+        builder.setTitle("葵花宝典");
+        builder.setMessage("欲练此功，必先自宫");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "感谢使用本软件，再见", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, "若不自宫，一定不成功", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog ad = builder.create();
+        ad.show();
+
+    }
+
+    //单选对话框
+    public void click2(View v) {
+        //创建对话框创建者对象
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //用创建者对象初始化对话框的各种属性
+        builder.setTitle("选择你的性别");
+        final String[] items = new String[] {
+                "男",
+                "女",
+                "小胖"
+        };
+        //设置单选条目
+        builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() {
+            //which：用户点击的条目索引
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MainActivity.this, items[which], Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    //多选对话框
+    public void click3(View v) {
+        //创建对话框创建者对象
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        //用创建者对象初始化对话框的各种属性
+        builder.setTitle("你喜欢吃什么水果");
+        final String[] items = new String[] {
+                "苹果",
+                "鸭梨",
+                "橘子",
+                "香蕉",
+                "黄瓜"
+        };
+        final boolean[] checkedItems = new boolean[] {
+                true,
+                true,
+                false,
+                false,
+                false
+        };
+
+       builder.setMultiChoiceItems(items, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+           @Override
+           public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+               //根据用户的选择改变记录条目是否被选中的boolean数组值
+               checkedItems[which] = isChecked;
+           }
+       });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String s = "";
+                for (int i = 0; i < items.length; i++) {
+                    s = s + (checkedItems[i]? items[i] + "," : "");
+                }
+                Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        builder.show();
+    }
+}
+
+
+/**
+ 
+ */
+
+#样式和主题
+* 样式：用于普通的组件
+* 主题：用于 application 和 Activity 节点
+
+/*********************************************************************************************/
+
+    <style name="JiangNanStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="JiangBeiStyle" parent="JiangNanStyle">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@android:color/holo_blue_bright</item>
+    </style>
+
+    <style name="JiangBeiStyle.JiangDongStyle">
+        <item name="android:textSize">35sp</item>
+    </style>
+
+/*********************************************************************************************/
+   
+    <TextView
+        style="@style/JiangNanStyle"
+        android:text="`(*∩_∩*)′"/>
+
+    <TextView
+        style="@style/JiangBeiStyle"
+        android:text="o(*≧▽≦)ツ"/>
+
+    <TextView
+        style="@style/JiangBeiStyle.JiangDongStyle"
+        android:text="o(*≧▽≦)ツ"/>
+
+/**
+ 
+ */
+
+国际化
+
+/**
+ * 字符串国际化
+ */
+	values-en-rGB//英国
+	values-en-rUS//美国
+	values-it//意大利
+	values-zh//中国
+	values-en//英语世界
+/**
+ * 图片国际化
+ */
+	drawable-en-rGB//英国
+	drawable-en-rGB//美国
+	
+	drawable //需要有一个默认的
+
+/**
+ 
+ */
 
 
 
