@@ -4867,7 +4867,7 @@ ViewPager实现 13:24
 
 		    @Override//我们需要一个加载views的方法，
 		    public Object instantiateItem(ViewGroup container, int position) {
-		        ((ViewPager)container).removeView(views.get(position));
+		        ((ViewPager)container).addView(views.get(position));
 
 		        return views.get(position);
 		    }
@@ -4923,6 +4923,10 @@ ViewPager实现 13:24
 		        views.add(inflater.inflate(R.layout.one, null));
 		        views.add(inflater.inflate(R.layout.two, null));
 		        views.add(inflater.inflate(R.layout.three, null));
+
+		        viewPagerAdapter = new ViewPagerAdapter(views, this);
+        		viewPager = (ViewPager) findViewById(R.id.viewpager);
+        		viewPager.setAdapter(viewPagerAdapter);
 		    }
 		}
 

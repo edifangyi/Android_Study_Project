@@ -5,7 +5,14 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
  android:hint="请输入电话好吗..." //提示输入
  android:lines="5" //展示5行内容
  
+
+ android:shadowColor="#ff0000"//给文字设置阴影
+ android:shadowDx="2"
+ android:shadowDy="2"
+ android:shadowRadius="2"
+ 
  android:gravity="top" //内容文字对齐方式
+
  android:layout_gravity=""//对象在布局中的位置方式
 
  /**
