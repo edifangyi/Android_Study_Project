@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.fangyi.mobilesafe.MainActivity;
 import com.fangyi.mobilesafe.R;
 
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class Guide extends Activity implements ViewPager.OnPageChangeListener {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent i = new Intent(Guide.this, MainActivity.class);
+                Intent i = new Intent(Guide.this, WelcomeActivity.class);
                 startActivity(i);
                 finish();
             }

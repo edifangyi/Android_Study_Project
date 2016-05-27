@@ -843,6 +843,21 @@ SQLite
 
 
 
+实现多线程的方式
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+            }
+        }.start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                
+            }
+        }).start();
 
 
 
