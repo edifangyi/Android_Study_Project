@@ -3,13 +3,41 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
  android:inputType="phone" //限制输入
  android:inputType="textPassword"//输入文字显示密文
  android:hint="请输入电话好吗..." //提示输入
+
  android:lines="5" //展示5行内容
- 
+ android:singleLine="ture" //默认单行
+ android:ellipsize="none" //没有省略号，参数有开始省略，末尾省略，中间省略
+ android:ellipsize="marquee" //跑马灯效果
+
+
+
+//跑马灯效果
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="最新的手机卫士，快来下载，下载就送大妹纸o(*≧▽≦)ツ"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
+//自定义控件，在手机安全卫士中的 类
+        public class FocusedTextView extends TextView{}
+
+    <com.fangyi.mobilesafe.view.FocusedTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:text="哈哈哈哈哈`(*∩_∩*)′，，，，o(*≧▽≦)ツ快来下载"/>
+
 
  android:shadowColor="#ff0000"//给文字设置阴影
  android:shadowDx="2"
  android:shadowDy="2"
  android:shadowRadius="2"
+
+
  
  android:gravity="top" //内容文字对齐方式
 
@@ -5610,10 +5638,42 @@ public class MainActivity extends AppCompatActivity {
  
  */
 
-c
+md5加密
 
+public class MD5 {
+    public static void main(String[] args) {
+        //md5加密
+        //1.信息摘要器
+        try {
+            MessageDigest digest = MessageDigest.getInstance("md5");
+            String password = "12356";
+            //2.变成byte数组
+            byte bytes[] = digest.digest(password.getBytes());
+            StringBuffer buffer = new StringBuffer();
 
-
+            //3.每一个byte个和8个二进制位做与运算
+            for (byte b : bytes) {
+                int number = b & 0xff;//加盐0xff
+                
+                //4.把int类型转换成十六进制
+                String numberStr = Integer.toHexString(number);
+                System.out.println();
+                //5.不足的补全
+                if (numberStr.length() == 1) {
+                    buffer.append("0");
+                }
+                
+                buffer.append(numberStr);
+            
+            }
+//          buffer.toString();标准的md5加密后的结果
+            System.out.println(buffer.toString());
+   
+        } catch (NoSuchAlgorithmException e) {
+            //没有预先准备的说法异常
+            e.printStackTrace();
+        }
+    }
 
 
 

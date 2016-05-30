@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/activity_setup1_title"
+        android:text="1.欢迎使用手机防盗"
+        style="@style/text_title_style"/>
+
+    <TextView
+        style="@style/text_content_style"
+        android:text="您的手机防盗卫士："/>
+
+    <TextView
+        style="@style/text_content_style"
+        android:drawableLeft="@android:drawable/star_big_on"
+        android:text="SIM卡变更报警"/>
+
+    <TextView
+        style="@style/text_content_style"
+        android:drawableLeft="@android:drawable/star_big_on"
+        android:text="GPS追踪"/>
+
+    <TextView
+        style="@style/text_content_style"
+        android:drawableLeft="@android:drawable/star_big_on"
+        android:text="远程数据销毁"/>
+
+    <TextView
+        style="@style/text_content_style"
+        android:drawableLeft="@android:drawable/star_big_on"
+        android:text="远程锁屏"/>
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@android:drawable/presence_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ccc"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,17 +1,28 @@
 package com.fangyi.mobilesafe.activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.utils.MD5Utils;
 
 public class MainActivity extends AppCompatActivity {
+    private static String TAG = "MainActivity.clsss";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +32,168 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private GridView listMain;
+    private SharedPreferences sp;
+
     private static final  String names[] = {"手机防盗", "通信卫士", "应用管理", "进程管理", "流量统计", "手机杀毒", "缓存管理", "高级功能", "设置中心"};
-    private static final  int ids[] = {R.drawable.plane, R.drawable.pointer, R.drawable.rss, R.drawable.star, R.drawable.ticket, R.drawable.twitter, R.drawable.user, R.drawable.view, R.drawable.weather};
+    private static final  int ids[] = {R.drawable.ic_compass, R.drawable.ic_find_friends, R.drawable.ic_reminders, R.drawable.ic_voice_memos, R.drawable.ic_safari, R.drawable.ic_icloud_drive, R.drawable.ic_news, R.drawable.ic_tips, R.drawable.ic_settings};
     private void assignViews() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         listMain = (GridView) findViewById(R.id.list_main);
         //设置适配器
-
         listMain.setAdapter(new HomeAdapter());
+        listMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0://进入手机防盗
+                        showLostFindDialog();
+                        break;
+                    case 8://进入设置中心
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+
+                }
+            }
+
+        });
+    }
+
+
+
+    /**
+     * 根据当前情况，弹出不同的对话框
+     */
+    private void showLostFindDialog() {
+        //判断是否是设置了密码，如果没有设置就弹出设置对话框，否则就弹出输入对话框
+        if (isSetupPwd()) {
+            //已经设置密码
+            showEnterDwdDialog();
+        } else {
+            //没有设置密码
+            showSetupDwdDialog();
+        }
+    }
+
+    /**
+     * 输入密码的对话框
+     */
+    private void showEnterDwdDialog() {
+        AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
+
+        View view = View.inflate(MainActivity.this, R.layout.dialog_enterpwd, null);
+        final EditText etDialogEnderwdPassword = (EditText) view.findViewById(R.id.et_dialog_enterpwd_password);
+        Button btDialogEnderpwdConfirm = (Button) view.findViewById(R.id.bt_dialog_enterpwd_confirm);
+        Button btDialogEnderpwdCancel = (Button) view.findViewById(R.id.bt_dialog_enterpwd_cancel);
+
+        btDialogEnderpwdCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //取消对话框
+                dialog.dismiss();
+
+            }
+        });
+
+        btDialogEnderpwdConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //1.得到两个输入框的密码
+                String password = etDialogEnderwdPassword.getText().toString().trim();
+                String password_save = sp.getString("password", "");
+
+                //2.判断密码是否为空
+                if (TextUtils.isEmpty(password)||TextUtils.isEmpty(password)) {
+                    Toast.makeText(MainActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //3.判断两个密码是否相同，不相同的话提示
+
+                if (MD5Utils.ecoder(password).equals(password_save)) {
+                    dialog.dismiss();
+                    Log.e(TAG, "密码输入正确，消除对话框");
+                } else {
+
+                    Toast.makeText(MainActivity.this, "您输入的密码不正确", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+        bulder.setView(view);
+        dialog = bulder.show();
+    }
+
+    /**
+     * 设置密码的对话框
+     */
+    private AlertDialog dialog;
+
+    private void showSetupDwdDialog() {
+        final AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
+
+        final View view = View.inflate(MainActivity.this, R.layout.dialog_setuppwd, null);
+        final EditText etDialogSetuppwdPassword = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password);
+        final EditText etDialogSetuppwdPasswordConfirm = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password_confirm);
+        Button btDialogSetuppwdConfirm = (Button) view.findViewById(R.id.bt_dialog_setuppwd_confirm);
+        Button btDialogSetuppwdCancel = (Button) view.findViewById(R.id.bt_dialog_setuppwd_cancel);
+
+        btDialogSetuppwdCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //取消对话框
+                dialog.dismiss();
+            }
+        });
+
+        btDialogSetuppwdConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //1.得到两个输入框的密码
+                String password = etDialogSetuppwdPassword.getText().toString().trim();
+                String password_confirm = etDialogSetuppwdPasswordConfirm.getText().toString().trim();//已经加密的密文
+
+                //2.判断密码是否为空
+                if (TextUtils.isEmpty(password)||TextUtils.isEmpty(password_confirm)) {
+                    Toast.makeText(MainActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //3.判断两个密码是否相同，不相同的话提示
+                if (password.equals(password_confirm)) {
+                    //4.保存密码，消掉对话框，进入手机放到页面
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("password", MD5Utils.ecoder(password));//保存的是加密后的密文
+                    editor.commit();
+                    dialog.dismiss();
+                    Log.e(TAG, "密码保存，消除对话框");
+                } else {
+
+                    Toast.makeText(MainActivity.this, "输入的两次密码不一致", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+        bulder.setView(view);
+        dialog = bulder.show();
+    }
+
+
+
+    /**
+     * 判断是否设置了密码
+     * @return
+     */
+    private boolean isSetupPwd() {
+        String password = sp.getString("password", null);
+//        if (TextUtils.isEmpty(password)) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+        return !TextUtils.isEmpty(password);
     }
 
     private class HomeAdapter extends BaseAdapter {

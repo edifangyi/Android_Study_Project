@@ -9,7 +9,7 @@
         android:id="@+id/iv_icon"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/plane"/>
+        android:src="@drawable/ic_compass"/>
 
     <TextView
         android:id="@+id/tv_name"

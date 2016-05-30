@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.guide;
+package com.fangyi.mobilesafe.activity.guide;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

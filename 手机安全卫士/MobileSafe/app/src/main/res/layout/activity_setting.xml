@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:fangyi="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/activity_setting_title"
+        android:text="设置列表"
+        style="@style/text_title_style"/>
+
+    <com.fangyi.mobilesafe.view.SettingItemView
+        fangyi:title="设置自动更新"
+        fangyi:update_off="当前自动更新已经关闭"
+        fangyi:update_on="当前自动更新已经开启"
+        android:id="@+id/siv_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.fangyi.mobilesafe.view.SettingItemView>
+
+
+
+</LinearLayout>
