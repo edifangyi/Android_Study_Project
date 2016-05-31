@@ -1,5 +1,6 @@
 package com.fangyi.mobilesafe.activity.lostFind;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,10 @@ public class LostFindActivity extends AppCompatActivity {
             setContentView(R.layout.activity_lost_find);
         } else {
             //跳转到手机防盗设置向导第一个页面
+            Intent intent = new Intent(this, Setup1Activity.class);
+            startActivity(intent);
+            //把当前页面-手机防盗页面关闭掉
+            finish();
         }
 
     }

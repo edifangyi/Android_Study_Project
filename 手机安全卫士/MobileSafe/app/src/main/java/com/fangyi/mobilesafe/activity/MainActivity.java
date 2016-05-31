@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.utils.MD5Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private GridView listMain;
     private SharedPreferences sp;
 
-    private static final  String names[] = {"手机防盗", "通信卫士", "应用管理", "进程管理", "流量统计", "手机杀毒", "缓存管理", "高级功能", "设置中心"};
-    private static final  int ids[] = {R.drawable.ic_compass, R.drawable.ic_find_friends, R.drawable.ic_reminders, R.drawable.ic_voice_memos, R.drawable.ic_safari, R.drawable.ic_icloud_drive, R.drawable.ic_news, R.drawable.ic_tips, R.drawable.ic_settings};
+    private static final  String names[] = {"手机防盗", "通信卫士", "应用管理", "进程管理", "缓存管理", "手机杀毒", "流量统计", "高级功能", "设置中心"};
+    private static final  int ids[] = {R.drawable.ic_1, R.drawable.ic_2, R.drawable.ic_3, R.drawable.ic_4, R.drawable.ic_5, R.drawable.ic_6, R.drawable.ic_7, R.drawable.ic_8, R.drawable.ic_9};
     private void assignViews() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         listMain = (GridView) findViewById(R.id.list_main);
@@ -113,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 if (MD5Utils.ecoder(password).equals(password_save)) {
                     dialog.dismiss();
                     Log.e(TAG, "密码输入正确，消除对话框");
+                    Intent intent = new Intent(MainActivity.this, LostFindActivity.class);
+                    startActivity(intent);
                 } else {
 
                     Toast.makeText(MainActivity.this, "您输入的密码不正确", Toast.LENGTH_SHORT).show();
@@ -168,6 +171,8 @@ public class MainActivity extends AppCompatActivity {
                     editor.commit();
                     dialog.dismiss();
                     Log.e(TAG, "密码保存，消除对话框");
+                    Intent intent = new Intent(MainActivity.this, LostFindActivity.class);
+                    startActivity(intent);
                 } else {
 
                     Toast.makeText(MainActivity.this, "输入的两次密码不一致", Toast.LENGTH_SHORT).show();
