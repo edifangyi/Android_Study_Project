@@ -21,7 +21,7 @@ public class SettingActivity extends AppCompatActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setContentView(R.layout.activity_setting);
         sivUpdate = (SettingItemView) findViewById(R.id.siv_update);
-        boolean update = sp.getBoolean("update", false);
+        boolean update = sp.getBoolean("update", true);
         if (update) {
             //自动升级已经开启
 //            sivUpdate.setDescription("当前状态为自动升级已经开启");

@@ -121,7 +121,8 @@ public class WelcomeActivity extends Activity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         //设置版本号
         tvWelcomeVersion.setText("版本名：" + getVersionName());
-        if(sp.getBoolean("update", false)) {
+        //自动升级默认开启
+        if(sp.getBoolean("update", true)) {
             //检测是否有新版本
             checkVersion();
         } else {
