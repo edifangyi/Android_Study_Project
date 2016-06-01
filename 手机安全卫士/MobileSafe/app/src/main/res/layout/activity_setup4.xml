@@ -9,32 +9,16 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/activity_setup1_title"
-            android:text="1.欢迎使用手机防盗"
+            android:text="4.设置完成"
             style="@style/text_title_style"/>
 
-        <TextView
-            style="@style/text_content_style"
-            android:text="您的手机防盗卫士："/>
+        <CheckBox
+            android:layout_marginTop="10dp"
+            android:text="当前状态：手机防盗没有开启"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <TextView
-            style="@style/text_content_style"
-            android:drawableLeft="@drawable/suite_package_focus"
-            android:text="SIM卡变更报警"/>
-
-        <TextView
-            style="@style/text_content_style"
-            android:drawableLeft="@drawable/suite_package_focus"
-            android:text="GPS追踪"/>
-
-        <TextView
-            style="@style/text_content_style"
-            android:drawableLeft="@drawable/suite_package_focus"
-            android:text="远程数据销毁"/>
-
-        <TextView
-            style="@style/text_content_style"
-            android:drawableLeft="@drawable/suite_package_focus"
-            android:text="远程锁屏"/>
     </LinearLayout>
 
 
@@ -45,25 +29,25 @@
         android:layout_height="wrap_content">
 
         <ImageView
+            android:src="@drawable/voicemail_button_mxz"
+            android:layout_margin="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@drawable/voicemail_button_mxz"
+            android:layout_margin="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:src="@drawable/voicemail_button_mxz"
+            android:layout_margin="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
             android:src="@drawable/voicemail_button_xz"
-            android:layout_margin="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:src="@drawable/voicemail_button_mxz"
-            android:layout_margin="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:src="@drawable/voicemail_button_mxz"
-            android:layout_margin="2dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:src="@drawable/voicemail_button_mxz"
             android:layout_margin="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -78,12 +62,11 @@
             android:layout_centerInParent="true"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/activity_setup1"/>
-
+            android:src="@drawable/activity_setup4"/>
         <ImageView
-
+            style="@style/button_imageviev_left_style"/>
+        <ImageView
             style="@style/button_imageviev_right_style"/>
-
 
     </RelativeLayout>
 

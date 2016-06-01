@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.fangyi.mobilesafe.R;
 
@@ -22,12 +23,27 @@ public class LostFindActivity extends AppCompatActivity {
         if (configed) {
             setContentView(R.layout.activity_lost_find);
         } else {
-            //跳转到手机防盗设置向导第一个页面
-            Intent intent = new Intent(this, Setup1Activity.class);
-            startActivity(intent);
-            //把当前页面-手机防盗页面关闭掉
-            finish();
+            enterSeeting();
         }
 
+    }
+
+    /**
+     * 进入设置向导页面
+     */
+    private void enterSeeting() {
+        //跳转到手机防盗设置向导第一个页面
+        Intent intent = new Intent(this, Setup1Activity.class);
+        startActivity(intent);
+        //把当前页面-手机防盗页面关闭掉
+        finish();
+    }
+
+    /**
+     * 重新进入设置向导
+     * @param v
+     */
+    public void reEnterSetting(View v) {
+        enterSeeting();
     }
 }

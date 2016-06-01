@@ -44,7 +44,6 @@ public class WelcomeActivity extends Activity {
     private static final String TAG = "WelcomeActivity";
 
     private boolean isFirstIn = false;
-    private static final int TIME = 2000;
 
     private static final int GO_HOME = 1000;
     private static final int GO_GUIDE = 1001;

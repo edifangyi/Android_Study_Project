@@ -21,9 +21,15 @@
 
         <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.guide.Guide"></activity>
+
         <activity android:name=".activity.SettingActivity"/>
+
         <activity android:name=".activity.lostFind.LostFindActivity"/>
         <activity android:name=".activity.lostFind.Setup1Activity"/>
+        <activity android:name=".activity.lostFind.Setup2Activity"/>
+        <activity android:name=".activity.lostFind.Setup3Activity"/>
+        <activity android:name=".activity.lostFind.Setup4Activity"/>
+
     </application>
 
 </manifest>

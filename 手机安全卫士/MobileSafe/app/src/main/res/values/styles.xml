@@ -28,4 +28,23 @@
         <item name="android:background">@drawable/ic_flow_close_p</item>
     </style>
 
+
+    <style name="button_imageviev_right_style" parent="AppTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:background">@drawable/button_imageviev_right</item>
+        <item name="android:onClick">next</item>
+    </style>
+
+    <style name="button_imageviev_left_style" parent="AppTheme">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:background">@drawable/button_imageviev_left</item>
+        <item name="android:onClick">pre</item>
+    </style>
+
 </resources>
