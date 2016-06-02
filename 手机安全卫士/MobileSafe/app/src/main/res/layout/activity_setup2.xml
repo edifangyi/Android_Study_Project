@@ -30,7 +30,7 @@
         fangyi:title="点击绑定SIM卡"
         fangyi:update_off="SIM卡没有绑定"
         fangyi:update_on="SIM卡已经绑定"
-        android:id="@+id/siv_update"
+        android:id="@+id/siv_bind_sim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></com.fangyi.mobilesafe.view.SettingItemView>
 

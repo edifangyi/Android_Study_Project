@@ -5653,7 +5653,7 @@ public class MD5 {
 
             //3.每一个byte个和8个二进制位做与运算
             for (byte b : bytes) {
-                int number = b & 0xff;//加盐0xff
+                int number = b & 0xff;//加盐0xfff
                 
                 //4.把int类型转换成十六进制
                 String numberStr = Integer.toHexString(number);
