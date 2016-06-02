@@ -3722,13 +3722,13 @@ public class MainActivity extends AppCompatActivity {
     public void click4() {
         //访问内容提供者获取联系人数据
         ContentResolver cr = getContentResolver();
-        Cursor cursor = cr.query(Uri.parse("content://com.android.contacts/rwa_contacts"), new String[]{"contact_id"}, null, null, null);
+        Cursor cursor = cr.query(Uri.parse("content://com.android.contacts/raw_contacts"), new String[]{"contact_id"}, null, null, null);
         while (cursor.moveToNext()) {
             //拿到联系人id
             String contact_id = cursor.getString(0);
             //拿到联系人id再去查询data表，去除属于该联系人的信息
             Cursor cursor1 = cr.query(Uri.parse("content://com.android.contacts/data"), new String[]{"data1", "mimetype"},
-                    "rwa_contact_id = ?", new String[]{contact_id}, null);
+                    "raw_contact_id = ?", new String[]{contact_id}, null);
 
             Person p = new Person();
 
