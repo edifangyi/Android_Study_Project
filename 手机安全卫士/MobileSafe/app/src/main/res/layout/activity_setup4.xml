@@ -13,6 +13,7 @@
             style="@style/text_title_style"/>
 
         <CheckBox
+            android:id="@+id/cb_setup4_protectting"
             android:layout_marginTop="10dp"
             android:text="当前状态：手机防盗没有开启"
             android:textSize="20sp"
