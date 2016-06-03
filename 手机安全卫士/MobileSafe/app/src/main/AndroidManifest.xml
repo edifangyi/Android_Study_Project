@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.fangyi.mobilesafe">
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <!--读取电话的权限-->
@@ -8,9 +10,15 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
     <!--读取联系人-->
     <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
-    <!--发短信-->
+    <!--短信-->
     <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
     <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+
+    <!--GPS精确位置-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <!--GPS模糊位置-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_1"
@@ -48,6 +56,8 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
+
+        <service android:name=".service.GPSService"/>
 
     </application>
 

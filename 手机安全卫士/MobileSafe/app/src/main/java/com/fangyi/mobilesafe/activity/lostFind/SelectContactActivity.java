@@ -67,7 +67,7 @@ public class SelectContactActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                List<Map<String, String>> data = getAllContacts();
+                data = getAllContacts();
                 handler.sendEmptyMessage(0);
             }
         }.start();
