@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.activity.guide;
+package com.fangyi.mobilesafe.activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -19,8 +19,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fangyi.mobilesafe.activity.MainActivity;
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.guide.Guide;
 import com.fangyi.mobilesafe.utils.StreamTools;
 
 import net.tsz.afinal.FinalHttp;
@@ -30,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -74,6 +75,7 @@ public class WelcomeActivity extends Activity {
             switch (msg.what) {
                 case GO_HOME://进入主页面
                     goHome();
+
                     break;
 
                 case GO_GUIDE://进入引导页面
@@ -108,7 +110,7 @@ public class WelcomeActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.welcome);
+        setContentView(R.layout.activity_welcome);
         //引导页
         init();
         alphaAnimation();
@@ -121,6 +123,10 @@ public class WelcomeActivity extends Activity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         //设置版本号
         tvWelcomeVersion.setText("版本名：" + getVersionName());
+
+        //拷贝电话归属地查询数据库
+        copyDB();
+
         //自动升级默认开启
         if(sp.getBoolean("update", true)) {
             //检测是否有新版本
@@ -134,6 +140,45 @@ public class WelcomeActivity extends Activity {
                 }
             }, 2000);
         }
+
+    }
+
+    /**
+     * 把assets目录下的 NumeberAddressQuery.db 拷贝到 path = "/data/data/com.fangyi.mobilesafe/files/NumeberAddressQuery.db"
+     */
+    private void copyDB() {
+        File file = new File(getFilesDir(), "NumeberAddressQuery.db");
+        if (file.exists() && file.length() > 0) {
+            //数据库已经存在
+            Log.e("数据库已经存在", "数据库已经存在");
+        } else {
+            Log.e("数据库正在拷贝", "数据库正在拷贝");
+
+            InputStream is = null;
+            try {
+                is = getAssets().open("NumeberAddressQuery.db");
+
+                FileOutputStream fos = new FileOutputStream(file);
+
+
+                int len = 0;
+                byte buffer[] = new byte[1024];
+                while  ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
+
+                Log.e("拷贝完成", "拷贝完成");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
 
     }
 

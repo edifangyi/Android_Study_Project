@@ -33,7 +33,7 @@ public class SelectContactActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             lvSelectContact.setAdapter(new SimpleAdapter(SelectContactActivity.this, data,
-                    R.layout.select_contact_item, new String[]{"name", "number"},
+                    R.layout.activity_lost_find_setup3_select_contact_item, new String[]{"name", "number"},
                     new int[]{R.id.tv_select_contact_name, R.id.tv_select_contact_number}));
         }
     };
@@ -41,7 +41,7 @@ public class SelectContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setup3_select_contact);
+        setContentView(R.layout.activity_lost_find_setup3_select_contact);
         lvSelectContact = (ListView) findViewById(R.id.lv_select_contact);
 
         fillData();

@@ -18,7 +18,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <!--GPS模糊位置-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-
+    <!--震动-->
+    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_1"
@@ -26,37 +27,61 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
-        <activity android:name=".activity.guide.WelcomeActivity" >
+        <!--应用启动首页-->
+        <activity android:name=".activity.WelcomeActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!--主页面-->
         <activity android:name=".activity.MainActivity"></activity>
+        <!--首次启动页面-->
         <activity android:name=".activity.guide.Guide"></activity>
-
+        <!--设置中心-->
         <activity android:name=".activity.SettingActivity"/>
 
+        <!--手机防盗-->
         <activity android:name=".activity.lostFind.LostFindActivity"/>
         <activity android:name=".activity.lostFind.Setup1Activity"/>
         <activity android:name=".activity.lostFind.Setup2Activity"/>
         <activity android:name=".activity.lostFind.Setup3Activity"/>
         <activity android:name=".activity.lostFind.Setup4Activity"/>
         <activity android:name=".activity.lostFind.SelectContactActivity"/>
+        <activity android:name=".activity.lostFind.LockScreenActivity"/>
 
+        <!--高级功能-->
+        <activity android:name=".activity.atools.AToolsActivity"/>
+        <activity android:name=".activity.atools.numaddressquery.NumberAddressQueryActivity"/>
+
+        <!--启动检测服务-->
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <!--短信收发监控-->
         <receiver android:name=".receiver.SMSReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
+        <!--设备管理员-->
+        <receiver android:name=".receiver.MyAdmin"
+                  android:label="@string/sample_device_admin"
+                  android:description="@string/sample_device_admin_description"
+                  android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin"
+                       android:resource="@xml/device_admin_sample" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <!--GPS检测-->
         <service android:name=".service.GPSService"/>
 
     </application>

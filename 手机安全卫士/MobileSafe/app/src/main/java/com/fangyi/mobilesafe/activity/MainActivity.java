@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.utils.MD5Utils;
 
@@ -45,13 +46,20 @@ public class MainActivity extends AppCompatActivity {
         listMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int i = position;
                 switch (position) {
                     case 0://进入手机防盗
                         showLostFindDialog();
                         break;
+
+                    case 7://进入高级功能
+                        Intent atoolsIntent = new Intent(MainActivity.this, AToolsActivity.class);
+                        startActivity(atoolsIntent);
+                        break;
+
                     case 8://进入设置中心
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
+                        Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(settingIntent);
                         break;
 
                 }
@@ -59,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
-
 
 
     /**
@@ -82,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEnterDwdDialog() {
         AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        View view = View.inflate(MainActivity.this, R.layout.dialog_enterpwd, null);
+        View view = View.inflate(MainActivity.this, R.layout.activity_lost_find_dialog_enterpwd, null);
         final EditText etDialogEnderwdPassword = (EditText) view.findViewById(R.id.et_dialog_enterpwd_password);
         Button btDialogEnderpwdConfirm = (Button) view.findViewById(R.id.bt_dialog_enterpwd_confirm);
         Button btDialogEnderpwdCancel = (Button) view.findViewById(R.id.bt_dialog_enterpwd_cancel);
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSetupDwdDialog() {
         final AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        final View view = View.inflate(MainActivity.this, R.layout.dialog_setuppwd, null);
+        final View view = View.inflate(MainActivity.this, R.layout.activity_lost_find_dialog_setuppwd, null);
         final EditText etDialogSetuppwdPassword = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password);
         final EditText etDialogSetuppwdPasswordConfirm = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password_confirm);
         Button btDialogSetuppwdConfirm = (Button) view.findViewById(R.id.bt_dialog_setuppwd_confirm);
@@ -221,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(MainActivity.this, R.layout.main_item, null);
+            View view = View.inflate(MainActivity.this, R.layout.activity_main_item, null);
             ImageView ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
             TextView tvName = (TextView) view.findViewById(R.id.tv_name);
             ivIcon.setImageResource(ids[position]);

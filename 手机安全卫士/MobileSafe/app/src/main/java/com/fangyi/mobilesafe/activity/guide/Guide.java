@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.WelcomeActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Guide extends Activity implements ViewPager.OnPageChangeListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.guide);
+        setContentView(R.layout.guide_main);
         initViews();
         initDots();
     }

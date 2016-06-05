@@ -25,7 +25,7 @@ public class Setup2Activity extends BaseSetupActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setup2);
+        setContentView(R.layout.activity_lost_find_setup2);
         tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         sivBindSIM = (SettingItemView) findViewById(R.id.siv_bind_sim);
         String sim = sp.getString("sim", "");

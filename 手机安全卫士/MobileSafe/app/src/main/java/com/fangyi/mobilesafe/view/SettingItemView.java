@@ -26,7 +26,7 @@ public class SettingItemView extends RelativeLayout {
     private void initView(Context context) {
         //inflate方法的作用：把布局文件--》View
         //最后一个参数：添加谁进来，谁就是setting_item_view的父亲，布局文件挂载在传进来的这个控件上
-        View.inflate(context, R.layout.setting_item_view, SettingItemView.this);
+        View.inflate(context, R.layout.activity_setting_item_view, SettingItemView.this);
         cbStatus = (CheckBox) findViewById(R.id.cb_status);
         tvDesc = (TextView) findViewById(R.id.tv_desc);
         tvTitle = (TextView) findViewById(R.id.tv_title);
