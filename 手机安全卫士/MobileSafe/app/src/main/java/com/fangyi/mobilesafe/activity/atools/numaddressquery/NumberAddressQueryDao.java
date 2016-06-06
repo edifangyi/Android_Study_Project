@@ -21,7 +21,7 @@ public class NumberAddressQueryDao {
 
         //手机号码 - 个数11位, 13,14,15,16,17,18 正则表达式
         //^1[45678]\d{9}$
-        if (number.matches("^1[45678]\\d{9}$")) {
+        if (number.matches("^1[345678]\\d{9}$")) {
             Cursor cursor = db.rawQuery("SELECT location FROM data2 WHERE id = (SELECT outkey from data1 where id = ?)", new String[]{number.substring(0, 7)});
             while (cursor.moveToLast()) {
                 String location =  cursor.getString(0);

@@ -83,6 +83,8 @@
 
         <!--GPS检测-->
         <service android:name=".service.GPSService"/>
+        <!--监听来电-->
+        <service android:name=".service.AddressService"/>
 
     </application>
 

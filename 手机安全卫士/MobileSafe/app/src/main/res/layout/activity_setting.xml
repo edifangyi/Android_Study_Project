@@ -16,8 +16,14 @@
         fangyi:update_on="当前自动更新已经开启"
         android:id="@+id/siv_update"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></com.fangyi.mobilesafe.view.SettingItemView>
+        android:layout_height="wrap_content"/>
 
-
+    <com.fangyi.mobilesafe.view.SettingItemView
+        fangyi:title="设置归属地显示"
+        fangyi:update_off="归属地显示已经关闭"
+        fangyi:update_on="归属地显示已经开启"
+        android:id="@+id/siv_showaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
