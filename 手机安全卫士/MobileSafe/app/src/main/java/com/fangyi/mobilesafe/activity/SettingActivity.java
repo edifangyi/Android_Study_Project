@@ -1,15 +1,18 @@
 package com.fangyi.mobilesafe.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.service.AddressService;
 import com.fangyi.mobilesafe.utils.ServiceStatusUtils;
+import com.fangyi.mobilesafe.view.SettingClickView;
 import com.fangyi.mobilesafe.view.SettingItemView;
 
 /**
@@ -23,6 +26,9 @@ public class SettingActivity extends AppCompatActivity {
     //设置号码归属地显示
     private SettingItemView sivShowAddress;
     private Intent addressIntent;
+
+    //设置归属地显示窗背景
+    private SettingClickView scvChangeBg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +88,36 @@ public class SettingActivity extends AppCompatActivity {
                     //开启服务
                     startService(addressIntent);
                 }
+            }
+        });
+
+
+        //设置归属地显示框的风格
+        scvChangeBg = (SettingClickView) findViewById(R.id.scv_changebg);
+        final String items[] = {"粉色","绿色","蓝色","紫色"};
+        int which = sp.getInt("which", 0);
+        scvChangeBg.setDescription(items[which]);
+        scvChangeBg.setTitle("归属地提示框风格");
+        scvChangeBg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int tt = sp.getInt("which", 0);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                builder.setTitle("归属地提示框风格");
+                builder.setSingleChoiceItems(items, tt, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //1.保存
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("which", which);
+                        editor.commit();
+                        //2.设置
+                        scvChangeBg.setDescription(items[which]);
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("cancel", null);
+                builder.show();
             }
         });
     }

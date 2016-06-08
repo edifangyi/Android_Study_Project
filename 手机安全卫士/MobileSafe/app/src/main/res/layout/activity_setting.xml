@@ -26,4 +26,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <com.fangyi.mobilesafe.view.SettingClickView
+        fangyi:title="设置归属地显示"
+        fangyi:update_off="归属地显示已经关闭"
+        fangyi:update_on="归属地显示已经开启"
+        android:id="@+id/scv_changebg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>
