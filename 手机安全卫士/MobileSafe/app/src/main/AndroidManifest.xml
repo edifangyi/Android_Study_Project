@@ -22,6 +22,8 @@
     <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
 
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"></uses-permission>
+    <!--归属地显示框拖动权限-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_1"
@@ -56,6 +58,11 @@
         <!--高级功能-->
         <activity android:name=".activity.atools.AToolsActivity"/>
         <activity android:name=".activity.atools.numaddressquery.NumberAddressQueryActivity"/>
+
+        <!--归属地位置拖动设置-->
+        <activity android:name=".activity.DragViewActivity"/>
+
+
 
         <!--启动检测服务-->
         <receiver android:name=".receiver.BootCompleteReceiver">

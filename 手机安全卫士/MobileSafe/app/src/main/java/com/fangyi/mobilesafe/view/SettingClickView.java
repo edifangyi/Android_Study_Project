@@ -3,7 +3,6 @@ package com.fangyi.mobilesafe.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,7 +12,6 @@ import com.fangyi.mobilesafe.R;
  * Created by FANGYI on 2016/5/29.
  */
 public class SettingClickView extends RelativeLayout {
-    private CheckBox cbStatus;
     private TextView tvDesc;
     private TextView tvTitle;
     private String title;

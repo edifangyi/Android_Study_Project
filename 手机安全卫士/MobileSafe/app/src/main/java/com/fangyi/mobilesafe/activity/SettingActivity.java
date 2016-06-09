@@ -30,6 +30,10 @@ public class SettingActivity extends AppCompatActivity {
     //设置归属地显示窗背景
     private SettingClickView scvChangeBg;
 
+    //设置归属地显示框位置
+    private SettingClickView scvChangePosition;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +122,20 @@ public class SettingActivity extends AppCompatActivity {
                 });
                 builder.setNegativeButton("cancel", null);
                 builder.show();
+            }
+        });
+
+
+        //设置归属地显示框位置
+        scvChangePosition = (SettingClickView) findViewById(R.id.scv_changeposition);
+        scvChangePosition.setTitle("归属地提示框位置");
+        scvChangePosition.setDescription("设置归属地提示框显示位置");
+        scvChangePosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //跳转到拖动Activity界面
+                Intent intent = new Intent(SettingActivity.this, DragViewActivity.class);
+                startActivity(intent);
             }
         });
     }
