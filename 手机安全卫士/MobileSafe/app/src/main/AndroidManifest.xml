@@ -61,6 +61,9 @@
 
         <!--归属地位置拖动设置-->
         <activity android:name=".activity.DragViewActivity"/>
+        <!--小火箭-->
+        <activity android:name=".rocket.Rocket"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
 
 

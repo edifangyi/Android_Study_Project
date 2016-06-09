@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
+import com.fangyi.mobilesafe.rocket.Rocket;
 import com.fangyi.mobilesafe.utils.MD5Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +52,10 @@ public class MainActivity extends AppCompatActivity {
                     case 0://进入手机防盗
                         showLostFindDialog();
                         break;
-
+                    case 2://进入高级功能
+                        Intent rocketIntent = new Intent(MainActivity.this, Rocket.class);
+                        startActivity(rocketIntent);
+                        break;
                     case 7://进入高级功能
                         Intent atoolsIntent = new Intent(MainActivity.this, AToolsActivity.class);
                         startActivity(atoolsIntent);
