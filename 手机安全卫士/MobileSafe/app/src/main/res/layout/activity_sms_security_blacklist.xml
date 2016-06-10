@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:fangyi="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/activity_sms_security_blacklist_title"
+            android:text="黑名单管理"
+            style="@style/text_title_style"
+            android:gravity="left|center_vertical"/>
+
+        <Button
+            android:onClick="addBlackNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加"
+            android:id="@+id/button"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"/>
+
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/lv_sms_security_blacklist_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></ListView>
+
+
+</LinearLayout>

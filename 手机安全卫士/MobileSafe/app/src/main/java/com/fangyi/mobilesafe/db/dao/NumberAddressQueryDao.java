@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.activity.atools.numaddressquery;
+package com.fangyi.mobilesafe.db.dao;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

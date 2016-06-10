@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.fangyi.mobilesafe.activity.atools.numaddressquery.NumberAddressQueryDao;
+import com.fangyi.mobilesafe.db.dao.NumberAddressQueryDao;
 
 /**
  * Created by FANGYI on 2016/6/8.

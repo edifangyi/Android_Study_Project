@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.fangyi.mobilesafe.R;
-import com.fangyi.mobilesafe.activity.atools.numaddressquery.NumberAddressQueryDao;
+import com.fangyi.mobilesafe.db.dao.NumberAddressQueryDao;
 import com.fangyi.mobilesafe.receiver.BootCompleteReceiver;
 
 /**
