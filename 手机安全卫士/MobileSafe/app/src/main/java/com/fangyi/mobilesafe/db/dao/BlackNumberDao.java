@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
+import android.util.Log;
 
 import com.fangyi.mobilesafe.db.BlackNumberDBOpenHelper;
 import com.fangyi.mobilesafe.domain.BlackNumberInfo;
@@ -96,6 +98,8 @@ public class BlackNumberDao {
      * @return
      */
     public List<BlackNumberInfo> queryAll() {
+        Log.e("3.执行耗时操作","显示");
+        SystemClock.sleep(3000);//模拟耗时操作
         List<BlackNumberInfo> result = new ArrayList<>();
         SQLiteDatabase db = mHelper.getWritableDatabase();
         Cursor cursor = db.query("blacknumber", new String[]{"number", "mode"}, null, null, null, null, null);
