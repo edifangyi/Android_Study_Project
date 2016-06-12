@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
+import com.fangyi.mobilesafe.activity.callsmssafe.SmsSecurityBlackListActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.rocket.Rocket;
 import com.fangyi.mobilesafe.utils.MD5Utils;
@@ -38,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sp;
 
     private static final  String names[] = {"手机防盗", "通信卫士", "应用管理", "进程管理", "缓存管理", "手机杀毒", "流量统计", "高级功能", "设置中心"};
-    private static final  int ids[] = {R.drawable.ic_1, R.drawable.ic_2, R.drawable.ic_3, R.drawable.ic_4, R.drawable.ic_5, R.drawable.ic_6, R.drawable.ic_7, R.drawable.ic_8, R.drawable.ic_9};
+    private static final  int ids[] = {R.drawable.ic_1, R.drawable.ic_2, R.drawable.ic_3,
+            R.drawable.ic_4, R.drawable.ic_5, R.drawable.ic_6,
+            R.drawable.ic_7, R.drawable.ic_8, R.drawable.ic_9};
     private void assignViews() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         listMain = (GridView) findViewById(R.id.list_main);
@@ -48,17 +51,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int i = position;
+                Intent intent;
                 switch (position) {
                     case 0://进入手机防盗
                         showLostFindDialog();
                         break;
+                    case 1://进入通信卫士
+                        intent = new Intent(MainActivity.this, SmsSecurityBlackListActivity.class);
+                        startActivity(intent);
+                        break;
                     case 2://进入高级功能
-                        Intent rocketIntent = new Intent(MainActivity.this, Rocket.class);
-                        startActivity(rocketIntent);
+                        intent = new Intent(MainActivity.this, Rocket.class);
+                        startActivity(intent);
                         break;
                     case 7://进入高级功能
-                        Intent atoolsIntent = new Intent(MainActivity.this, AToolsActivity.class);
-                        startActivity(atoolsIntent);
+                        intent = new Intent(MainActivity.this, AToolsActivity.class);
+                        startActivity(intent);
                         break;
 
                     case 8://进入设置中心
