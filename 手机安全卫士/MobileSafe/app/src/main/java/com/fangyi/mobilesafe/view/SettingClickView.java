@@ -68,4 +68,6 @@ public class SettingClickView extends RelativeLayout {
     public void setDescription(String text) {
         tvDesc.setText(text);
     }
+
+
 }

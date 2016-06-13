@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.service.AddressService;
+import com.fangyi.mobilesafe.service.SmsSafeService;
 import com.fangyi.mobilesafe.utils.ServiceStatusUtils;
 import com.fangyi.mobilesafe.view.SettingClickView;
 import com.fangyi.mobilesafe.view.SettingItemView;
@@ -32,6 +33,10 @@ public class SettingActivity extends AppCompatActivity {
 
     //设置归属地显示框位置
     private SettingClickView scvChangePosition;
+
+    //设置黑名单拦截
+    private SettingItemView sivBlacknumber;
+    private Intent blacknumberIntent;
 
 
     @Override
@@ -98,7 +103,7 @@ public class SettingActivity extends AppCompatActivity {
 
         //设置归属地显示框的风格
         scvChangeBg = (SettingClickView) findViewById(R.id.scv_changebg);
-        final String items[] = {"粉色","绿色","蓝色","紫色"};
+        final String items[] = {"粉色", "绿色", "蓝色", "紫色"};
         int which = sp.getInt("which", 0);
         scvChangeBg.setDescription(items[which]);
         scvChangeBg.setTitle("归属地提示框风格");
@@ -138,6 +143,30 @@ public class SettingActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //设置黑名单拦截
+        sivBlacknumber = (SettingItemView) findViewById(R.id.siv_blacknumber);
+        blacknumberIntent = new Intent(this, SmsSafeService.class);
+        boolean blacknumberService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.SmsSafeService");
+
+        sivBlacknumber.setChecked(blacknumberService);
+
+        sivBlacknumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (sivBlacknumber.isChecked()) {
+                    //非勾选
+                    sivBlacknumber.setChecked(false);
+                    //关闭服务
+                    stopService(blacknumberIntent);
+                } else {
+                    //勾选
+                    sivBlacknumber.setChecked(true);
+                    //开启服务
+                    startService(blacknumberIntent);
+                }
+            }
+        });
     }
 
     //获得焦点
@@ -146,5 +175,8 @@ public class SettingActivity extends AppCompatActivity {
         super.onResume();
         boolean addressService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.AddressService");
         sivShowAddress.setChecked(addressService);
+
+        boolean blacknumberService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.SmsSafeService");
+        sivBlacknumber.setChecked(blacknumberService);
     }
 }

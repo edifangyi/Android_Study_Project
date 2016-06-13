@@ -60,9 +60,12 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, SmsSecurityBlackListActivity.class);
                         startActivity(intent);
                         break;
-                    case 2://进入高级功能
+                    case 2://进入小火箭
                         intent = new Intent(MainActivity.this, Rocket.class);
                         startActivity(intent);
+                        break;
+                    case 3://进入小火箭
+
                         break;
                     case 7://进入高级功能
                         intent = new Intent(MainActivity.this, AToolsActivity.class);
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEnterDwdDialog() {
         AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        View view = View.inflate(MainActivity.this, R.layout.activity_lost_find_dialog_enterpwd, null);
+        View view = View.inflate(MainActivity.this, R.layout.dialog_enterpwd, null);
         final EditText etDialogEnderwdPassword = (EditText) view.findViewById(R.id.et_dialog_enterpwd_password);
         Button btDialogEnderpwdConfirm = (Button) view.findViewById(R.id.bt_dialog_enterpwd_confirm);
         Button btDialogEnderpwdCancel = (Button) view.findViewById(R.id.bt_dialog_enterpwd_cancel);
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSetupDwdDialog() {
         final AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        final View view = View.inflate(MainActivity.this, R.layout.activity_lost_find_dialog_setuppwd, null);
+        final View view = View.inflate(MainActivity.this, R.layout.dialog_setuppwd, null);
         final EditText etDialogSetuppwdPassword = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password);
         final EditText etDialogSetuppwdPasswordConfirm = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password_confirm);
         Button btDialogSetuppwdConfirm = (Button) view.findViewById(R.id.bt_dialog_setuppwd_confirm);

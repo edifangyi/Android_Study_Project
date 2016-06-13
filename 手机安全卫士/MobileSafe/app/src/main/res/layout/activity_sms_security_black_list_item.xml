@@ -28,7 +28,7 @@
         android:layout_marginRight="10dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:id="@+id/iv_black"
+        android:id="@+id/iv_delete"
         android:src="@drawable/delete_button_seletor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

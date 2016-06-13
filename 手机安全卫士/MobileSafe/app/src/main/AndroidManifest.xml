@@ -110,6 +110,8 @@
         <service android:name=".service.GPSService"/>
         <!--监听来电-->
         <service android:name=".service.AddressService"/>
+        <!--短信拦截-->
+        <service android:name=".service.SmsSafeService"/>
 
     </application>
 
