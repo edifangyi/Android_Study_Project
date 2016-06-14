@@ -201,7 +201,7 @@ LinearLayout (线性布局)
  *     android:layout_weight="2"
  *     android:layout_width="0dp"
  * 
- * //两个组件，第一个组件式100dp+权重1:1分配的，第二个组件是50dp+权重1:1分配的
+ * //两个组件，第一个组件是100dp+权重1:1分配的，第二个组件是50dp+权重1:1分配的
  *     android:layout_weight="1"
  *     android:layout_width="100dp"
  *
@@ -3538,6 +3538,7 @@ data/com.android.providers.teltphony/databass/mmssms.db
             String body = cursor.getString(3);
             Toast.makeText(this, address + ";" + date + ";"+ type + ";" + body, Toast.LENGTH_SHORT).show();
         }
+        cursor.close();
     }
 
 /**

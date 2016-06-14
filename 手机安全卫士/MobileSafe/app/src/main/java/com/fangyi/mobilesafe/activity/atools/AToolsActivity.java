@@ -2,6 +2,7 @@ package com.fangyi.mobilesafe.activity.atools;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,18 +12,23 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.SettingActivity;
 import com.fangyi.mobilesafe.activity.atools.numaddressquery.NumberAddressQueryActivity;
+import com.fangyi.mobilesafe.utils.SmsBackupUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by FANGYI on 2016/6/5.
  */
 public class AToolsActivity extends AppCompatActivity {
     private ListView listView;
-    private static final  String names[] = {"号码归属地查询", "程序锁", "短信备份"};
-    private static final  int ids[] = {R.drawable.ic_activity_atools_main_1, R.drawable.ic_activity_atools_main_2, R.drawable.ic_activity_atools_main_3};
+    private static final String names[] = {"号码归属地查询", "程序锁", "短信备份"};
+    private static final int ids[] = {R.drawable.ic_activity_atools_main_1, R.drawable.ic_activity_atools_main_2, R.drawable.ic_activity_atools_main_3};
 
 
     @Override
@@ -36,20 +42,42 @@ public class AToolsActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
                 switch (position) {
                     case 0://号码归属地查询
-                        Intent numberAddressQueryIntent = new Intent(AToolsActivity.this, NumberAddressQueryActivity.class);
-                        startActivity(numberAddressQueryIntent);
+                        intent = new Intent(AToolsActivity.this, NumberAddressQueryActivity.class);
+                        startActivity(intent);
                         break;
                     case 1://进入程序锁
-                        Intent settingIntent = new Intent(AToolsActivity.this, SettingActivity.class);
-                        startActivity(settingIntent);
+                        intent = new Intent(AToolsActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 2://进入短信备份
+                        smsBackup(view);
                         break;
 
                 }
             }
 
         });
+    }
+
+    /**
+     * 点击事件 - 短信备份
+     */
+    private void smsBackup(View view) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File file = new File(Environment.getExternalStorageDirectory(), "smsBackup.xml");
+            try {
+                SmsBackupUtils.smsBackup(AToolsActivity.this, file.getAbsolutePath());
+                Toast.makeText(this, "短信备份成功", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(this, "短信备份失败", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "sd卡不可用", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

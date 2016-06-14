@@ -3,33 +3,34 @@
           package="com.fangyi.mobilesafe">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!--读取电话的权限-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!--读取联系人-->
-    <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <!--短信-->
-    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
-    <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!--GPS精确位置-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!--GPS模糊位置-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!--震动-->
-    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <!--程序拨出电话-->
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"></uses-permission>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <!--归属地显示框拖动权限-->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <!--打电话-->
-    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <!--读取写入电话日志-->
-    <uses-permission android:name="android.permission.READ_CALL_LOG"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_CALL_LOG"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
     <!--写联系人，低版本-->
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 
     <application
         android:allowBackup="true"
