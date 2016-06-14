@@ -2082,8 +2082,17 @@ public void click2(View v) {
             </intent-filter>
         </receiver>
 
-        //优先级 -1000~1000
+
+
+    /**
+     * 在优先级相同的情况下  代码注册的优先级比清单文件中的高
+     */
+    //广播优先级 -1000~1000
 	android:priority="1000"
+
+    //代码注册优先级
+    filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);//注册最高优先级
+
 
 /****************************************************************************/
 
@@ -2962,6 +2971,8 @@ public class RegisterService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);//注册最高优先级
+
 
         //3.注册
         registerReceiver(soorr, filter);

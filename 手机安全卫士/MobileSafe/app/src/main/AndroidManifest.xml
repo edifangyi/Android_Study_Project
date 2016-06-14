@@ -13,17 +13,24 @@
     <!--短信-->
     <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
     <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
-
     <!--GPS精确位置-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
     <!--GPS模糊位置-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
     <!--震动-->
     <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
-
+    <!--程序拨出电话-->
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"></uses-permission>
     <!--归属地显示框拖动权限-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
+    <!--打电话-->
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+    <!--读取写入电话日志-->
+    <uses-permission android:name="android.permission.READ_CALL_LOG"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"></uses-permission>
+    <!--写联系人，低版本-->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_1"
@@ -40,9 +47,9 @@
             </intent-filter>
         </activity>
         <!--主页面-->
-        <activity android:name=".activity.MainActivity"></activity>
+        <activity android:name=".activity.MainActivity"/>
         <!--首次启动页面-->
-        <activity android:name=".activity.guide.Guide"></activity>
+        <activity android:name=".activity.guide.Guide"/>
         <!--设置中心-->
         <activity android:name=".activity.SettingActivity"/>
 
