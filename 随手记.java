@@ -11,6 +11,8 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
 
 
 
+
+
 //跑马灯效果
     <TextView
         android:layout_width="match_parent"
@@ -90,6 +92,10 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
     for (Sms  : mSmsList) {
         
     }
+
+
+清单文件中
+android:installLocation="auto"|"internalOnly"|"preferExternal"//自动，内部，外部，默认安装在内部，内存不够安装外部
 
 /**
  
@@ -486,6 +492,32 @@ TableLayout (表格布局)
     }
 
 
+***********************************************************************************************
+
+
+
+    tvAvailRom.setText("内存可用：" + getAvailSpace(Environment.getDataDirectory().getAbsolutePath()));
+    tvAvailSdcard.setText("sd卡可用：" + getAvailSpace(Environment.getExternalStorageDirectory().getAbsolutePath()));
+
+
+    /**
+     * 可到某个目录的可用空间
+     * @param path
+     * @return
+     */
+    private String getAvailSpace(String path) {
+        StatFs fs = new StatFs(path);
+        //得到多少块可用空间
+        long blocks = fs.getAvailableBlocksLong();
+        //得到每块的可用大小
+        long size = fs.getBlockSizeLong();
+
+        Formatter.formatFileSize(this, blocks * size);
+
+        return Formatter.formatFileSize(this, blocks * size);;
+    }
+
+***********************************************************************************************
 
 
 4.文件访问权限
