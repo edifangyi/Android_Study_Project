@@ -1,5 +1,6 @@
 package com.fangyi.mobilesafe.activity.atools;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -53,7 +54,7 @@ public class AToolsActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case 2://进入短信备份
-                        smsBackup(view);
+                        smsBackup();
                         break;
 
                 }
@@ -62,23 +63,6 @@ public class AToolsActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * 点击事件 - 短信备份
-     */
-    private void smsBackup(View view) {
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            File file = new File(Environment.getExternalStorageDirectory(), "smsBackup.xml");
-            try {
-                SmsBackupUtils.smsBackup(AToolsActivity.this, file.getAbsolutePath());
-                Toast.makeText(this, "短信备份成功", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Toast.makeText(this, "短信备份失败", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(this, "sd卡不可用", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -111,6 +95,45 @@ public class AToolsActivity extends AppCompatActivity {
             ivAToolsIcon.setImageResource(ids[position]);
             tvAToolsName.setText(names[position]);
             return view;
+        }
+    }
+
+    /**
+     * 点击事件 - 短信备份
+     */
+    private void smsBackup() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            final File file = new File(Environment.getExternalStorageDirectory(), "smsBackup.xml");
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("正在短信备份中...");
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);//样式更改为水平，带进度条的那种
+            dialog.show();
+
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        SmsBackupUtils.smsBackup(AToolsActivity.this, file.getAbsolutePath(), new SmsBackupUtils.SmsBackupCallBack() {
+                            @Override
+                            public void smsBackupBefore(int total) {
+                                dialog.setMax(total);
+                            }
+
+                            @Override
+                            public void smsBackupProgress(int progress) {
+                                dialog.setProgress(progress);
+                            }
+                        });
+                        dialog.dismiss();
+                    } catch (IOException e) {
+                        dialog.dismiss();
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+
+        } else {
+            Toast.makeText(this, "sd卡不可用", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.util.Xml;
 
 import org.xmlpull.v1.XmlSerializer;
@@ -17,13 +18,33 @@ import java.io.IOException;
  */
 
 public class SmsBackupUtils {
+
+    /**
+     * 定义的短信备份接口或者回调
+     */
+    public interface SmsBackupCallBack {
+        /**
+         * 短信备份前调用
+         *
+         * @param total 短信的总条数
+         */
+        public void smsBackupBefore(int total);
+
+        /**
+         * 短信备份过程中调用
+         *
+         * @param progress 短信备份的进度或备份了多少条
+         */
+        public void smsBackupProgress(int progress);
+    }
+
     /**
      * 短信备份
      *
      * @param context 上下文
      * @param path    要保存短信的路径
      */
-    public static void smsBackup(Context context, String path) throws IOException {
+    public static void smsBackup(Context context, String path, SmsBackupCallBack back) throws IOException {
         ContentResolver resolver = context.getContentResolver();
         XmlSerializer serializer = Xml.newSerializer();
         File file = new File(path);
@@ -33,7 +54,12 @@ public class SmsBackupUtils {
         serializer.startTag(null, "smss");
         //把所有的短信备份
         Uri uri = Uri.parse("content://sms");
-        Cursor cursor  = resolver.query(uri, new String[]{"address", "date", "type", "body"}, null, null, null);
+        Cursor cursor = resolver.query(uri, new String[]{"address", "date", "type", "body"}, null, null, null);
+        //设置总条数
+//        dialog.setMax(cursor.getCount());
+        back.smsBackupBefore(cursor.getCount());
+        int progress = 0;//进度
+
         while (cursor.moveToNext()) {
             serializer.startTag(null, "sms");
 
@@ -58,6 +84,12 @@ public class SmsBackupUtils {
             serializer.endTag(null, "body");
 
             serializer.endTag(null, "sms");
+
+            SystemClock.sleep(60);//模拟延迟
+
+            progress ++;
+//            dialog.setProgress(progress);
+            back.smsBackupProgress(progress);
         }
         cursor.close();
         serializer.startTag(null, "smss");

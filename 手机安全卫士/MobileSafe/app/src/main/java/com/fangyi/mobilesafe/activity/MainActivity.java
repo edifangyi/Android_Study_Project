@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.appmanager.AppManagerActivity;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.callsmssafe.SmsSecurityBlackListActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
@@ -27,6 +28,7 @@ import com.fangyi.mobilesafe.utils.MD5Utils;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity.clsss";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +62,11 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, SmsSecurityBlackListActivity.class);
                         startActivity(intent);
                         break;
-                    case 2://进入小火箭
-                        intent = new Intent(MainActivity.this, Rocket.class);
+                    case 2://进入应用管理
+                        intent = new Intent(MainActivity.this, AppManagerActivity.class);
                         startActivity(intent);
                         break;
-                    case 3://进入小火箭
+                    case 3://
 
                         break;
                     case 7://进入高级功能
@@ -250,6 +252,14 @@ public class MainActivity extends AppCompatActivity {
             tvName.setText(names[position]);
             return view;
         }
+    }
+
+    /**
+     * 小火箭
+     */
+    public void rocket(View v) {
+        Intent intent = new Intent(MainActivity.this, Rocket.class);
+        startActivity(intent);
     }
 
 }

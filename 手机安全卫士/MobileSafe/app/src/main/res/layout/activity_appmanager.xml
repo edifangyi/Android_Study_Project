@@ -4,41 +4,40 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+    <TextView
+        android:id="@+id/activity_setting_title"
+        style="@style/text_title_style"
+        android:text="程序管理"/>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/activity_sms_security_blacklist_title"
-            style="@style/text_title_style"
-            android:gravity="left|center_vertical"
-            android:text=" 黑名单管理"/>
-
-        <Button
-            android:id="@+id/button"
+            android:id="@+id/tv_avail_rom"
+            android:text="内存可用"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:onClick="addBlackNumber"
-            android:text="添加"/>
+            android:layout_height="wrap_content"/>
 
-
+        <TextView
+            android:id="@+id/tv_avail_sdcard"
+            android:layout_alignParentRight="true"
+            android:text="sd卡可用"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <ListView
-            android:id="@+id/lv_sms_security_blacklist_list"
+            android:id="@+id/lv_appmanger"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+        </ListView>
 
         <LinearLayout
             android:id="@+id/ll_loading"
-            android:visibility="invisible"
+            android:visibility="gone"
             android:gravity="center"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -47,12 +46,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:text="玩命加载中..."
+                android:text="正在给力加载中"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-
     </FrameLayout>
+
 
 
 </LinearLayout>

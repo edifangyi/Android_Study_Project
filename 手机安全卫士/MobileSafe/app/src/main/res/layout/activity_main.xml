@@ -8,6 +8,7 @@
     tools:context=".activity.MainActivity">
 
     <TextView
+        android:onClick="rocket"
         android:id="@+id/activity_main_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -75,9 +75,10 @@
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <!--通信卫士-->
-        <activity android:name=".activity.callsmssafe.CallSmsSafeActivity"/>
         <!--黑名单-->
         <activity android:name=".activity.callsmssafe.SmsSecurityBlackListActivity"/>
+
+        <activity android:name=".activity.appmanager.AppManagerActivity"/>
 
 
 
