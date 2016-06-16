@@ -50,6 +50,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_app_status"
+            android:text="用户程序"
+            android:background="#ff888888"
+            android:textColor="#ffffffff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </FrameLayout>
 
 
