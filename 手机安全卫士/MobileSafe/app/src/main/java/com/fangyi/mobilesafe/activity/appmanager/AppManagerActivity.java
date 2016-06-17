@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
-import com.fangyi.mobilesafe.engine.AppInfo;
+import com.fangyi.mobilesafe.domain.AppInfo;
 import com.fangyi.mobilesafe.engine.AppInfoProvider;
 
 import java.util.ArrayList;
@@ -196,9 +196,10 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
 
             if (position == 0) {
                 TextView tv = new TextView(AppManagerActivity.this);
-                tv.setBackgroundColor(Color.GRAY);
-                tv.setText("用户程序(" + userAppInfos.size() + ")");
-                tv.setTextColor(Color.WHITE);
+                tv.setHeight(0);
+//                tv.setBackgroundColor(Color.GRAY);
+//                tv.setText("用户AAA程序(" + userAppInfos.size() + ")");
+//                tv.setTextColor(Color.WHITE);
                 return tv;
             } else if (position == userAppInfos.size() + 1) {
                 TextView tv = new TextView(AppManagerActivity.this);
@@ -408,6 +409,7 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
             intent.addCategory(Intent.CATEGORY_DEFAULT);        //"android.intent.category.DEFAULT"
             intent.setData(Uri.parse("package:" + appInfo.getPackName()));
             startActivityForResult(intent, 0);
+            fillData();
         } else {
             Toast.makeText(this, "需要root权限才能卸载", Toast.LENGTH_SHORT).show();
         }

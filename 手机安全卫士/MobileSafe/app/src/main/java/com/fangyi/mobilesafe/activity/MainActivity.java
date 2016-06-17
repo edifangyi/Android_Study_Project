@@ -23,6 +23,7 @@ import com.fangyi.mobilesafe.activity.appmanager.AppManagerActivity;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.callsmssafe.SmsSecurityBlackListActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
+import com.fangyi.mobilesafe.activity.taskmanager.TaskManagerActivity;
 import com.fangyi.mobilesafe.rocket.Rocket;
 import com.fangyi.mobilesafe.utils.MD5Utils;
 
@@ -66,8 +67,9 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, AppManagerActivity.class);
                         startActivity(intent);
                         break;
-                    case 3://
-
+                    case 3://进程管理
+                        intent = new Intent(MainActivity.this, TaskManagerActivity.class);
+                        startActivity(intent);
                         break;
                     case 7://进入高级功能
                         intent = new Intent(MainActivity.this, AToolsActivity.class);

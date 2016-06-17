@@ -32,6 +32,7 @@
     <!--写联系人，低版本-->
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_1"
@@ -77,9 +78,10 @@
         <!--通信卫士-->
         <!--黑名单-->
         <activity android:name=".activity.callsmssafe.SmsSecurityBlackListActivity"/>
-
+        <!--程序管理-->
         <activity android:name=".activity.appmanager.AppManagerActivity"/>
-
+        <!--进程管理-->
+        <activity android:name=".activity.taskmanager.TaskManagerActivity"/>
 
 
         <!--启动检测服务-->

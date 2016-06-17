@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.engine;
+package com.fangyi.mobilesafe.domain;
 
 import android.graphics.drawable.Drawable;
 
