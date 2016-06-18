@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bilibili</string>
+    <string name="register_account">Register</string>
+    <string name="login_text">Login</string>
+    <string name="login_next">next</string>
+    <string name="please_input_your_nick_name"><font size="14">Your Phone/Email</font></string>
+    <string name="please_input_your_password"><font size="14">Your PassWord</font></string>
+    <string name="register_doing">Has not &#8230;</string>
+
+    <string name="loading_title">Loading&#8230;</string>
+    <string name="forget_password">forget password?</string>
+
+    <string name="image_22">22</string>
+    <string name="image_33">33</string>
+    <string name="image_logo">logo</string>
+    <string name="nick_name_clear">name_clear</string>
+    <string name="pass_word_clear">pwd_clear</string>
+</resources>

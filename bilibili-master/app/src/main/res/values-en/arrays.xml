@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mail_filter">
+        <item>qq.com</item>
+        <item>163.com</item>
+        <item>126.com</item>
+        <item>gmail.com</item>
+        <item>sina.com</item>
+        <item>hotmail.com</item>
+        <item>vip.qq.com</item>
+        <item>foxmail.com</item>
+        <item>sina.cn</item>
+        <item>yeah.net</item>
+        <item>sohu.com</item>
+        <item>live.cn</item>
+        <item>outlook.com</item>
+        <item>aliyun.com</item>
+        <item>yahoo.com</item>
+    </string-array>
+</resources>

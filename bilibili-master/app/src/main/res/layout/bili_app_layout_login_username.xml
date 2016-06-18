@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_dimen_47dip">
+
+    <LinearLayout
+        android:id="@+id/ll_clear_name_layout"
+        android:layout_width="@dimen/common_dimen_28dip"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <ImageView
+            android:id="@+id/iv_clear_nick_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/common_dimen_20dip"
+            android:contentDescription="@string/nick_name_clear"
+            android:src="@mipmap/ic_edittext_clear" />
+    </LinearLayout>
+
+    <AutoCompleteTextView
+        android:id="@+id/ed_user_nickname"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/common_dimen_46dip"
+        android:layout_marginLeft="@dimen/common_dimen_28dip"
+        android:layout_toLeftOf="@+id/ll_clear_name_layout"
+        android:background="@null"
+        android:completionThreshold="1"
+        android:drawableLeft="@mipmap/ic_login_username_default"
+        android:drawablePadding="@dimen/common_dimen_20dip"
+        android:gravity="center_vertical"
+        android:hint="@string/please_input_your_nick_name"
+        android:imeActionLabel="@string/login_next"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="@dimen/common_dimen_8dip"
+        android:paddingRight="@dimen/common_dimen_0dip"
+        android:singleLine="true"
+        android:textCursorDrawable="@drawable/edittext_cursor"
+        android:textSize="@dimen/common_dimen_14sp" />
+
+    <requestFocus></requestFocus>
+
+    <View
+        android:id="@+id/v_nick_name_bottom_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/common_dimen_1dip"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/ed_user_nickname"
+        android:layout_marginLeft="@dimen/common_dimen_28dip"
+        android:layout_toLeftOf="@+id/ll_clear_name_layout"
+        android:background="@color/theme_color_secondary" />
+
+</RelativeLayout>

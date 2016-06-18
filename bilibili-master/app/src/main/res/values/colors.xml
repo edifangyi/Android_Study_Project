@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="theme_color_window_background">#ffeaeaea</color>
+    <color name="colorPrimary">#fffb7299</color>
+    <color name="colorPrimaryDark">#ffb85671</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="theme_color_secondary">#fffb7299</color>
+    <color name="theme_color_secondary_dark">#ffb85671</color>
+    <color name="gray_dark">#ff999999</color>
+
+    <color name="theme_color_primary">#fffb7299</color>
+    <color name="theme_color_primary_dark">#ffb85671</color>
+    <color name="color_pick_enable">#EFC5D1</color>
+</resources>

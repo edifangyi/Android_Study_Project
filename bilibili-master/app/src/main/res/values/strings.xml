@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Bilibili</string>
+    <string name="register_account">注册帐号</string>
+    <string name="login_text">登录</string>
+    <string name="login_next">下一步</string>
+    <string name="please_input_your_nick_name"><font size="14">你的手机号/邮箱</font></string>
+    <string name="please_input_your_password"><font size="14">请输入密码</font></string>
+    <string name="register_doing">还没有注册功能&#8230;</string>
+    <string name="loading_title">登录中&#8230;</string>
+    <string name="forget_password">忘记密码?</string>
+    <string name="image_22">22</string>
+    <string name="image_33">33</string>
+    <string name="image_logo">logo</string>
+    <string name="nick_name_clear">name_clear</string>
+    <string name="pass_word_clear">pwd_clear</string>
+
+</resources>

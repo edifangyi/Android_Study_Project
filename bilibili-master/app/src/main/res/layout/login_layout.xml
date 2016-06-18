@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.malin.animation.view.ResizeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_login_root_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/tips_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/common_dimen_106dip">
+
+                <ImageView
+                    android:id="@+id/bili_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/image_logo"
+                    android:src="@mipmap/ic_bili_logo" />
+
+                <!--scaleType 把图片按比例扩大(缩小)到View的宽度或者高度
+                原图w>h,w缩放到View的宽，h等比例缩放
+                原图h>w,h缩放到View的高，w等比例缩放
+                ，显示在View的上部分位置-->
+                <ImageView
+                    android:id="@+id/iv_22"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/bili_logo"
+                    android:contentDescription="@string/image_22"
+                    android:scaleType="fitStart"
+                    android:src="@mipmap/ic_22" />
+
+                <ImageView
+                    android:id="@+id/iv_33"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/bili_logo"
+                    android:contentDescription="@string/image_33"
+                    android:scaleType="fitEnd"
+                    android:src="@mipmap/ic_33" />
+            </RelativeLayout>
+
+
+            <include layout="@layout/bili_app_layout_login_username" />
+
+            <include layout="@layout/bili_app_layout_login_password" />
+
+            <include layout="@layout/bili_app_layout_login_action_button" />
+        </LinearLayout>
+    </ScrollView>
+</com.malin.animation.view.ResizeLayout>
