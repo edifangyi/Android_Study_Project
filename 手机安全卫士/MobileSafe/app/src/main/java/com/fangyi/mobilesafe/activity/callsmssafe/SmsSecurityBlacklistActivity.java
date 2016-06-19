@@ -1,15 +1,18 @@
 package com.fangyi.mobilesafe.activity.callsmssafe;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -24,8 +27,11 @@ import android.widget.Toast;
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.db.dao.BlackNumberDao;
 import com.fangyi.mobilesafe.domain.BlackNumberInfo;
+import com.socks.library.KLog;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by FANGYI on 2016/6/10.
@@ -74,7 +80,6 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
             llDoading.setVisibility(View.INVISIBLE);
         }
     };
-
 
 
     @Override
@@ -250,7 +255,6 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * 添加黑名单的点击事件，弹出对话框添加黑名单号码
      */
@@ -262,6 +266,26 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
         View contentview = View.inflate(this, R.layout.dialog_addblacknumber, null);
 
         final EditText etAddBlackNumber = (EditText) contentview.findViewById(R.id.et_dialog_addBlack_number);
+
+        etAddBlackNumber.setInputType(InputType.TYPE_CLASS_NUMBER);//限制输入
+
+        //自动弹出键盘
+        etAddBlackNumber.setFocusableInTouchMode(true);
+        etAddBlackNumber.requestFocus();
+
+        Timer timer = new Timer();//定时器
+        timer.schedule(new TimerTask() {
+
+                           public void run() {
+                               InputMethodManager inputManager =
+                                       (InputMethodManager) etAddBlackNumber.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                               inputManager.showSoftInput(etAddBlackNumber, 0);
+                           }
+
+                       },
+                200);
+
+
         final RadioGroup rgMode = (RadioGroup) contentview.findViewById(R.id.rg_mode);
         Button btDialogAddBlackConfirm = (Button) contentview.findViewById(R.id.bt_dialog_addBlack_confirm);
         Button btDialogAddBlackCancel = (Button) contentview.findViewById(R.id.bt_dialog_addBlack_cancel);
@@ -279,9 +303,11 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
                 //1.得到电话号码，拦截模式
                 String number = etAddBlackNumber.getText().toString().trim();
                 int checkedid = rgMode.getCheckedRadioButtonId();//得到选中的id
+
+
                 String mode = "2";//默认全部拦截
                 switch (checkedid) {
-                    case R.id.rg_mode://电话
+                    case R.id.rb_number://电话
                         mode = "0";
                         break;
                     case R.id.rb_sms://短信
@@ -291,6 +317,7 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
                         mode = "2";
                         break;
                 }
+                KLog.e("mode ========" + mode);
 
                 //2.判断是否为空
                 if (TextUtils.isEmpty(number)) {

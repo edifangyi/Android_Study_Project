@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
     <!--写联系人，低版本-->
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <!--杀死进程-->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
 
 
     <application
@@ -82,6 +84,7 @@
         <activity android:name=".activity.appmanager.AppManagerActivity"/>
         <!--进程管理-->
         <activity android:name=".activity.taskmanager.TaskManagerActivity"/>
+        <activity android:name=".activity.taskmanager.TaskManagerSettingActivity"/>
 
 
         <!--启动检测服务-->
@@ -110,6 +113,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".receiver.MyAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/example_appwidget_info" />
+        </receiver>
+
         <!--打电话-->
         <!--<receiver android:name=".receiver.OutCallReceiver">-->
             <!--<intent-filter>-->
@@ -123,6 +134,8 @@
         <service android:name=".service.AddressService"/>
         <!--短信拦截-->
         <service android:name=".service.SmsSafeService"/>
+        <!--锁屏杀死后台服务 - 监听熄屏-->
+        <service android:name=".service.KillProcessService"/>
 
     </application>
 

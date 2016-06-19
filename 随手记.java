@@ -95,6 +95,7 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
 
 
 清单文件中
+//默认安装位置
 android:installLocation="auto"|"internalOnly"|"preferExternal"//自动，内部，外部，默认安装在内部，内存不够安装外部
 
 /**

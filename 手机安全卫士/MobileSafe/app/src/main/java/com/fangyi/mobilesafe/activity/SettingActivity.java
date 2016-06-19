@@ -74,7 +74,7 @@ public class SettingActivity extends AppCompatActivity {
         //设置号码归属地显示
         sivShowAddress = (SettingItemView) findViewById(R.id.siv_showaddress);
         addressIntent = new Intent(this, AddressService.class);
-        boolean addressService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.AddressService");
+        boolean addressService = ServiceStatusUtils.inRunningService(this, "com.fangyi.mobilesafe.service.AddressService");
 
 //        if (addressService) {
 //            sivShowAddress.setChecked(true);
@@ -147,7 +147,7 @@ public class SettingActivity extends AppCompatActivity {
         //设置黑名单拦截
         sivBlacknumber = (SettingItemView) findViewById(R.id.siv_blacknumber);
         blacknumberIntent = new Intent(this, SmsSafeService.class);
-        boolean blacknumberService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.SmsSafeService");
+        boolean blacknumberService = ServiceStatusUtils.inRunningService(this, "com.fangyi.mobilesafe.service.SmsSafeService");
 
         sivBlacknumber.setChecked(blacknumberService);
 
@@ -173,10 +173,10 @@ public class SettingActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean addressService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.AddressService");
+        boolean addressService = ServiceStatusUtils.inRunningService(this, "com.fangyi.mobilesafe.service.AddressService");
         sivShowAddress.setChecked(addressService);
 
-        boolean blacknumberService = ServiceStatusUtils.inRunning(this, "com.fangyi.mobilesafe.service.SmsSafeService");
+        boolean blacknumberService = ServiceStatusUtils.inRunningService(this, "com.fangyi.mobilesafe.service.SmsSafeService");
         sivBlacknumber.setChecked(blacknumberService);
     }
 }

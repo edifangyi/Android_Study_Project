@@ -15,6 +15,7 @@
         android:textSize="18sp"/>
 
     <EditText
+        android:inputType="number"
         android:id="@+id/et_dialog_addBlack_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

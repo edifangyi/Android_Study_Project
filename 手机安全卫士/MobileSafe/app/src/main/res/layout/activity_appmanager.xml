@@ -4,6 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+
     <TextView
         android:id="@+id/activity_setting_title"
         style="@style/text_title_style"
@@ -15,49 +16,52 @@
 
         <TextView
             android:id="@+id/tv_avail_rom"
-            android:text="内存可用"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="内存可用"/>
 
         <TextView
             android:id="@+id/tv_avail_sdcard"
-            android:layout_alignParentRight="true"
-            android:text="sd卡可用"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="sd卡可用"/>
     </RelativeLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/tv_app_status"
-            android:text="用户程序"
-            android:background="#ff888888"
-            android:textColor="#ffffffff"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="#ff888888"
+            android:text="用户程序"
+            android:textColor="#ffffffff"
+            android:visibility="invisible"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <LinearLayout
                 android:id="@+id/ll_loading"
-                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:visibility="gone">
+
                 <ProgressBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+
                 <TextView
-                    android:text="正在给力加载中"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="正在给力加载中"/>
             </LinearLayout>
 
             <ListView
@@ -66,12 +70,9 @@
                 android:layout_height="match_parent">
             </ListView>
 
-
         </FrameLayout>
 
     </LinearLayout>
-
-
 
 
 </LinearLayout>

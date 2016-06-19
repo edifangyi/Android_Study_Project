@@ -33,9 +33,12 @@
         android:layout_alignStart="@+id/tv_task_name"/>
 
     <CheckBox
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/cr_shear"
+        android:id="@+id/cr_taskmanager_status"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 

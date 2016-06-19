@@ -13,16 +13,17 @@ public class ServiceStatusUtils {
 
     /**
      * 校验某个服务是否运行中
+     *
      * @param context
-     * @param serviceName   要校验服务的全类名
-     * @return  如果运行就返回true，否则返回false
+     * @param serviceName 要校验服务的全类名
+     * @return 如果运行就返回true，否则返回false
      */
 
-    public static boolean inRunning(Context context, String serviceName) {
+    public static boolean inRunningService(Context context, String serviceName) {
         //ActivityManager
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 
-        List<ActivityManager.RunningServiceInfo>  serviceInfos = am.getRunningServices(100);//参数的意思是最近的100个服务
+        List<ActivityManager.RunningServiceInfo> serviceInfos = am.getRunningServices(100);//参数的意思是最近的100个服务
 
         for (ActivityManager.RunningServiceInfo service : serviceInfos) {
             //得到全类名称

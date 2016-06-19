@@ -25,7 +25,7 @@
 
         <ImageView
             android:src="@drawable/k0"
-            android:id="@+id/cb_status"
+            android:id="@+id/iv_click_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"

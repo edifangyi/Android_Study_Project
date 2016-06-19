@@ -23,6 +23,19 @@ public class TaskInfo {
      * false系统进程
      */
     private boolean isUser;
+    /**
+     * true被选中
+     * false未被选中
+     */
+    private boolean isChecked;
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 
     public Drawable getIcon() {
         return icon;
