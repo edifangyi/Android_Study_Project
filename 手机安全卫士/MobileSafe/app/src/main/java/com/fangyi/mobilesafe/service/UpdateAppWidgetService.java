@@ -25,7 +25,7 @@ public class UpdateAppWidgetService extends Service {
     private AppWidgetManager awm;
     private Timer timer;
     private TimerTask task;
-    private ProgressBar mProgressBar;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,19 +47,27 @@ public class UpdateAppWidgetService extends Service {
                 ComponentName componentName = new ComponentName(UpdateAppWidgetService.this, MyAppWidget.class);
                 //序列化 更新远程view的布局
                 RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.my_appwidget);
-                //使用内存  总内存-剩余内存
-                remoteViews.setTextViewText(R.id.tv_appwidget_used, "RAM Used: " + Formatter.formatFileSize(UpdateAppWidgetService.this, SystemInfoUtils.getTotalRam(UpdateAppWidgetService.this) - SystemInfoUtils.getAvailRam(UpdateAppWidgetService.this)));
+
+                //剩余，可用内存
+                long availRam = SystemInfoUtils.getAvailRam(UpdateAppWidgetService.this);
+                //总内存
+                long totalRam = SystemInfoUtils.getTotalRam(UpdateAppWidgetService.this);
+
+                //使用内存 总内存-剩余内存
+                long usedRam = totalRam - availRam;
+
+                //使用内存
+                remoteViews.setTextViewText(R.id.tv_appwidget_used, "RAM Used: " + Formatter.formatFileSize(UpdateAppWidgetService.this, usedRam));
                 //剩余内存
-                remoteViews.setTextViewText(R.id.tv_appwidget_free, "Free: " + Formatter.formatFileSize(UpdateAppWidgetService.this, SystemInfoUtils.getAvailRam(UpdateAppWidgetService.this)));
+                remoteViews.setTextViewText(R.id.tv_appwidget_free, "Free: " + Formatter.formatFileSize(UpdateAppWidgetService.this, availRam));
 
-
+                //设置进度条，最大值为totalRam, 当前值为usedRam，最后一个参数为true时显示条纹
+                remoteViews.setProgressBar(R.id.pb_appwidget, (int)totalRam, (int)usedRam, false);
                 awm.updateAppWidget(componentName, remoteViews);
             }
         };
         timer.schedule(task, 0, 4000);
     }
-
-
 
 
     @Override

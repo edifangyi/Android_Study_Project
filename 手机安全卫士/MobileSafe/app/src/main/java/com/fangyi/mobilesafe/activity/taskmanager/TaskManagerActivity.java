@@ -51,8 +51,8 @@ public class TaskManagerActivity extends AppCompatActivity {
     private List<TaskInfo> usertaskInfos;//用户运行的进程列表
 
     private int runningProcessConut;//系统运行进程
-    private long availRam;//剩余内存
-    private long totalRam;//可用内存
+    private long availRam;//可用内存
+    private long totalRam;//总内存
 
     private TaskInfoAdapter adapter;
     private ActivityManager am;

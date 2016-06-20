@@ -56,7 +56,7 @@
         android:layout_toRightOf="@id/widget_fresh_black">
 
         <ProgressBar
-            android:id="@+id/widget_progressBar"
+            android:id="@+id/pb_appwidget"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="fill_parent"
             android:layout_height="25dp"

@@ -24,7 +24,7 @@ public class SystemInfoUtils {
     }
 
     /**
-     * 得到可用内存
+     * 得到可用，剩余内存
      * @param context
      * @return
      */
