@@ -1,8 +1,9 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
                     android:minWidth="294dp"
                     android:minHeight="72dp"
+                    android:previewImage="@drawable/b8w"
                     android:updatePeriodMillis="86400000"
-                    android:initialLayout="@layout/myappwidget"
+                    android:initialLayout="@layout/my_appwidget"
                     >
     <!--指定预览图-->
     <!--android:previewImage="@drawable/preview"-->
@@ -17,5 +18,7 @@
     <!--android:initialKeyguardLayout=""-->
 
     <!--android:resizeMode="horizontal|vertical"-->
+    <!--对应的布局文件-->
+    <!--android:initialLayout="@layout/myappwidget"-->
 
 </appwidget-provider>

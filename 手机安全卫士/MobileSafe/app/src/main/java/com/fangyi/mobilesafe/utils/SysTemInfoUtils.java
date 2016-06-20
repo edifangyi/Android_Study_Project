@@ -8,12 +8,11 @@ import com.jaredrummler.android.processes.models.AndroidAppProcess;
 
 import java.util.List;
 
-
 /**
  * Created by FANGYI on 2016/6/16.
  */
 
-public class SysTemInfoUtils {
+public class SystemInfoUtils {
 
     /**
      * 得到当前手机运行进程的总数

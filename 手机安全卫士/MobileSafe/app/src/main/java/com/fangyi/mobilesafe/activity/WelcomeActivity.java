@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.guide.Guide;
+import com.fangyi.mobilesafe.service.UpdateAppWidgetService;
 import com.fangyi.mobilesafe.utils.StreamTools;
 
 import net.tsz.afinal.FinalHttp;
@@ -103,7 +104,7 @@ public class WelcomeActivity extends Activity {
                     break;
             }
 
-        };
+        }
     };
 
     @Override
@@ -123,6 +124,10 @@ public class WelcomeActivity extends Activity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         //设置版本号
         tvWelcomeVersion.setText("版本名：" + getVersionName());
+
+        //启动appwidget远程更新view服务
+        Intent intent = new Intent(this, UpdateAppWidgetService.class);
+        startService(intent);
 
         //拷贝电话归属地查询数据库
         copyDB();

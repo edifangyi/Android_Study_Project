@@ -113,6 +113,7 @@
             </intent-filter>
         </receiver>
 
+        <!--AppWidget-->
         <receiver android:name=".receiver.MyAppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -136,6 +137,8 @@
         <service android:name=".service.SmsSafeService"/>
         <!--锁屏杀死后台服务 - 监听熄屏-->
         <service android:name=".service.KillProcessService"/>
+        <!--AppWidget-->
+        <service android:name=".service.UpdateAppWidgetService"/>
 
     </application>
 

@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.domain.TaskInfo;
 import com.fangyi.mobilesafe.engine.TaskInfoProvider;
-import com.fangyi.mobilesafe.utils.SysTemInfoUtils;
+import com.fangyi.mobilesafe.utils.SystemInfoUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,9 +97,9 @@ public class TaskManagerActivity extends AppCompatActivity {
 
 
 //        runningProcessConut = SysTemInfoUtils.getRunningProcessCount(this);//5.1挂掉了
-        runningProcessConut = SysTemInfoUtils.getRunningProcessCount();
-        availRam = SysTemInfoUtils.getAvailRam(this);
-        totalRam = SysTemInfoUtils.getTotalRam(this);
+        runningProcessConut = SystemInfoUtils.getRunningProcessCount();
+        availRam = SystemInfoUtils.getAvailRam(this);
+        totalRam = SystemInfoUtils.getTotalRam(this);
 
 
         tvRunProcessCount.setText("运行中进程：" + runningProcessConut + "个");
