@@ -5724,28 +5724,144 @@ public class MD5 {
     }
 
 
+/**
+ 
 
 
 
+ */
+
+自定义ProgressBar简单完成颜色渐变功能进度条
+
+样式，有外框 两头圆角，有渐变色的
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="80dp"
+        android:background="@drawable/shape_progressbar">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="3dp"
+
+            android:max="100"
+            android:progress="50"
+            android:progressDrawable="@drawable/my_progress"/>
+    </LinearLayout>
+
+
+--------------------------------------------------------------------------------------------------------
+my_progress.xml
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<item android:id="@android:id/background">-->
+    <!--<shape>-->
+    <!--<corners android:radius="5dip" />-->
+    <!--<gradient-->
+    <!--android:startColor="#ff9d9e9d"-->
+    <!--android:centerColor="#ff5a5d5a"-->
+    <!--android:centerY="0.75"-->
+    <!--android:endColor="#ff747674"-->
+    <!--android:angle="270"-->
+    <!--/>-->
+    <!--</shape>-->
+    <!--</item>-->
+
+    <!--<item android:id="@android:id/secondaryProgress">-->
+    <!--<clip>-->
+    <!--<shape>-->
+    <!--<corners android:radius="5dip" />-->
+    <!--<gradient-->
+    <!--android:startColor="#80ffd300"-->
+    <!--android:centerColor="#80ffb600"-->
+    <!--android:centerY="0.75"-->
+    <!--android:endColor="#a0ffcb00"-->
+    <!--android:angle="270"-->
+    <!--/>-->
+    <!--</shape>-->
+    <!--</clip>-->
+    <!--</item>-->
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="360dip"/>
+
+                <solid android:color="#49ACFD"/>
+
+                <stroke
+                    android:width="1dp"
+                    android:color="#49ACFD"/>
+
+                <gradient
+                    android:angle="0"
+                    android:centerY="0.75"
+                    android:endColor="#49ACFD"
+                    android:startColor="#8CC5EE"
+                    />
+            </shape>
+        </clip>
+    </item>
+
+--------------------------------------------------------------------------------------------------------
+
+
+shape_progressbar.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="360dp"/>
+    <solid android:color="#ffffff"/>
+    <stroke
+        android:width="1dp"
+        android:color="#f55c18"/>
+</shape>
 
 
 
+/**
+ 
+ */
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="100dp"
+        android:layout_marginStart="30dp"
+        android:layout_toStartOf="@+id/imageView"
+        android:max="100"
+        android:progress="50"
+        android:progressDrawable="@drawable/my_progress"/>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="80dp"
+        android:max="100"
+        android:progress="50"
+        android:progressDrawable="@drawable/my_progress"
+        />
 
 
 
