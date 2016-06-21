@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
-import com.fangyi.mobilesafe.activity.atools.numaddressquery.NumberAddressQueryActivity;
 import com.fangyi.mobilesafe.utils.SmsBackupUtils;
 
 import java.io.File;
@@ -31,9 +30,10 @@ import java.io.IOException;
 public class AToolsActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private ListView listView;
-    private static final String names[] = {"号码归属地查询", "短信备份", "创建快捷键", "常用电话号码查询"};
+    private static final String names[] = {"号码归属地查询", "短信备份", "创建快捷键", "常用电话号码查询", "程序锁"};
     private static final int ids[] = {R.drawable.ic_activity_atools_main_1, R.drawable.ic_activity_atools_main_2,
-            R.drawable.ic_activity_atools_main_3, R.drawable.ic_activity_atools_main_4};
+            R.drawable.ic_activity_atools_main_3, R.drawable.ic_activity_atools_main_4,
+            R.drawable.ic_activity_atools_main_5};
 
 
     @Override
@@ -64,14 +64,16 @@ public class AToolsActivity extends AppCompatActivity {
                         intent = new Intent(AToolsActivity.this, CommonNumberQueryActivity.class);
                         startActivity(intent);
                         break;
+                    case 4://程序锁
+                        intent = new Intent(AToolsActivity.this, EnterAppLock.class);
+                        startActivity(intent);
+                        break;
 
                 }
             }
 
         });
     }
-
-
 
 
     @Override

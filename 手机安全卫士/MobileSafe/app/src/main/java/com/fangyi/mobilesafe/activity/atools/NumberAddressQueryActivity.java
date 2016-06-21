@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.activity.atools.numaddressquery;
+package com.fangyi.mobilesafe.activity.atools;
 
 import android.os.Bundle;
 import android.os.Vibrator;
