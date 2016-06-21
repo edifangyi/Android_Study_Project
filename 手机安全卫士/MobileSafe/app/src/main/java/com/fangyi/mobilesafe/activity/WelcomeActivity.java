@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,7 +22,6 @@ import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.guide.Guide;
-import com.fangyi.mobilesafe.service.UpdateAppWidgetService;
 import com.fangyi.mobilesafe.utils.StreamTools;
 
 import net.tsz.afinal.FinalHttp;
@@ -70,8 +70,7 @@ public class WelcomeActivity extends Activity {
     private SharedPreferences sp;
 
 
-
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case GO_HOME://进入主页面
@@ -118,6 +117,39 @@ public class WelcomeActivity extends Activity {
     }
 
 
+    /**
+     * 判断是否第一次启动
+     * 进行选择
+     */
+    private void init() {
+        SharedPreferences perPreferences = getSharedPreferences("jike", MODE_PRIVATE);
+        isFirstIn = perPreferences.getBoolean("isFirstIn", true);
+        if (!isFirstIn) {
+            assignViews();
+        } else {
+            handler.sendEmptyMessageDelayed(GO_GUIDE, 0);
+            SharedPreferences.Editor editor = perPreferences.edit();
+            editor.putBoolean("isFirstIn", false);
+            editor.commit();
+        }
+
+    }
+
+    private void goHome() {
+        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    private void goGuide() {
+        Intent i = new Intent(WelcomeActivity.this, Guide.class);
+        startActivity(i);
+        finish();
+    }
+
+    /**
+     * 加载任务
+     */
     private void assignViews() {
         tvWelcomeVersion = (TextView) findViewById(R.id.tv_welcome_version);
         tvWelcomeVpdateinfo = (TextView) findViewById(R.id.tv_welcome_updateinfo);
@@ -125,15 +157,13 @@ public class WelcomeActivity extends Activity {
         //设置版本号
         tvWelcomeVersion.setText("版本名：" + getVersionName());
 
-        //启动appwidget远程更新view服务
-        Intent intent = new Intent(this, UpdateAppWidgetService.class);
-        startService(intent);
-
         //拷贝电话归属地查询数据库
         copyDB();
+        //创建快捷键
+        createShortcut();
 
         //自动升级默认开启
-        if(sp.getBoolean("update", true)) {
+        if (sp.getBoolean("update", true)) {
             //检测是否有新版本
             checkVersion();
         } else {
@@ -145,6 +175,41 @@ public class WelcomeActivity extends Activity {
                 }
             }, 2000);
         }
+
+    }
+
+    /**
+     * 创建快捷键
+     */
+    private void createShortcut() {
+
+        if (sp.getBoolean("installshortcut", false)) {
+            return;
+        }
+        Intent intent = new Intent();
+        //动作
+        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");//安装快捷 + 权限
+        //<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+//
+// intent.setAction(Intent.ACTION_CREATE_SHORTCUT);//动作创建快捷方式
+        //额外的快捷键名称
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机卫士");
+        //额外的快捷键图标
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_1));
+
+        //点击我要我干什么 - 直接进入主界面
+        Intent callIntent = new Intent();
+        callIntent.setAction("com.fangyi.mobilesafe.home");//在清单文件注册
+
+
+        //把意图装进动作里
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, callIntent);
+
+        sendBroadcast(intent);
+
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("installshortcut", true);
+        editor.commit();
 
     }
 
@@ -168,7 +233,7 @@ public class WelcomeActivity extends Activity {
 
                 int len = 0;
                 byte buffer[] = new byte[1024];
-                while  ((len = is.read(buffer)) != -1) {
+                while ((len = is.read(buffer)) != -1) {
                     fos.write(buffer, 0, len);
                 }
                 is.close();
@@ -182,7 +247,6 @@ public class WelcomeActivity extends Activity {
 
 
         }
-
 
 
     }
@@ -199,6 +263,7 @@ public class WelcomeActivity extends Activity {
 
     /**
      * 得到版本名称
+     *
      * @return
      */
     public String getVersionName() {
@@ -239,7 +304,7 @@ public class WelcomeActivity extends Activity {
                         InputStream is = con.getInputStream();
                         String result = StreamTools.readFromStream(is);
 
-                        Log.e(TAG, "result==" +result);
+                        Log.e(TAG, "result==" + result);
                         //解析json
                         JSONObject obj = new JSONObject(result);
                         //服务器最新的版本
@@ -273,43 +338,13 @@ public class WelcomeActivity extends Activity {
                     long endTime = System.currentTimeMillis();
                     long dTime = endTime - startTime;//花的时间没有到2秒
                     if (dTime < 2000) {
-                        SystemClock.sleep(2000-dTime);
+                        SystemClock.sleep(2000 - dTime);
                     }
                     handler.sendMessage(msg);
                 }
             }
         }.start();
 
-    }
-
-    /**
-     * 判断是否第一次启动
-     * 进行选择
-     */
-    private void init(){
-        SharedPreferences perPreferences = getSharedPreferences("jike", MODE_PRIVATE);
-        isFirstIn = perPreferences.getBoolean("isFirstIn", true);
-        if (!isFirstIn) {
-            assignViews();
-        }else{
-            handler.sendEmptyMessageDelayed(GO_GUIDE, 0);
-            SharedPreferences.Editor editor = perPreferences.edit();
-            editor.putBoolean("isFirstIn", false);
-            editor.commit();
-        }
-
-    }
-
-    private void goHome(){
-        Intent i = new Intent(WelcomeActivity.this,MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    private void goGuide(){
-        Intent i = new Intent(WelcomeActivity.this,Guide.class);
-        startActivity(i);
-        finish();
     }
 
     /**
@@ -370,7 +405,7 @@ public class WelcomeActivity extends Activity {
                         public void onLoading(long count, long current) {
                             super.onLoading(count, current);
                             tvWelcomeVpdateinfo.setVisibility(View.VISIBLE);
-                            int progess = (int) (current*100/count);
+                            int progess = (int) (current * 100 / count);
                             tvWelcomeVpdateinfo.setText("下载进度：" + progess + "%");
                         }
                     });

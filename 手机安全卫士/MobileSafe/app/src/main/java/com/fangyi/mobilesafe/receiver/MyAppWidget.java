@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.fangyi.mobilesafe.service.UpdateAppWidgetService;
+
 /**
  * 特殊的广播接受者
  * Created by FANGYI on 2016/6/19.
@@ -21,6 +23,9 @@ public class MyAppWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        //启动appwidget远程更新view服务
+        Intent intent = new Intent(context, UpdateAppWidgetService.class);
+        context.startService(intent);
     }
 
     @Override
@@ -36,11 +41,17 @@ public class MyAppWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
+        //启动appwidget远程更新view服务
+        Intent intent = new Intent(context, UpdateAppWidgetService.class);
+        context.startService(intent);
     }
 
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
+        //启动appwidget远程更新view服务
+        Intent intent = new Intent(context, UpdateAppWidgetService.class);
+        context.stopService(intent);
     }
 
     @Override

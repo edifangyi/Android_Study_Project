@@ -227,6 +227,31 @@ RelativeLayout (相对布局)
  * Android UI之RelativeLayout（相对布局）
  * http://blog.csdn.net/j_bing/article/details/45723565
  */
+属性名                                     功能说明
+    android:layout_centerHoriazontal        控制该子组件是否相对于父容器水平居中
+    android:layout_centerVertical           控制该子组件是否相对于父容器垂直居中
+    android:layout_centerInParent           控制该子组件是否相对于父容器居中
+    android:layout_alignParentBottom        控制该子组件是否与父容器底端对齐
+    android:layout_alignParentTop           控制该子组件是否与父容器顶端对齐
+    android:layout_alignParentLeft          控制该子组件是否与父容器左端对齐
+    android:layout_alignParentRight         控制该子组件是否与父容器右端对齐
+    android:layout_alignParentEnd           控制该子组件是否与父容器结束对齐（右上角）
+    android:layout_alignParentStart         控制该子组件是否与父容器开始对齐（左上角）
+
+    需要注意的是，这些属相是可以同时使用的，不过如果同时使用相互冲突的属性（比如layout_alignParentLeft和layout_alignParentRight）会产生一些比较古怪的效果，所以不建议同时使用有冲突的属性。
+
+属性名                                     功能说明
+    android:layout_toRightOf                控制该子组件位于ID指定组件的右侧
+    android:layout_toLeftOf                 控制该子组件位于ID指定组件的左侧
+    android:layout_above                    控制该子组件位于ID指定组件的上方
+    android:layout_below                    控制该子组件位于ID指定组件的下方
+    android:layout_alignTop                 控制该组件顶端与ID指定组件的上边界对齐
+    android:layout_alignBottom              控制该底端组件与ID指定组件的下边界对齐
+    android:layout_alignLeft                控制该组件左端与ID指定组件的左边界对齐
+    android:layout_alignRight               控制该组件右端与ID指定组件的右边界对齐
+    android:layout_alignStart               控制该组件起始位置与ID指定组件的起始位置对齐（左上角）
+    android:layout_alignEnd                 控制该组件结束位置与ID指定组件的结束位置对齐（右上角）
+
 
 
 FrameLayout (帧布局)
@@ -5834,48 +5859,36 @@ shape_progressbar.xml
  
  */
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="100dp"
-        android:layout_marginStart="30dp"
-        android:layout_toStartOf="@+id/imageView"
-        android:max="100"
-        android:progress="50"
-        android:progressDrawable="@drawable/my_progress"/>
+1.第一个widget被创建的生命周期
+
+onReceive   每个方法都用刀onReceive，通讯就用广播
+onEnabled   当第一个widget被创建的时候执行，适合初始化资源，比如创建服务
+onReceive
+onUpdate    每新创建一个widget都被执行，系统默认更新时间30分，时间到了也会执行
+onReceive
+onAppWidgetOptionsChanged   每新创建一个widget都被执行
+
+2.第二个widget被创建的生命周期
+
+onReceive
+onUpdate
+onReceive
+onAppWidgetOptionsChanged
+
+3.第三个widget被创建的生命周期
+
+同样
 
 
+1.删除第一个widget
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="80dp"
-        android:max="100"
-        android:progress="50"
-        android:progressDrawable="@drawable/my_progress"
-        />
+onReceive
+onDeleted   只要删除任意一个widget
 
+2.删除最后一个widget
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+onReceive
+onDeleted
+onReceive
+onDisabled 只要删除任意一个widget就会执行，适合释放资源，比如停止服务
 
