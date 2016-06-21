@@ -158,7 +158,8 @@ public class WelcomeActivity extends Activity {
         tvWelcomeVersion.setText("版本名：" + getVersionName());
 
         //拷贝电话归属地查询数据库
-        copyDB();
+        copyDB("NumeberAddressQuery.db");
+        copyDB("commonnum.db");
         //创建快捷键
         createShortcut();
 
@@ -216,8 +217,8 @@ public class WelcomeActivity extends Activity {
     /**
      * 把assets目录下的 NumeberAddressQuery.db 拷贝到 path = "/data/data/com.fangyi.mobilesafe/files/NumeberAddressQuery.db"
      */
-    private void copyDB() {
-        File file = new File(getFilesDir(), "NumeberAddressQuery.db");
+    private void copyDB(String dbname) {
+        File file = new File(getFilesDir(), dbname);
         if (file.exists() && file.length() > 0) {
             //数据库已经存在
             Log.e("数据库已经存在", "数据库已经存在");
@@ -226,7 +227,7 @@ public class WelcomeActivity extends Activity {
 
             InputStream is = null;
             try {
-                is = getAssets().open("NumeberAddressQuery.db");
+                is = getAssets().open(dbname);
 
                 FileOutputStream fos = new FileOutputStream(file);
 

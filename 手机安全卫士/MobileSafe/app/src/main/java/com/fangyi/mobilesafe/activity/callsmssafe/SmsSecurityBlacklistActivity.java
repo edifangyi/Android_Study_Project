@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -170,7 +171,7 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
             View view;
             ViewHolder holder;
 
-            if (convertView != null) {
+            if (convertView != null && convertView instanceof RelativeLayout) {
                 view = convertView;
                 System.out.println("使用历史缓存的 View==" + position);
                 holder = (ViewHolder) view.getTag();

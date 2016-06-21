@@ -31,8 +31,9 @@ import java.io.IOException;
 public class AToolsActivity extends AppCompatActivity {
     private SharedPreferences sp;
     private ListView listView;
-    private static final String names[] = {"号码归属地查询", "短信备份", "创建快捷键"};
-    private static final int ids[] = {R.drawable.ic_activity_atools_main_1, R.drawable.ic_activity_atools_main_2, R.drawable.ic_activity_atools_main_3};
+    private static final String names[] = {"号码归属地查询", "短信备份", "创建快捷键", "常用电话号码查询"};
+    private static final int ids[] = {R.drawable.ic_activity_atools_main_1, R.drawable.ic_activity_atools_main_2,
+            R.drawable.ic_activity_atools_main_3, R.drawable.ic_activity_atools_main_4};
 
 
     @Override
@@ -56,8 +57,12 @@ public class AToolsActivity extends AppCompatActivity {
                     case 1://进入短信备份
                         smsBackup();
                         break;
-                    case 2://进入
+                    case 2://创建快捷键
                         shortcutKey();
+                        break;
+                    case 3://常用电话号码查询
+                        intent = new Intent(AToolsActivity.this, CommonNumberQueryActivity.class);
+                        startActivity(intent);
                         break;
 
                 }
@@ -161,6 +166,7 @@ public class AToolsActivity extends AppCompatActivity {
         //点击我要干什么 - 一键报警
         Intent callIntent = new Intent();
         callIntent.setAction(Intent.ACTION_CALL);//直接拨打电话
+//        intent.setAction(Intent.ACTION_DIAL);//打开拨号界面
         callIntent.setData(Uri.parse("tel:10001"));
 
         //把意图装进动作里

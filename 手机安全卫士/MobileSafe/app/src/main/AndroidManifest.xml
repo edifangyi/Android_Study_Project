@@ -76,6 +76,7 @@
         <!--高级功能-->
         <activity android:name=".activity.atools.AToolsActivity"/>
         <activity android:name=".activity.atools.numaddressquery.NumberAddressQueryActivity"/>
+        <activity android:name=".activity.atools.CommonNumberQueryActivity"/>
 
         <!--归属地位置拖动设置-->
         <activity android:name=".activity.DragViewActivity"/>
@@ -86,6 +87,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <!--通信卫士-->
+        <activity android:name=".activity.callsmssafe.CallSmsSafeActivity"/>
         <!--黑名单-->
         <activity android:name=".activity.callsmssafe.SmsSecurityBlackListActivity"/>
         <!--程序管理-->
@@ -93,6 +95,8 @@
         <!--进程管理-->
         <activity android:name=".activity.taskmanager.TaskManagerActivity"/>
         <activity android:name=".activity.taskmanager.TaskManagerSettingActivity"/>
+
+
 
 
         <!--启动检测服务-->

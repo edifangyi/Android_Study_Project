@@ -8460,15 +8460,20 @@ SimpleAdapter & ArrayAdapter
         Map<String, Object> map2= new HashMap<String, Object>();
         map2.put("name", "小花");
         map2.put("image", R.drawable.photo2);
-        data.add(map3);
+        data.add(map2);
 
         Map<String, Object> map3 = new HashMap<String, Object>();
         map3.put("name", "小红");
         map3.put("image", R.drawable.photo3);
         data.add(map3);
  
-    //                                             传入的数据                     组件的资源ID，资源的位置都要对应好
-    lv.SimpleAdapter(new SimpleAdapter(this, data, new String[]{"name", "image"}, new int[]{R.id.tv, R.id.iv}))
+    lv.SimpleAdapter(new SimpleAdapter(
+        this, 
+        data,  //传入的数据
+        R.layout.XXX,  //布局资源
+        new String[]{"name", "image"},  //资源的位置都要对应好
+        new int[]{R.id.tv, R.id.iv}  //组件的资源ID
+        ));
 
 3.
 	如何把数据库和 Lsitview 结合起来

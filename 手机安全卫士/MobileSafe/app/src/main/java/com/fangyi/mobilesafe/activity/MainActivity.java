@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.appmanager.AppManagerActivity;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
-import com.fangyi.mobilesafe.activity.callsmssafe.SmsSecurityBlackListActivity;
+import com.fangyi.mobilesafe.activity.callsmssafe.CallSmsSafeActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.activity.taskmanager.TaskManagerActivity;
 import com.fangyi.mobilesafe.rocket.Rocket;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         showLostFindDialog();
                         break;
                     case 1://进入通信卫士
-                        intent = new Intent(MainActivity.this, SmsSecurityBlackListActivity.class);
+                        intent = new Intent(MainActivity.this, CallSmsSafeActivity.class);
                         startActivity(intent);
                         break;
                     case 2://进入应用管理
