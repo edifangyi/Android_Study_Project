@@ -16,7 +16,7 @@ import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.ITelephony;
-import com.fangyi.mobilesafe.db.dao.BlackNumberDao;
+import com.fangyi.mobilesafe.dao.BlackNumberDao;
 
 import java.lang.reflect.Method;
 

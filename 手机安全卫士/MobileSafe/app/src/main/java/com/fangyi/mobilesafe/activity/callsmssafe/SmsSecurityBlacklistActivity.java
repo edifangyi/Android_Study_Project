@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
-import com.fangyi.mobilesafe.db.dao.BlackNumberDao;
+import com.fangyi.mobilesafe.dao.BlackNumberDao;
 import com.fangyi.mobilesafe.domain.BlackNumberInfo;
 import com.socks.library.KLog;
 

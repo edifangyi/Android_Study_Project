@@ -16,7 +16,6 @@ import android.widget.RemoteViews;
 import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.receiver.MyAppWidget;
 import com.fangyi.mobilesafe.utils.SystemInfoUtils;
-import com.socks.library.KLog;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -66,7 +65,8 @@ public class UpdateAppWidgetService extends Service {
         task = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("开始耗电");
+//                System.out.println("开始耗电");
+
                 //激活的组件 - 通讯
                 ComponentName componentName = new ComponentName(UpdateAppWidgetService.this, MyAppWidget.class);
                 //序列化 更新远程view的布局
@@ -79,10 +79,10 @@ public class UpdateAppWidgetService extends Service {
 
                 //使用内存 总内存-剩余内存
                 long usedRam = totalRam - availRam;
-
-                KLog.e("剩余     ==== " + availRam);
-                KLog.e("总内存   ==== " + totalRam);
-                KLog.e("使用内存 ==== " + usedRam);
+//
+//                KLog.e("剩余     ==== " + availRam);
+//                KLog.e("总内存   ==== " + totalRam);
+//                KLog.e("使用内存 ==== " + usedRam);
 
                 //使用内存
                 remoteViews.setTextViewText(R.id.tv_appwidget_used, "RAM Used: " + Formatter.formatFileSize(UpdateAppWidgetService.this, usedRam));

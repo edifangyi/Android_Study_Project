@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
-import com.fangyi.mobilesafe.db.dao.NumberAddressQueryDao;
+import com.fangyi.mobilesafe.dao.NumberAddressQueryDao;
 
 /**
  * Created by FANGYI on 2016/6/5.

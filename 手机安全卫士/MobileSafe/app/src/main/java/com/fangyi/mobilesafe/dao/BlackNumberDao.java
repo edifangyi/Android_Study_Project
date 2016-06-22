@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.db.dao;
+package com.fangyi.mobilesafe.dao;
 
 import android.content.ContentValues;
 import android.content.Context;

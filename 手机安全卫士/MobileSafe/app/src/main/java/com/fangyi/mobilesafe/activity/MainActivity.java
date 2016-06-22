@@ -24,6 +24,7 @@ import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.callsmssafe.CallSmsSafeActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.activity.taskmanager.TaskManagerActivity;
+import com.fangyi.mobilesafe.activity.trafficmanager.TrafficManagerActivity;
 import com.fangyi.mobilesafe.rocket.Rocket;
 import com.fangyi.mobilesafe.utils.MD5Utils;
 
@@ -71,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, TaskManagerActivity.class);
                         startActivity(intent);
                         break;
+                    case 6://进入流量统计
+                        intent = new Intent(MainActivity.this, TrafficManagerActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7://进入高级功能
                         intent = new Intent(MainActivity.this, AToolsActivity.class);
                         startActivity(intent);
@@ -108,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEnterDwdDialog() {
         AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        View view = View.inflate(MainActivity.this, R.layout.dialog_enterpwd, null);
+        View view = View.inflate(MainActivity.this, R.layout.dialog_lost_find_enterpwd, null);
         final EditText etDialogEnderwdPassword = (EditText) view.findViewById(R.id.et_dialog_enterpwd_password);
         Button btDialogEnderpwdConfirm = (Button) view.findViewById(R.id.bt_dialog_enterpwd_confirm);
         Button btDialogEnderpwdCancel = (Button) view.findViewById(R.id.bt_dialog_enterpwd_cancel);
@@ -162,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSetupDwdDialog() {
         final AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        final View view = View.inflate(MainActivity.this, R.layout.dialog_setuppwd, null);
+        final View view = View.inflate(MainActivity.this, R.layout.dialog_lost_find_setuppwd, null);
         final EditText etDialogSetuppwdPassword = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password);
         final EditText etDialogSetuppwdPasswordConfirm = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password_confirm);
         Button btDialogSetuppwdConfirm = (Button) view.findViewById(R.id.bt_dialog_setuppwd_confirm);
