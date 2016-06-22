@@ -97,6 +97,10 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
 清单文件中
 //默认安装位置
 android:installLocation="auto"|"internalOnly"|"preferExternal"//自动，内部，外部，默认安装在内部，内存不够安装外部
+android:launchMode="singleInstance" //启动模式
+android:excludeFromRecents="true" //是否在最近列表中显示 true 显示，false不显示
+
+
 
 /**
  
@@ -5891,4 +5895,299 @@ onReceive
 onDeleted
 onReceive
 onDisabled 只要删除任意一个widget就会执行，适合释放资源，比如停止服务
+
+/**
+
+
+
+
+ */
+
+/**
+ * 流量统计
+ *
+ * 起始点是本次开机 而不是第一次开机
+ */
+
+public class TrafficManagerActivity extends AppCompatActivity {
+
+    static long  getMobileRxBytes()  //获取通过Mobile连接收到的字节总数，不包含WiFi  
+    static long  getMobileRxPackets()  //获取Mobile连接收到的数据包总数  
+    static long  getMobileTxBytes()  //Mobile发送的总字节数  
+    static long  getMobileTxPackets()  //Mobile发送的总数据包数  
+    static long  getTotalRxBytes()  //获取总的接受字节数，包含Mobile和WiFi等  
+    static long  getTotalRxPackets()  //总的接受数据包数，包含Mobile和WiFi等  
+    static long  getTotalTxBytes()  //总的发送字节数，包含Mobile和WiFi等  
+    static long  getTotalTxPackets()  //发送的总数据包数，包含Mobile和WiFi等   
+    static long  getUidRxBytes(int uid)  //获取某个网络UID的接受字节数  
+    static long  getUidTxBytes(int uid) //获取某个网络UID的发送字节数  
+
+    int uid;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        List<AppInfo> mAppInfos = new ArrayList<>();
+        //包管理器
+        PackageManager pm = getPackageManager();
+        List<PackageInfo> packageInfos = pm.getInstalledPackages(0);
+
+        for (PackageInfo packageInfo : packageInfos) {
+            AppInfo appInfo = new AppInfo();
+
+            String packName = packageInfo.packageName;
+            appInfo.setPackName(packName);
+
+            Drawable icon = packageInfo.applicationInfo.loadIcon(pm);
+            appInfo.setIcon(icon);
+
+            String name = packageInfo.applicationInfo.loadLabel(pm).toString();
+            appInfo.setName(name);
+
+            uid = packageInfo.applicationInfo.uid;
+
+            mAppInfos.add(appInfo);
+        }
+
+        //2.2版本以后，就引入流量统计的接口
+        //统计总流量的接口
+        TrafficStats.getMobileRxBytes();//手机(2G, 2.5G, 3G, 4G )流量下载的总和
+        TrafficStats.getMobileTxBytes();//手机流量上传的总和
+
+        TrafficStats.getTotalRxBytes();//手机+wifi流量下载的总和
+        TrafficStats.getTotalTxBytes();//手机+wifi流量上传的总和
+
+        //统计某一款应用消耗的流量
+        TrafficStats.getUidRxBytes(uid);//根据用户ID获取它下载了多少流量
+        TrafficStats.getUidTxBytes(uid);//根据用户ID获取它上传了多少钱流量
+
+    }
+}
+
+
+------------------------------------------------------------------------------------------------
+
+
+
+1.获得当前的总接受数据，getTotalRxPackets()
+
+2.每隔几秒再获取一次总接收的数据
+
+3.讲最新获取的数据减去之前获取的数据并且除以间隔的秒数，就得到了每秒平均的网速b/s，最后进行单位转换为kb、Mb等等
+
+
+
+
+1.得到当前网速的方法
+
+初始时给total_data一个值：
+
+private long total_data = TrafficStats.getTotalRxBytes();
+
+之后每次获取的数值要减去total_data再除以间隔秒数，并且将total重新赋值为最新的。
+
+
+    /**
+     * 核心方法，得到当前网速
+     * @return
+     */
+    private int getNetSpeed() {  
+        long traffic_data = TrafficStats.getTotalRxBytes() - total_data;
+        total_data = TrafficStats.getTotalRxBytes();
+        return (int)traffic_data /count ;
+    }
+
+
+2.周期性的获取网速
+
+
+    /**
+     * 定义线程周期性地获取网速
+     */
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            //定时器
+            mHandler.postDelayed(mRunnable, count * 1000);
+            Message msg = mHandler.obtainMessage();
+            msg.what = 1;
+            msg.arg1 = getNetSpeed();
+            mHandler.sendMessage(msg);
+        }
+    };
+
+3.单位转换
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    //float real_data = (float)msg.arg1;
+                    if(msg.arg1  > 1024 ){
+                        System.out.println(msg.arg1 / 1024 + "kb/s");                    
+                    }
+                    else{
+                        System.out.println(msg.arg1 + "b/s");    
+                    }
+                }
+            }
+        };
+
+    }
+
+
+4.启动handler和停止handler
+
+    // PS：服务开始就执行runnable中的方法，并且runnable中设置handler循环执行。
+    // 执行runnable中run()方法时，将网速包装到message中，交给handler进行单位转换并显示
+    // （这里在handler中进行单位转换是为了方便显示到ui中）
+
+    /**
+     * 启动服务时就开始启动线程获取网速
+     */
+    @Override
+    public void onStart(Intent intent, int startId) {
+        mHandler.postDelayed(mRunnable, 0);
+    };
+
+    /**
+     * 在服务结束时删除消息队列
+     */
+    @Override
+    public void onDestroy() {
+        mHandler.removeCallbacks(mRunnable);
+        super.onDestroy();
+    };
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    //float real_data = (float)msg.arg1;
+                    if(msg.arg1  > 1024 ){
+                        System.out.println(msg.arg1 / 1024 + "kb/s");                    
+                    }
+                    else{
+                        System.out.println(msg.arg1 + "b/s");    
+                    }
+                }
+            }
+        };
+
+最后，全部代码
+
+/**
+ * @author:Jack Tony
+ * @tips  :实时获取当前网速的service
+ * @date  :2014-9-24
+ */
+public class Net_Service extends Service {
+
+    private long total_data = TrafficStats.getTotalRxBytes();
+    private Handler mHandler;
+    //几秒刷新一次
+    private final int count = 5;
+
+    /**
+     * 定义线程周期性地获取网速
+     */
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            //定时器
+            mHandler.postDelayed(mRunnable, count * 1000);
+            Message msg = mHandler.obtainMessage();
+            msg.what = 1;
+            msg.arg1 = getNetSpeed();
+            mHandler.sendMessage(msg);
+        }
+    };
+    
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (msg.what == 1) {
+                    //float real_data = (float)msg.arg1;
+                    if(msg.arg1  > 1024 ){
+                        System.out.println(msg.arg1 / 1024 + "kb/s");                    
+                    }
+                    else{
+                        System.out.println(msg.arg1 + "b/s");    
+                    }
+                }
+            }
+        };
+        
+        
+
+    }
+    
+    /**
+     * 核心方法，得到当前网速
+     * @return
+     */
+    private int getNetSpeed() {  
+        long traffic_data = TrafficStats.getTotalRxBytes() - total_data;
+        total_data = TrafficStats.getTotalRxBytes();
+        return (int)traffic_data /count ;
+    }
+
+    /**
+     * 启动服务时就开始启动线程获取网速
+     */
+    @Override
+    public void onStart(Intent intent, int startId) {
+        mHandler.postDelayed(mRunnable, 0);
+    };
+
+    /**
+     * 在服务结束时删除消息队列
+     */
+    @Override
+    public void onDestroy() {
+        mHandler.removeCallbacks(mRunnable);
+        super.onDestroy();
+    };
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}
+
+
+
+/**
+ 
+
+ */
+
+网络防火墙  droidwall
+
+
+
+
+
+
+
+
+
+
 
