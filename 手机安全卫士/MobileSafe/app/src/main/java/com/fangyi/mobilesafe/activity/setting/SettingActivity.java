@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.activity;
+package com.fangyi.mobilesafe.activity.setting;
 
 import android.content.DialogInterface;
 import android.content.Intent;

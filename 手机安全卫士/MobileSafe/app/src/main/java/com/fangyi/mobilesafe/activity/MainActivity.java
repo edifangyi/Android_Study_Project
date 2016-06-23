@@ -19,10 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fangyi.mobilesafe.R;
+import com.fangyi.mobilesafe.activity.antivirus.AntiVirusActivity;
 import com.fangyi.mobilesafe.activity.appmanager.AppManagerActivity;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
 import com.fangyi.mobilesafe.activity.callsmssafe.CallSmsSafeActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
+import com.fangyi.mobilesafe.activity.setting.SettingActivity;
 import com.fangyi.mobilesafe.activity.taskmanager.TaskManagerActivity;
 import com.fangyi.mobilesafe.activity.trafficmanager.TrafficManagerActivity;
 import com.fangyi.mobilesafe.rocket.Rocket;
@@ -42,10 +44,12 @@ public class MainActivity extends AppCompatActivity {
     private GridView listMain;
     private SharedPreferences sp;
 
-    private static final  String names[] = {"手机防盗", "通信卫士", "应用管理", "进程管理", "缓存管理", "手机杀毒", "流量统计", "高级功能", "设置中心"};
+    private static final  String names[] = {"手机防盗", "通信卫士", "应用管理",
+                                            "进程管理", "缓存管理", "手机杀毒",
+                                            "流量统计", "高级功能", "设置中心"};
     private static final  int ids[] = {R.drawable.ic_1, R.drawable.ic_2, R.drawable.ic_3,
-            R.drawable.ic_4, R.drawable.ic_5, R.drawable.ic_6,
-            R.drawable.ic_7, R.drawable.ic_8, R.drawable.ic_9};
+                                       R.drawable.ic_4, R.drawable.ic_5, R.drawable.ic_6,
+                                       R.drawable.ic_7, R.drawable.ic_8, R.drawable.ic_9};
     private void assignViews() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         listMain = (GridView) findViewById(R.id.list_main);
@@ -54,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         listMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int i = position;
                 Intent intent;
                 switch (position) {
                     case 0://进入手机防盗
@@ -72,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, TaskManagerActivity.class);
                         startActivity(intent);
                         break;
+                    case 4://进入缓存管理
+                        intent = new Intent(MainActivity.this, TrafficManagerActivity.class);
+                        startActivity(intent);
+                    case 5://进入病毒查杀
+                        intent = new Intent(MainActivity.this, AntiVirusActivity.class);
+                        startActivity(intent);
+                        break;
                     case 6://进入流量统计
                         intent = new Intent(MainActivity.this, TrafficManagerActivity.class);
                         startActivity(intent);
@@ -80,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                         intent = new Intent(MainActivity.this, AToolsActivity.class);
                         startActivity(intent);
                         break;
-
                     case 8://进入设置中心
                         Intent settingIntent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(settingIntent);
@@ -92,6 +101,37 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 适配器
+     */
+    private class HomeAdapter extends BaseAdapter {
+
+        //返回长度
+        @Override
+        public int getCount() {
+            return names.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = View.inflate(MainActivity.this, R.layout.activity_main_item, null);
+            ImageView ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
+            TextView tvName = (TextView) view.findViewById(R.id.tv_name);
+            ivIcon.setImageResource(ids[position]);
+            tvName.setText(names[position]);
+            return view;
+        }
+    }
 
     /**
      * 根据当前情况，弹出不同的对话框
@@ -232,34 +272,7 @@ public class MainActivity extends AppCompatActivity {
         return !TextUtils.isEmpty(password);
     }
 
-    private class HomeAdapter extends BaseAdapter {
 
-        //返回长度
-        @Override
-        public int getCount() {
-            return names.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(MainActivity.this, R.layout.activity_main_item, null);
-            ImageView ivIcon = (ImageView) view.findViewById(R.id.iv_icon);
-            TextView tvName = (TextView) view.findViewById(R.id.tv_name);
-            ivIcon.setImageResource(ids[position]);
-            tvName.setText(names[position]);
-            return view;
-        }
-    }
 
     /**
      * 小火箭

@@ -99,7 +99,7 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
 android:installLocation="auto"|"internalOnly"|"preferExternal"//自动，内部，外部，默认安装在内部，内存不够安装外部
 android:launchMode="singleInstance" //启动模式
 android:excludeFromRecents="true" //是否在最近列表中显示 true 显示，false不显示
-
+android:configChanges="screenSize|keyboardHidden|orientation"//屏幕切换不影响Activity
 
 
 /**
@@ -5348,6 +5348,23 @@ public boolean onTouchEvent(MotionEvent event) {
 ##透明
 
     AlphaAnimation aa = new AlphaAnimation(0, 1);
+
+
+给控件用
+
+    一是, 参数为int类型
+
+    titleHeadIv.setAlpha(0~255);
+
+
+    二是,参数为float类型
+
+    titleHeadIv.setAlpha(0f~1f);
+
+
+    三是,setImageAlpha(int),这个方法是较高api的, 不做使用
+
+
     
 * 起始透明度0
 * 终点透明度 1

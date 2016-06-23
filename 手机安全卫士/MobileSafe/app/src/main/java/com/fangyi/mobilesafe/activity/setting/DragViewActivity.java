@@ -1,4 +1,4 @@
-package com.fangyi.mobilesafe.activity;
+package com.fangyi.mobilesafe.activity.setting;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

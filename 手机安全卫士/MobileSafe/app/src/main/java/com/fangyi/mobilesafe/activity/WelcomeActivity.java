@@ -160,6 +160,7 @@ public class WelcomeActivity extends Activity {
         //拷贝电话归属地查询数据库
         copyDB("NumeberAddressQuery.db");
         copyDB("commonnum.db");
+        copyDB("antivirus.db");
         //创建快捷键
         createShortcut();
 
