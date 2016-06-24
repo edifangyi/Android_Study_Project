@@ -37,6 +37,8 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <!--获得栈 - 看门狗-->
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <!--获取缓存大小-->
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
 
 
     <application
@@ -92,16 +94,15 @@
             android:name=".rocket.Rocket"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
-        <!--通信卫士-->
-        <activity android:name=".activity.callsmssafe.CallSmsSafeActivity"/>
-        <!--黑名单-->
+        <!---通信卫士- 黑名单-->
         <activity android:name=".activity.callsmssafe.SmsSecurityBlackListActivity"/>
         <!--程序管理-->
         <activity android:name=".activity.appmanager.AppManagerActivity"/>
         <!--进程管理-->
         <activity android:name=".activity.taskmanager.TaskManagerActivity"/>
         <activity android:name=".activity.taskmanager.TaskManagerSettingActivity"/>
-
+        <!--缓存管理-->
+        <activity android:name=".activity.cleancache.CleanCacheActivity"/>
         <!--流量管理-->
         <activity android:name=".activity.trafficmanager.TrafficManagerActivity"/>
         <!--病毒查杀-->

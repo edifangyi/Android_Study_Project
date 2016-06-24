@@ -22,7 +22,8 @@ import com.fangyi.mobilesafe.R;
 import com.fangyi.mobilesafe.activity.antivirus.AntiVirusActivity;
 import com.fangyi.mobilesafe.activity.appmanager.AppManagerActivity;
 import com.fangyi.mobilesafe.activity.atools.AToolsActivity;
-import com.fangyi.mobilesafe.activity.callsmssafe.CallSmsSafeActivity;
+import com.fangyi.mobilesafe.activity.callsmssafe.SmsSecurityBlackListActivity;
+import com.fangyi.mobilesafe.activity.cleancache.CleanCacheActivity;
 import com.fangyi.mobilesafe.activity.lostFind.LostFindActivity;
 import com.fangyi.mobilesafe.activity.setting.SettingActivity;
 import com.fangyi.mobilesafe.activity.taskmanager.TaskManagerActivity;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                         showLostFindDialog();
                         break;
                     case 1://进入通信卫士
-                        intent = new Intent(MainActivity.this, CallSmsSafeActivity.class);
+                        intent = new Intent(MainActivity.this, SmsSecurityBlackListActivity.class);
                         startActivity(intent);
                         break;
                     case 2://进入应用管理
@@ -76,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case 4://进入缓存管理
-                        intent = new Intent(MainActivity.this, TrafficManagerActivity.class);
+                        intent = new Intent(MainActivity.this, CleanCacheActivity.class);
                         startActivity(intent);
+                        break;
                     case 5://进入病毒查杀
                         intent = new Intent(MainActivity.this, AntiVirusActivity.class);
                         startActivity(intent);
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEnterDwdDialog() {
         AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        View view = View.inflate(MainActivity.this, R.layout.dialog_lost_find_enterpwd, null);
+        View view = View.inflate(MainActivity.this, R.layout.dialog_lostfind_enterpwd, null);
         final EditText etDialogEnderwdPassword = (EditText) view.findViewById(R.id.et_dialog_enterpwd_password);
         Button btDialogEnderpwdConfirm = (Button) view.findViewById(R.id.bt_dialog_enterpwd_confirm);
         Button btDialogEnderpwdCancel = (Button) view.findViewById(R.id.bt_dialog_enterpwd_cancel);
@@ -207,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     private void showSetupDwdDialog() {
         final AlertDialog.Builder bulder = new AlertDialog.Builder(MainActivity.this);
 
-        final View view = View.inflate(MainActivity.this, R.layout.dialog_lost_find_setuppwd, null);
+        final View view = View.inflate(MainActivity.this, R.layout.dialog_lostfind_setuppwd, null);
         final EditText etDialogSetuppwdPassword = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password);
         final EditText etDialogSetuppwdPasswordConfirm = (EditText) view.findViewById(R.id.et_dialog_setuppwd_password_confirm);
         Button btDialogSetuppwdConfirm = (Button) view.findViewById(R.id.bt_dialog_setuppwd_confirm);

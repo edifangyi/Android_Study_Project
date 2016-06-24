@@ -21,7 +21,7 @@ public class Setup3Activity extends BaseSetupActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lost_find_setup3);
+        setContentView(R.layout.activity_lostfind_setup3);
         etActivitySetup3Number = (EditText) findViewById(R.id.et_activity_setup3_number);
         etActivitySetup3Number.setText(sp.getString("safenumber", ""));
     }

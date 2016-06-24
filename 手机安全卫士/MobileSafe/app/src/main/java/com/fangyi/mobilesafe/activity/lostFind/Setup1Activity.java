@@ -15,7 +15,7 @@ public class Setup1Activity extends BaseSetupActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lost_find_setup1);
+        setContentView(R.layout.activity_lostfind_setup1);
     }
 
     public void showNext() {

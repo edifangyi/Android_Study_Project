@@ -20,7 +20,7 @@ public class Setup4Activity extends BaseSetupActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        setContentView(R.layout.activity_lost_find_setup4);
+        setContentView(R.layout.activity_lostfind_setup4);
         cbSetup4Protectting = (CheckBox) findViewById(R.id.cb_setup4_protectting);
 
         boolean protectting = sp.getBoolean("protectting", false);

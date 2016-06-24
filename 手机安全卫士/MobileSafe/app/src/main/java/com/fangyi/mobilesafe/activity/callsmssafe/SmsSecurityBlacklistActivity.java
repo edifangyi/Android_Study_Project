@@ -86,7 +86,7 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sms_security_black_list);
+        setContentView(R.layout.activity_smssecurityblack);
 
         lvSmsSecurityBlacklistList = (ListView) findViewById(R.id.lv_sms_security_blacklist_list);
         llDoading = (LinearLayout) findViewById(R.id.ll_loading);
@@ -176,7 +176,7 @@ public class SmsSecurityBlackListActivity extends AppCompatActivity {
                 System.out.println("使用历史缓存的 View==" + position);
                 holder = (ViewHolder) view.getTag();
             } else {
-                view = View.inflate(SmsSecurityBlackListActivity.this, R.layout.activity_sms_security_black_list_item, null);
+                view = View.inflate(SmsSecurityBlackListActivity.this, R.layout.activity_smssecurityblack_item, null);
                 System.out.println("创建新的 View==" + position);
                 //当这个View对象呗创建的时候，就把id给查找了，并且放在容器（类）
                 holder = new ViewHolder();

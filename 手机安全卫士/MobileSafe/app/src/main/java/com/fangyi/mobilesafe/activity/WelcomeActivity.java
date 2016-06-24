@@ -157,10 +157,11 @@ public class WelcomeActivity extends Activity {
         //设置版本号
         tvWelcomeVersion.setText("版本名：" + getVersionName());
 
-        //拷贝电话归属地查询数据库
-        copyDB("NumeberAddressQuery.db");
+        //拷贝查询数据库
+        copyDB("naddress.db");
         copyDB("commonnum.db");
         copyDB("antivirus.db");
+
         //创建快捷键
         createShortcut();
 

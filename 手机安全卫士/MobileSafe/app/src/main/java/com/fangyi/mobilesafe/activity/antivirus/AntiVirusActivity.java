@@ -35,11 +35,11 @@ import java.util.Random;
  */
 
 public class AntiVirusActivity extends AppCompatActivity {
-    private static final int SCANING = 1;
-    private static final int SCANING_FINISH = 2;
+    private static final int SCANING = 0;
+    private static final int SCANING_FINISH = 1;
     private ImageView ivAntivirusRadar;
     private ProgressBar pbAntivirus;
-    private ProgressBar pbAntivirus2;
+
     private TextView tvAntivirusStatus;
     private LinearLayout llContaner;
     private List<Scaninfo> antiViruslist;
@@ -62,6 +62,7 @@ public class AntiVirusActivity extends AppCompatActivity {
                     llContaner.addView(tvPackName, 0);
                     break;
                 case SCANING_FINISH:
+                    tvAntivirusStatus.setText("扫描结束");
                     ivAntivirusRadar.clearAnimation();
                     if (antiViruslist != null && antiViruslist.size() > 0) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(AntiVirusActivity.this);
@@ -97,7 +98,6 @@ public class AntiVirusActivity extends AppCompatActivity {
 
         ivAntivirusRadar = (ImageView) findViewById(R.id.iv_antivirus_radar);
         pbAntivirus = (ProgressBar) findViewById(R.id.pb_antivirus);
-        pbAntivirus2 = (ProgressBar) findViewById(R.id.pb_antivirus2);
         tvAntivirusStatus = (TextView) findViewById(R.id.tv_antivirus_status);
         llContaner = (LinearLayout) findViewById(R.id.ll_contaner);
 
@@ -126,7 +126,7 @@ public class AntiVirusActivity extends AppCompatActivity {
                 PackageManager pm = getPackageManager();
                 List<PackageInfo> packInfos = pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
                 pbAntivirus.setMax(packInfos.size());
-                pbAntivirus2.setMax(packInfos.size());
+
                 Random random = new Random();
                 int progress = 0;
 
@@ -163,9 +163,9 @@ public class AntiVirusActivity extends AppCompatActivity {
                     progress++;
 
                     pbAntivirus.setProgress(progress);
-                    pbAntivirus2.setProgress(progress);
+
                     KLog.e("正在扫描================");
-                    SystemClock.sleep(50 + random.nextInt(50));//模拟扫描过程
+                    SystemClock.sleep(50 + random.nextInt(50));//必要的耗时操作，否则ProgressBar显示不正常
 
                 }
                 Message msg = Message.obtain();

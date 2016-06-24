@@ -25,7 +25,7 @@ public class NumberAddressQueryActivity extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_atools_number_address_query);
+        setContentView(R.layout.activity_atools_numberaddressquery);
         etActivityNumberAddressQueryNumber = (EditText) findViewById(R.id.et_activity_number_address_query_number);
         tvActivityNumberAddressQueryNumberResult = (TextView) findViewById(R.id.tv_activity_number_address_query_number_result);
 

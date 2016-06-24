@@ -39,7 +39,7 @@ public class AToolsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_atools_main);
+        setContentView(R.layout.activity_atools);
         sp = getSharedPreferences("config", MODE_PRIVATE);
 
         listView = (ListView) findViewById(R.id.lv_atools_list_main);
@@ -101,7 +101,7 @@ public class AToolsActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(AToolsActivity.this, R.layout.activity_atools_main_item, null);
+            View view = View.inflate(AToolsActivity.this, R.layout.activity_atools_item, null);
             ImageView ivAToolsIcon = (ImageView) view.findViewById(R.id.iv_atools_icon);
             TextView tvAToolsName = (TextView) view.findViewById(R.id.tv_atools_name);
             ivAToolsIcon.setImageResource(ids[position]);

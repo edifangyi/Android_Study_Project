@@ -115,6 +115,7 @@ public class CommonNumberQueryActivity extends AppCompatActivity {
             view.setTextColor(Color.RED);
             view.setTextSize(20);
             view.setText("       " + CommonNumberQueryDao.getGroupName(groupPosition, db));
+            view.setPadding(45, 0, 0, 0);
             return view;
         }
 
@@ -130,6 +131,7 @@ public class CommonNumberQueryActivity extends AppCompatActivity {
             view.setTextColor(Color.BLUE);
             view.setTextSize(15);
             view.setText("  " + CommonNumberQueryDao.getChildrenName(groupPosition, childPosition, db));
+            view.setPadding(45, 0, 0, 0);
             return view;
         }
 
@@ -138,6 +140,8 @@ public class CommonNumberQueryActivity extends AppCompatActivity {
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return true;
         }
+
+
     }
 
     @Override

@@ -28,7 +28,7 @@ public class LostFindActivity extends AppCompatActivity {
         //判断是否做过设置页面向导，如果没有做过就跳转到设置向导页面第一个页面，否者就加载手机防盗页面
         boolean configed = sp.getBoolean("configed", false);
         if (configed) {
-            setContentView(R.layout.activity_lost_find);
+            setContentView(R.layout.activity_lostfind);
             tvActivityLostFindNumber = (TextView) findViewById(R.id.tv_activity_lost_find_number);
             ivActivityLostFindProtectting = (ImageView) findViewById(R.id.iv_activity_lost_find_protectting);
             tvActivityLostFindNumber.setText(sp.getString("safenumber", ""));
