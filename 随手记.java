@@ -9,7 +9,10 @@ Android 文字使用 sp，长度使用 dp ，不推荐使用 像素 px
  android:ellipsize="none" //没有省略号，参数有开始省略，末尾省略，中间省略
  android:ellipsize="marquee" //跑马灯效果
 
+android:padding="8dp"//边框
 
+定义框 框中文字字体是否全为大写
+android:textAllCaps="false" 
 
 
 
@@ -235,6 +238,7 @@ RelativeLayout (相对布局)
     android:layout_centerHoriazontal        控制该子组件是否相对于父容器水平居中
     android:layout_centerVertical           控制该子组件是否相对于父容器垂直居中
     android:layout_centerInParent           控制该子组件是否相对于父容器居中
+
     android:layout_alignParentBottom        控制该子组件是否与父容器底端对齐
     android:layout_alignParentTop           控制该子组件是否与父容器顶端对齐
     android:layout_alignParentLeft          控制该子组件是否与父容器左端对齐
@@ -249,6 +253,7 @@ RelativeLayout (相对布局)
     android:layout_toLeftOf                 控制该子组件位于ID指定组件的左侧
     android:layout_above                    控制该子组件位于ID指定组件的上方
     android:layout_below                    控制该子组件位于ID指定组件的下方
+
     android:layout_alignTop                 控制该组件顶端与ID指定组件的上边界对齐
     android:layout_alignBottom              控制该底端组件与ID指定组件的下边界对齐
     android:layout_alignLeft                控制该组件左端与ID指定组件的左边界对齐
