@@ -96,6 +96,10 @@ android:theme="@android:style/Theme.Translucent"//透明主题色
         
     }
 
+/**
+
+ */
+
 
 清单文件中
 //默认安装位置
@@ -103,6 +107,23 @@ android:installLocation="auto"|"internalOnly"|"preferExternal"//自动，内部�
 android:launchMode="singleInstance" //启动模式
 android:excludeFromRecents="true" //是否在最近列表中显示 true 显示，false不显示
 android:configChanges="screenSize|keyboardHidden|orientation"//屏幕切换不影响Activity
+
+
+/**
+
+ */
+
+android:shape="oval"
+
+            oval    椭圆形
+            line    线
+            rectangle 矩形
+            ring 戒指
+
+
+
+
+
 
 
 /**
@@ -6204,12 +6225,177 @@ public class Net_Service extends Service {
 网络防火墙  droidwall
 
 
+ListView 的实现方式
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String names[] = {"常用号码查询", "黑名单管理", "位置3", "大波q", "吹波q", "跨抓q", "喷他q",
+            "常用号码查询", "黑名单管理", "位置3", "大波q", "吹波q", "跨抓q", "喷他q"};
 
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        assignViews();
+    }
+
+    private ListView lv;
+    private ListView lv2;
+    private ListView lv3;
+
+
+    private void assignViews() {
+        lv = (ListView) findViewById(R.id.lv);
+        lv2 = (ListView) findViewById(R.id.lv2);
+        lv3 = (ListView) findViewById(R.id.lv3);
+
+        /**
+         * 1.自定义适配器
+         */
+        lv.setAdapter(new listviewAdapter());
+
+        /**
+         * 2.数组适配器
+         */
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, names);
+
+        lv2.setAdapter(arrayAdapter);
+
+        /**
+         * item点击事件
+         */
+        lv2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "点击事件" + "  第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
+            }
+        });
+        /**
+         * item长按事件
+         */
+        lv2.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, "长按事件" + "  第" + (position + 1) + "个", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+
+        /**
+         * 3.HashMap
+         */
+        List<Map<String, Object>> data = new ArrayList<>();
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("image", R.drawable.icon_11);
+        map1.put("title", "小明");
+        map1.put("content", "138");
+        map1.put("time", "2016年7月21日");
+        data.add(map1);
+
+        Map<String, Object> map2= new HashMap<>();
+        map2.put("image", R.drawable.icon_12);
+        map2.put("title", "小红");
+        map2.put("content", "188");
+        map2.put("time", "2013年6月06日");
+        data.add(map2);
+
+        Map<String, Object> map3 = new HashMap<>();
+        map3.put("image", R.drawable.icon_13);
+        map3.put("title", "小花");
+        map3.put("content", "159");
+        map3.put("time", "2016年10月22日");
+        data.add(map3);
+
+        Map<String, Object> map4 = new HashMap<>();
+        map4.put("image", R.drawable.icon_11);
+        map4.put("title", "小娜");
+        map4.put("content", "178");
+        map4.put("time", "2014年4月11日");
+        data.add(map4);
+
+        Map<String, Object> map5= new HashMap<>();
+        map5.put("image", R.drawable.icon_12);
+        map5.put("title", "小胖");
+        map5.put("content", "120");
+        map5.put("time", "2017年6月06日");
+        data.add(map5);
+
+        Map<String, Object> map6 = new HashMap<>();
+        map6.put("image", R.drawable.icon_13);
+        map6.put("title", "小兰");
+        map6.put("content", "110");
+        map6.put("time", "2015年5月22日");
+        data.add(map6);
+
+        SimpleAdapter simpleAdapter = new SimpleAdapter(this, data, R.layout.item, new String[]{"image", "title", "content", "time"}, new int[]{R.id.img, R.id.title, R.id.content, R.id.time});
+
+        lv3.setAdapter(simpleAdapter);
+
+
+    }
+
+    /**
+     * 自定义适配器
+     */
+    class listviewAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return names.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            ViewHolder viewHolder;
+            if (convertView != null && convertView instanceof RelativeLayout) {
+                view = convertView;
+                viewHolder = (ViewHolder) view.getTag();
+            } else {
+                view = View.inflate(MainActivity.this, R.layout.item_listview, null);
+                viewHolder = new ViewHolder();
+
+                viewHolder.tv = (TextView) view.findViewById(R.id.tv);
+
+
+                view.setTag(viewHolder);
+            }
+
+            viewHolder.tv.setText(names[position]);
+
+            return view;
+        }
+    }
+
+    /**
+     * 容器
+     */
+    static class ViewHolder {
+        TextView tv;
+    }
+
+}
 
 
 
+/**
+ 
 
+ */
 
 
