@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_3"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal">
+
+        <LinearLayout style="@style/MyMiddleSatnavChildLinearLayout">
+
+            <ImageView
+                style="@style/MyTopSatnavchildImageView"
+                android:src="@mipmap/home_b" />
+
+            <TextView
+                style="@style/MyTopSatnavChildTextView"
+                android:text="首页" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMiddleSatnavChildLinearLayout">
+
+            <ImageView
+                style="@style/MyTopSatnavchildImageView"
+                android:src="@mipmap/cash_rmb_a" />
+
+            <TextView
+                style="@style/MyTopSatnavChildTextView"
+                android:text="超级返" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMiddleSatnavChildLinearLayout">
+
+            <ImageView
+                style="@style/MyTopSatnavchildImageView"
+                android:src="@mipmap/business_a" />
+
+            <TextView
+                style="@style/MyTopSatnavChildTextView"
+                android:text="购物返利" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMiddleSatnavChildLinearLayout">
+
+            <ImageView
+                style="@style/MyTopSatnavchildImageView"
+                android:src="@mipmap/list_a" />
+
+            <TextView
+                style="@style/MyTopSatnavChildTextView"
+                android:text="逛逛" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/MyMiddleSatnavChildLinearLayout">
+
+            <ImageView
+                style="@style/MyTopSatnavchildImageView"
+                android:src="@mipmap/people_a" />
+
+            <TextView
+                style="@style/MyTopSatnavChildTextView"
+                android:text="我的" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

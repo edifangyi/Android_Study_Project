@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorCircular1">#FE3464</color>
+    <color name="colorCircular2">#E811CC</color>
+    <color name="colorCircular3">#AC00D0</color>
+    <color name="colorCircular4">#F11249</color>
+    <color name="colorCircular5">#FF990C</color>
+    <color name="colorMiddleModular">#FEFEFE</color>
+    <color name="colorMiddleModular1">#FDA720</color>
+    <color name="colorMiddleModular2">#539FF2</color>
+    <color name="colorMiddleModular4">#00bb9c</color>
+    <color name="colorMiddleModularTitle">#000000</color>
+    <color name="colorMiddleModularSubtitle">#B5B5B5</color>
+    <color name="colorTimeText">#333333</color>
+
+</resources>
