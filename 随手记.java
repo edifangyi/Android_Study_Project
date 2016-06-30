@@ -6225,7 +6225,7 @@ public class Net_Service extends Service {
 网络防火墙  droidwall
 
 
-ListView 的实现方式
+ListView Adapter 的实现方式
 
 
 public class MainActivity extends AppCompatActivity {
@@ -6397,5 +6397,62 @@ public class MainActivity extends AppCompatActivity {
  
 
  */
+五种适配方式
+
+1.图片适配
+
+2.dimens.xml适配（当前手机的像素密度属于哪个范围内，dp和px的转换关系去达到适配，values-1280*720）
+    ldpo    1dp = 0.75 px    160dp = 120px      240px一半      320*240
+    ldpo    1dp = 1 px       160dp = 160px      320px一半      480*320
+    ldpo    1dp = 1.5 px     160dp = 240px      480px一半      320*480
+    ldpo    1dp = 2 px       160dp = 320px      640px一半      320*720 360px 180dp
+    ldpo    1dp = 3 px       160dp = 480px      960px一半      320*1080 540px
+
+3.布局适配（注意当前手机想读密码属于哪个范围内，加载不同资源布局 layout-1280*720 布局文件）
+
+4.java代码配置
+
+        /**
+         * 获取手机屏幕的宽高
+         */
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
+        /**
+         * 获取手机宽高上面的像素点
+         */
+
+        int widthPixels = displayMetrics.widthPixels;
+        int heightPixels = displayMetrics.heightPixels;
+
+        //textView 显示屏幕宽高的1/2，首先指定的宽高设置在当前控件的父布局，然后再将宽高作用在当前控件上
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                //数学四舍五入操作
+                (int) (widthPixels * 0.5 + 0.5), (int) (heightPixels * 0.5 + 0.5));
+
+        TextView textView = (TextView) findViewById(R.id.textView);
+        textView.setLayoutParams(layoutParams);
 
 
+5.weight 权重适配（只有在线性布局中使用）
+
+/**
+ 
+
+ */
+
+
+    /**
+     * 一个控件View从创建到显示过程中主要的方法
+     * 1.构造方法-实例化 两个参数的构造方法
+     * 2.测量：onMeasure(int, int); 如果这个View是ViewGroup，有义务测量孩子的宽高
+     * 3.指定View的大小和位置：onLayout(boolean, int,int,int,int);
+     *   如果这个View是ViewGroup，有义务测量孩子的大小和位置
+     * 4.绘制视图：onDraw(canvas)
+     */
+    
+
+/**
+ 
+ 
+ */
