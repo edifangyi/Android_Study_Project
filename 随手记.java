@@ -119,12 +119,47 @@ android:shape="oval"
             line    线
             rectangle 矩形
             ring 戒指
+/**
+
+ */
 
 
-
-
-
-
+文本显示组件：TextView
+按钮组件：Button
+编辑框：EditText
+单选钮：RadioGroup
+复选框：CheckBox
+下拉列表框：Spinner
+图片视图：ImageView
+图片按钮：ImageButton
+时间选择器：TimePicker
+日期选择器：DatePicker
+滚动视图：ScrollView
+列表显示：ListView
+对话框：Dialog
+定制对话框和LayoutInflater
+日期对话框：DatePickerDialog
+时间对话框：TimePickerDialog
+进度处理对话框：ProgressDialog
+随笔提示文本：AutoCompleteTextView
+拖动条：SeekBar
+评分组件：RatingBar
+信息提示框：Toast
+图片切换：ImageSwitcher
+文本切换：TextSwitcher
+拖拉图片：Gallery
+网格视图：GridView
+时钟组件：AnalogClock与DigitalClock
+计时器：Chronometer
+标签：TabHost
+菜单：Menu
+选项菜单：OptionsMenu
+上下文菜单：ContextMenu
+子菜单：SubMenu
+隐式抽屉组件：SlidingDrawer
+缩放控制：ZoomControls
+弹出窗口：PopupWindow
+树型组件：ExpandableListView
 
 /**
  
