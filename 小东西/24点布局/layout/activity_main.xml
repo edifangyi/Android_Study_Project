@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="8"
+    android:rowCount="4"
+    tools:context="com.example.fangyi.a24dian.MainActivity">
+
+    <!--第一行-->
+
+    <!--<Space-->
+        <!--android:layout_height="@dimen/activity_horizontal_margin"-->
+        <!--android:layout_columnSpan="8" />-->
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color2"
+        android:text="@string/title2"
+        android:textColor="@color/colorTitle2_4" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color4"
+        android:text="@string/title4"
+        android:textColor="@color/colorTitle2_4" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color8"
+        android:text="@string/title8"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <!--第二行-->
+
+    <Space
+        android:layout_height="@dimen/activity_horizontal_margin"
+        android:layout_columnSpan="8" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color32"
+        android:text="@string/title32"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color64"
+        android:text="@string/title64"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title128"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title256"
+        android:textColor="@color/colorTitle8_16_32" />
+    <!--第三行-->
+
+    <Space
+        android:layout_height="@dimen/activity_horizontal_margin"
+        android:layout_columnSpan="8" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+    <!--第四行-->
+
+    <Space
+        android:layout_height="@dimen/activity_horizontal_margin"
+        android:layout_columnSpan="8" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+    <Space android:layout_width="8dp" />
+
+    <TextView
+        style="@style/MyTextView"
+        android:background="@color/color16"
+        android:text="@string/title16"
+        android:textColor="@color/colorTitle8_16_32" />
+
+</GridLayout>

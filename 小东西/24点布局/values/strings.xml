@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">24dian</string>
+    <string name="title2">2</string>
+    <string name="title4">4</string>
+    <string name="title8">8</string>
+    <string name="title16">16</string>
+    <string name="title32">32</string>
+    <string name="title64">64</string>
+    <string name="title128">128</string>
+    <string name="title256">256</string>
+    <str0ng name="title1024">1024</str0ng>
+    <string name="title2048">2048</string>
+
+
+</resources>

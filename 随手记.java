@@ -109,6 +109,8 @@ android:excludeFromRecents="true" //是否在最近列表中显示 true 显示�
 android:configChanges="screenSize|keyboardHidden|orientation"//屏幕切换不影响Activity
 
 
+android:theme="@android:style/Theme.Translucent.NoTitleBar" //透明背景
+
 /**
 
  */
@@ -5358,7 +5360,11 @@ public boolean onTouchEvent(MotionEvent event) {
  */
 
 #补间动画
+
+
 * 旧形态向新形态变形时，为了让过程过度平滑自然而生成的动画
+
+
 
 ##平移
 
@@ -6476,7 +6482,7 @@ public class MainActivity extends AppCompatActivity {
 
  */
 
-
+自定义View控件
     /**
      * 一个控件View从创建到显示过程中主要的方法
      * 1.构造方法-实例化 两个参数的构造方法
@@ -6491,3 +6497,41 @@ public class MainActivity extends AppCompatActivity {
  
  
  */
+Vibrator类：实现振动服务
+实例化
+1、Context.getSystemService(java.lang.String)
+方法：
+1、vibrate(long[] pattern, int repeat)
+指定的时间间隔内震动并且可以设置震动持续的时间
+参数：
+    pattern：设置震动的时间间隔和持续时间
+    repeat：设置震动重复的次数
+
+2、cancel():取消震动
+
+/**
+ 
+ 
+ */
+
+MediaPlayer类：实现音频 audio 和 视频 video 文件的播放功能
+
+音乐播放的方式：
+1、静态方法
+2、构造方法
+    1、static MediaPlayer create(Context class, int resid);
+        根据音频文件的标识得到MediaPlayer对象
+
+    2、构造方法
+    MediaPlayer();
+    方法：
+        setDataSource(FileDescriptor fd, long offset, long length);
+        设置音频文件资源
+        参数：fd 文件描述符
+        offset 初始偏移量
+        length 文件的长度
+        严格按照生命周期来实现
+
+    播放
+        方法：
+        1、start():播放音乐
