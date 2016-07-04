@@ -6443,13 +6443,13 @@ public class MainActivity extends AppCompatActivity {
 1.图片适配
 
 2.dimens.xml适配（当前手机的像素密度属于哪个范围内，dp和px的转换关系去达到适配，values-1280*720）
-    ldpo    1dp = 0.75 px    160dp = 120px      240px一半      320*240
-    ldpo    1dp = 1 px       160dp = 160px      320px一半      480*320
-    ldpo    1dp = 1.5 px     160dp = 240px      480px一半      320*480
-    ldpo    1dp = 2 px       160dp = 320px      640px一半      320*720 360px 180dp
-    ldpo    1dp = 3 px       160dp = 480px      960px一半      320*1080 540px
+    ldpi    1dp = 0.75 px    160dp = 120px      240px一半      320*240
+    mdpi    1dp = 1 px       160dp = 160px      320px一半      480*320
+    hdpi    1dp = 1.5 px     160dp = 240px      480px一半      320*480
+    xdpi    1dp = 2 px       160dp = 320px      640px一半      320*720 360px 180dp
+    xxdpi    1dp = 3 px       160dp = 480px      960px一半      320*1080 540px
 
-3.布局适配（注意当前手机想读密码属于哪个范围内，加载不同资源布局 layout-1280*720 布局文件）
+3.布局适配（注意当前手机想读密码属于哪个范围内，加载不同资源布局 layout-1280*720 文件夹下，布局文件）
 
 4.java代码配置
 
