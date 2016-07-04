@@ -111,6 +111,16 @@ android:configChanges="screenSize|keyboardHidden|orientation"//屏幕切换不�
 
 android:theme="@android:style/Theme.Translucent.NoTitleBar" //透明背景
 
+
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                // 桌面上是否有图标
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
 /**
 
  */
@@ -6498,8 +6508,17 @@ public class MainActivity extends AppCompatActivity {
  
  */
 Vibrator类：实现振动服务
+
+权限 <uses-permission android:name="android.permission.VIBRATE"/>
+
 实例化
 1、Context.getSystemService(java.lang.String)
+
+private Vibrator mVibrator;//震动效果
+
+mVibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+
+
 方法：
 1、vibrate(long[] pattern, int repeat)
 指定的时间间隔内震动并且可以设置震动持续的时间
@@ -6508,6 +6527,22 @@ Vibrator类：实现振动服务
     repeat：设置震动重复的次数
 
 2、cancel():取消震动
+
+
+        long[] pattern = {500, 300, 500, 300};
+        mVibrator.vibrate(pattern, -1);
+
+
+         //震动效果
+        vibrator.vibrate(1000);//震动一秒
+
+
+        long[] pattern = {500, 500, 1000, 1000, 2000, 2000};//震动停止震动停止
+        //-1 不重复
+        //0 重复
+        //2 重复55,11,22  11,22  22
+        vibrator.vibrate(pattern, -1);
+
 
 /**
  
@@ -6535,3 +6570,191 @@ MediaPlayer类：实现音频 audio 和 视频 video 文件的播放功能
     播放
         方法：
         1、start():播放音乐
+
+
+/**
+ 
+ 
+ */
+
+android:src 前景，当前控件上面内容的大小
+android:background: 北京控件大小
+android:scaleType="fitXY" 让前景去填充慢背景
+
+
+设置欢迎页面图片
+
+        //延迟2秒在做后续操作
+        new Handler() {
+            //处理2秒后接收到的消息
+        }.sendEmptyMessageDelayed(0, 2000);
+
+导航页面
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:text="开始体验"
+        android:textSize="20sp"
+        android:visibility="gone"/>
+</RelativeLayout>
+
+
+/**
+ * 
+ */
+
+
+public class GuideActivity extends AppCompatActivity {
+
+    private ViewPager viewPager;
+    private Button button;
+    private List<ImageView> arrayList;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.guide);
+
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        button = (Button) findViewById(R.id.button);
+
+        initData();
+
+        viewPager.setAdapter(new MyAdapter());
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //滑动过程中
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                //已经选中某一页
+                if (position == arrayList.size()-1) {
+                    button.setVisibility(View.VISIBLE);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(GuideActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    });
+                } else {
+                    button.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                //滑动状态发生改变的方法
+            }
+        });
+
+    }
+
+    private void initData() {
+        arrayList = new ArrayList<>();
+        //添加包含了图片，图片空间
+
+        ImageView imageView1 = new ImageView(getApplicationContext());
+        imageView1.setBackgroundResource(R.drawable.guide_1);
+
+        ImageView imageView2 = new ImageView(getApplicationContext());
+        imageView2.setBackgroundResource(R.drawable.guide_2);
+
+        ImageView imageView3 = new ImageView(getApplicationContext());
+        imageView3.setBackgroundResource(R.drawable.guide_3);
+
+        arrayList.add(imageView1);
+        arrayList.add(imageView2);
+        arrayList.add(imageView3);
+    }
+
+    //ViewPager预加载操作
+    private class MyAdapter extends PagerAdapter {
+        @Override
+        public int getCount() {
+            return arrayList.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        //给指定的viewpager添加一个View方法
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            //container就是viewpager对象
+            container.addView(arrayList.get(position));
+            return arrayList.get(position);
+        }
+
+        //给指定的viewpager移除一个View方法
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
+    }
+}
+
+
+/**
+ * 
+ */
+
+public class WelcomeActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+
+        //延迟2秒在做后续操作
+        new Handler() {
+            //处理2秒后接收到的消息
+
+            @Override
+            public void handleMessage(Message msg) {
+                boolean b = sharedPreferences.getBoolean("is_first", true);
+
+                if (b) {
+                    //第一次进入导航页面
+                    sharedPreferences.edit().putBoolean("is_first", false).commit();
+                    //跳转到防止了ViewPager的Activity中
+                    startActivity(new Intent(WelcomeActivity.this, GuideActivity.class));
+                } else {
+                    //第一次之外进入应用，直接进入应用程序
+
+                }
+                finish();
+            }
+        }.sendEmptyMessageDelayed(0, 2000);
+
+    }
+}
