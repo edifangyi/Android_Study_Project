@@ -23,7 +23,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		//设置侧拉条目的宽度
 		slidingMenu.setBehindWidth(i);//像素
 		//设置分割线
-		slidingMenu.setShadowDrawable(R.drawable.shadow);//渐变颜色
+		slidingMenu.setShadowDrawable(R.drawable.shadow);//设置分割线资源
 		//给分割线设置宽度
 		slidingMenu.setShadowWidthRes(R.dimen.shadow_width);//5dp
 		// //给分割线设置宽度 - 传递像素
