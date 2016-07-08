@@ -16,6 +16,12 @@ android:textAllCaps="false"
 
 
 
+android:src 前景，当前控件上面内容的大小
+android:background: 北京控件大小
+android:scaleType="fitXY" 让前景去填充慢背景
+
+
+
 //跑马灯效果
     <TextView
         android:layout_width="match_parent"
@@ -6577,9 +6583,7 @@ MediaPlayer类：实现音频 audio 和 视频 video 文件的播放功能
  
  */
 
-android:src 前景，当前控件上面内容的大小
-android:background: 北京控件大小
-android:scaleType="fitXY" 让前景去填充慢背景
+
 
 
 设置欢迎页面图片
