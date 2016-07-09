@@ -182,6 +182,18 @@ android:shape="oval"
 /**
  
  */
+
+查询电脑ip地址  ipconfig 
+
+
+/**
+ 
+ */
+
+
+/**
+ 
+ */
 点击事件的几种方法
 
 package com.example.fangyi.myapp;
