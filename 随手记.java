@@ -6774,3 +6774,59 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 }
+
+
+
+
+
+
+
+/**
+ 
+ */
+
+
+    /**
+     * 设置webView
+     */
+    String url = "http://i.meituan.com/?cevent=imt%2Fguide%2Fi%2FAndroid";
+    private WebView webView;
+
+    private void webView() {
+        webView = (WebView) findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                //get the newProgress and refresh progress bar
+            }
+        });
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+
+        webView.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {  //表示按返回键 时的操作
+                        webView.goBack();   //后退
+                        return true;    //已处理
+                    }
+                }
+                return false;
+            }
+        });
+    }
