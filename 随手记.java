@@ -190,6 +190,12 @@ android:shape="oval"
  
  */
 
+重构Listview
+
+this.setSelector(R.drawable.XX);点击显示颜色
+this.setCacheColorHint(R.drawable.XX);拖拽的颜色
+this.setDivider(getDrawable(R.drawable.XX));每个条目的间隔的分割线
+
 
 /**
  
