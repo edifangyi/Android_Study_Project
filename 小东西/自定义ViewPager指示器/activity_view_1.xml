@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fangyi="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context="com.example.fangyi.myviewdemo.MainActivity">
+
+    <com.example.fangyi.myviewdemo.view_1.view.ViewPagerIndicator
+        android:id="@+id/id_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@mipmap/view_1_1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="短信"
+            android:textColor="#CCFFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="收藏"
+            android:textColor="#CCFFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="推荐"
+            android:textColor="#CCFFFFFF"
+            android:textSize="16sp" />
+
+
+    </com.example.fangyi.myviewdemo.view_1.view.ViewPagerIndicator>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/id_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v4.view.ViewPager>
+
+
+
+
+
+
+
+    <com.example.fangyi.myviewdemo.view_1.view.ViewPagerIndicator
+        android:id="@+id/id_indicator2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@mipmap/view_1_1"
+        android:orientation="horizontal"
+        fangyi:visible_tab_count="4">
+
+
+    </com.example.fangyi.myviewdemo.view_1.view.ViewPagerIndicator>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/id_viewpager2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v4.view.ViewPager>
+
+
+</LinearLayout>
