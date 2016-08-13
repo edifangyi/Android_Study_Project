@@ -2044,7 +2044,7 @@ singltTask:栈中永远只有一个该Activity实例，一旦被创建，就不�
 
 singleInstance:保证手机中永远只有一个该Activity的实例
     
-    如果用10个应用同时启动一个非单例模式的Activity，那么10个应用的栈中，个子会有一个该Activity
+    如果用10个应用同时启动一个非单例模式的Activity，那么10个应用的栈中，各子会有一个该Activity
     
     如果10个应用同时启动一个单例Activity，那么内存中也只有一个，10个应用启动的都是同一个Activity实例，
     并且该Activity实例不会进入应用的任务栈，而是保存在自己独立的任务栈中
