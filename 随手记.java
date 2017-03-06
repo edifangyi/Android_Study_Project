@@ -6836,3 +6836,83 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
+/**
+ 
+
+
+ */
+
+Selector的状态
+
+1.android:state_pressed="true/false"
+true:表示按下状态下使用，false:表示非按下状态下使用。
+
+2.android:state_focused="true/false"
+ture:表示聚焦状态使用（例如使用滚动球/D-pad聚焦Button），false:表示非聚集状态下使用。
+
+3.android:state_selected="true/false"
+true:表示被选中状态下使用，false:表示非选中下使用
+
+4.android:state_active="true/false"
+true:表示可勾选状态时使用，false:表示不可勾选状态下使用
+
+5.android:state_checkable="true/false"
+true:表示勾选状态下使用，false:表示非勾选状态使用
+
+6.android:state_checked "true/false"
+true:表示勾选状态下使用，false:表示非勾选状态使用
+
+7.android:state_enabled "true/false"
+true:表示可用状态使用（能接收触摸/点击事件），false:表示不可用状态使用
+
+8.android:state_window_focused "true/false"
+true:表示应用程序窗口有焦点时使用（应用程序在前台），false:表示无焦点时使用
+
+/**
+ 
+
+
+ */
+
+<android.support.v7.widget.Toolbar
+    android:id "@+id/toolbar"
+    android:layout_width "match_parent"
+    android:layout_height "wrap_content"
+    android:minHeight "?attr/actionBarSize"
+    android:background "?attr/colorPrimary">
+
+</android.support.v7.widget.Toolbar>
+
+
+xml style属性：
+colorPrimaryDark：状态栏的颜色（可用来实现沉浸效果）
+colorPrimary: Toolbar的背景颜色 （xml中用android:background ”?attr/colorPrimary”指定）
+android:textColorPrimary：Toolbar中文字的颜色，设置后Menu Item的字体颜色也会跟随
+colorAccent：EditText正在输入时，RadioButton选中时的颜色
+
+xml 属性：
+app:title ”App Title”：Toolbar中的App Title
+app:subtitle ”Sub Title” ：Toobar中的小标题
+app:navigationIcon ”@android:drawable/ic_menu_sort_by_size” ： 导航图标（注意和Logo的区别）
+
+
+/**
+ 
+
+
+ */
+
+全屏
+
+ <!-- 这行代码便可以隐藏ActionBar -->
+     android:theme "@android:style/Theme.Light.NoTitleBar" >
+
+
+/**
+
+
+ */
