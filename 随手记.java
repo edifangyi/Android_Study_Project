@@ -6618,31 +6618,27 @@ MediaPlayer类：实现音频 audio 和 视频 video 文件的播放功能
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height"match_parent">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v4.view.ViewPager>
+        android:layout_width"match_parent"
+        android:layout_height"match_parent"></android.support.v4.view.ViewPager>
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        android:text="开始体验"
-        android:textSize="20sp"
-        android:visibility="gone"/>
+        android:id"@+id/button"
+        android:layout_width"wrap_content"
+        android:layout_height"wrap_content"
+        android:layout_alignParentBottom"true"
+        android:layout_centerHorizontal"true"
+        android:layout_marginBottom"30dp"
+        android:paddingLeft"30dp"
+        android:paddingRight"30dp"
+        android:text"开始体验"
+        android:textSize"20sp"
+        android:visibility  "gone"/>
 </RelativeLayout>
 
-
-/**
- * 
- */
 
 
 public class GuideActivity extends AppCompatActivity {
@@ -6656,8 +6652,8 @@ public class GuideActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.guide);
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        button = (Button) findViewById(R.id.button);
+        viewPager  (ViewPager) findViewById(R.id.view_pager);
+        button  (Button) findViewById(R.id.button);
 
         initData();
 
@@ -6782,13 +6778,11 @@ public class WelcomeActivity extends AppCompatActivity {
 }
 
 
-
-
-
-
-
 /**
- 
+
+
+
+
  */
 
 
@@ -6838,6 +6832,17 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
 
+1.设置允许执行JS脚本：
+webSettings.setJavaScriptEnabled(true);
+
+2.添加通信接口
+webView.addJavascriptInterface(Interface,”InterfaceName”)
+
+3.JS调用Android
+InterfaceName.MethodName
+
+4.Android调用JS
+webView.loadUrl("javascript:functionName()");
 
 
 /**
@@ -6913,6 +6918,43 @@ app:navigationIcon ”@android:drawable/ic_menu_sort_by_size” ： 导航图标
 
 
 /**
+
+
+ */
+
+
+Android中设置TextView的颜色setTextColor
+
+
+
+
+TextView tv = new TextView(this);  
+tv.setText("Test set TextView's color.");  
+//方案一：代码中通过argb值的方式  
+tv.setTextColor(Color.rgb(255, 255, 255));
+
+
+
+Resources resource = (Resources) getBaseContext().getResources();  
+ColorStateList csl = (ColorStateList) resource.getColorStateList(R.color.my_color);  
+if (csl != null) {  
+    tv.setTextColor(csl);  
+}  
+
+
+
+
+XmlResourceParser xrp = getResources().getXml(R.color.my_color);  
+try {  
+    ColorStateList csl = ColorStateList.createFromXml(getResources(), xrp);  
+    tv.setTextColor(csl);  
+} catch (Exception e) {  
+}  
+
+
+/**
+ 
+
 
 
  */
