@@ -6833,16 +6833,47 @@ public class WelcomeActivity extends AppCompatActivity {
 
 
 1.设置允许执行JS脚本：
-webSettings.setJavaScriptEnabled(true);
+.webSettings.setJavaScriptEnabled(true);
 
-2.添加通信接口
+2.添加通信接口类
 webView.addJavascriptInterface(Interface,”InterfaceName”)
 
+webView.addJavascriptInterface(new WebAppInterface,App)
+
+
+class WebAppInterface {
+
+
+    @JavascriptInterface
+    public void sayHello(String name) {
+        Toast.XXXX
+    }
+}
+
+
+
+前端：
+在<scripy> 
+    app.sayHello()
+</scripy>
+
+
 3.JS调用Android
-InterfaceName.MethodName
+.InterfaceName.MethodName
 
 4.Android调用JS
 webView.loadUrl("javascript:functionName()");
+
+
+//打开本包内asset目录下的index.html文件
+webview.loadUrl("file///android_asset/index.html");
+
+//打开本地sd卡内的index.html文件
+webview.loadUrl("content://com.android.htmlfileprovid/sdcard/index.html");
+
+//开打指定URL的html文件
+webView.loadUrl("www.zhihu.com");
+
 
 
 /**
